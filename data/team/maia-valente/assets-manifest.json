@@ -1,0 +1,34 @@
+{
+  "id": "gwd-maia-valente-assets",
+  "status": "VALIDATED",
+  "drive_root": "https://drive.google.com/drive/folders/1AHwlUksWeNHqSqVV4IlOcjMTCOpsN_Cj",
+  "folders": {
+    "master": "https://drive.google.com/drive/folders/1wAGrbyHduim6hBx5ZEysXOj6qYqG0sjO",
+    "references": "https://drive.google.com/drive/folders/1JBlyrEGrDZFLW6Hyidx4dV0v8-ZrsUTi",
+    "portraits": "https://drive.google.com/drive/folders/1zEGXFldiUmnGOe-jW6rzdCVo-smYYUAs",
+    "full_body": "https://drive.google.com/drive/folders/13b29oGIQulyEMWcM0nJpUq6sU9QDdByD",
+    "work": "https://drive.google.com/drive/folders/1elXWud0LkDipO8lQYxFPqRzGbhqkFhjo",
+    "casual_personal": "https://drive.google.com/drive/folders/1uvGB9LaY_OtODTmAv5gT3rsbjBtA4WNr",
+    "events_networking": "https://drive.google.com/drive/folders/1WrM7QaKMOArUnQJQ8j7fvt4jCxWdwpkS",
+    "social_media": "https://drive.google.com/drive/folders/14XLMQ5ySKA3nFbk0yf9aa7PIc4oVVsua",
+    "banners_cards": "https://drive.google.com/drive/folders/1UxE-SgGmrplAXZMbXziVWnsmor3feuNK",
+    "whatsapp_community": "https://drive.google.com/drive/folders/1hnVtZwoIFWdQDpKxText0l3JpTvVo2fE"
+  },
+  "master_files": [
+    "Maia_Valente_MASTER_Visual_Lock_V01.png",
+    "Maia_Valente_Master_Profile_V02.png"
+  ],
+  "approved_asset_classes": [
+    "reference",
+    "master",
+    "portrait",
+    "full_body",
+    "work",
+    "casual_personal",
+    "events_networking",
+    "social_media",
+    "banners_cards",
+    "whatsapp_community"
+  ],
+  "rule": "Any new visual must preserve the canonical face and identity lock before being promoted to an approved folder."
+}
