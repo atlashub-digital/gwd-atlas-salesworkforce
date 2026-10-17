@@ -106,6 +106,54 @@
       "name": "Elisa_Duarte_Persona_Board_V01.png",
       "status": "APPROVED_VARIANT",
       "url": "https://drive.google.com/file/d/1Z1u_KMh_QZYagCL34SaaPZKpxV4J-3KT/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-BEACH-V01",
+      "name": "Elisa_Duarte_Lifestyle_Beach_Stroll_V01.png",
+      "class": "lifestyle_personal",
+      "category": "beach_travel",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1ry_QN6rzHOeGMcdzCQedAwI_XDBd4AWK/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-PAJAMA-V01",
+      "name": "Elisa_Duarte_Lifestyle_Pajama_Selfie_V01.png",
+      "class": "lifestyle_personal",
+      "category": "selfies",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1ZKGBNmV2yZKbIfPS38eCNJjGYYhKvJRh/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-MORNING-BEDROOM-V01",
+      "name": "Elisa_Duarte_Lifestyle_Morning_Bedroom_V01.png",
+      "class": "lifestyle_personal",
+      "category": "selfies",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/14IMN2sDWtAbsH1jiA4aYWD3anmrxHBOu/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-BREAKFAST-V01",
+      "name": "Elisa_Duarte_Lifestyle_Breakfast_V01.png",
+      "class": "lifestyle_personal",
+      "category": "cafe_routine",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1K27eA4nxwH9lSR7dXSZH2VFejnH9dMXi/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-PARK-V01",
+      "name": "Elisa_Duarte_Lifestyle_Park_Walk_V01.png",
+      "class": "lifestyle_personal",
+      "category": "sport_wellbeing",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1KMGXB7-5Q-LmgaOREe6TDAQZFWizbxPO/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-GYM-V01",
+      "name": "Elisa_Duarte_Lifestyle_Gym_V01.png",
+      "class": "lifestyle_personal",
+      "category": "sport_wellbeing",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1shGkzA8uSsa6LSKYjPQcVzSDD-7Jn5Py/view?usp=drivesdk"
     }
   ],
   "references": [
@@ -119,5 +167,7 @@
       "status": "REFERENCE_ONLY",
       "url": "https://drive.google.com/file/d/1FGNBoxKLkjqOyRtUhtHy9uR2kxfCqhLo/view?usp=drivesdk"
     }
-  ]
+  ],
+  "lifecycle_note": "Lifestyle assets are narrative Tier C variants unless separately promoted into Life Canon. They do not create permanent biographical facts.",
+  "updated_at": "2026-10-17"
 }
