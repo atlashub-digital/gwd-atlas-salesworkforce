@@ -1,67 +1,146 @@
 {
-  "persona_id": "gwd-diana-matos",
+  "id": "gwd-diana-matos-assets",
+  "status": "VISUAL_VALIDATED",
   "drive_root": "https://drive.google.com/drive/folders/1bYiD48ySr3AGslGi-uggmYBoB6IfwlmL",
   "folders": {
     "master": "https://drive.google.com/drive/folders/1EaJ85lfsmskCyKNAIVeL8KsQj7Q5I7Ck",
     "references": "https://drive.google.com/drive/folders/1Ocb5VZR-U9kirR3Wrs_wA2hHZ5ot2W9X",
     "portraits": "https://drive.google.com/drive/folders/1yzLTg3MGMzxq_TXXFtdpPIIxlGRjzrTt",
-    "work": "https://drive.google.com/drive/folders/1kY8oOcwZDNESb8vd3tDGxzRDXvWCIPsL",
-    "personal_casual": "https://drive.google.com/drive/folders/1tcVK42YIVNPHyJMm_usFJdf6FmySk_VE",
-    "team": "https://drive.google.com/drive/folders/1VW2Lvw0Ga-ILppMMIomSCqbEVhC1qHrp",
+    "full_body": "https://drive.google.com/drive/folders/1Kgob1aQLefqEkwlRfaHa82yywMnZZlYI",
+    "work": "https://drive.google.com/drive/folders/1lvB2_o-iQR4f83wI7RqqNW__q0FWXPRD",
+    "casual_personal": "https://drive.google.com/drive/folders/1a2uYLtTnFpxFAjcsZVjacIqdPzn1tZmX",
+    "events_networking": "https://drive.google.com/drive/folders/1Ww5dqk06GX0t33ih0FM-zDf2pcJUGbTr",
+    "social_media": "https://drive.google.com/drive/folders/1LiZmtkVE8sWnL3-CNMsWVGlVCYAnfy8D",
+    "banners_cards": "https://drive.google.com/drive/folders/1t2g-wf0uCOR4QzekJASg8BLGut3UR5xD",
+    "whatsapp_community": "https://drive.google.com/drive/folders/1_Qr5v3BTTxWdmGG1nG4ts76zWlYnuZXM",
+    "lifestyle_personal": "https://drive.google.com/drive/folders/1dpcEMCxGJqLG139fek0t7EoBD2w40mjz",
+    "social_publications": "https://drive.google.com/drive/folders/1pfGDo5LRfQqhwifTfVkL8RqRITpTkTKG",
     "archive": "https://drive.google.com/drive/folders/1FI3dScaPDyAcN2_kPzGXUQJUgtFly99u"
   },
-  "visual_status": "VALIDATED",
-  "required_pack": [
-    "MASTER_PROFILE",
-    "WORK_INDIVIDUAL",
-    "PERSONAL_CASUAL",
-    "TEAM_AFTER_GROUP_LOCK"
+  "master_files": [
+    "Diana_Matos_MASTER_Visual_Lock_V01.png",
+    "Diana_Matos_Profile_Card_CANONICAL_V01.png"
   ],
-  "assets": [
+  "approved_asset_classes": [
+    "reference",
+    "master",
+    "portrait",
+    "full_body",
+    "work",
+    "casual_personal",
+    "events_networking",
+    "social_media",
+    "banners_cards",
+    "whatsapp_community",
+    "lifestyle_personal"
+  ],
+  "rule": "Any new Diana visual must preserve the canonical face and profile-card visual identity. Generate from approved master references, then QA before promotion.",
+  "lifestyle_categories": {
+    "selfies": "https://drive.google.com/drive/folders/1nzbiIsXn6ISkzESpgRYo-e_NN8IMCI-E",
+    "cafe_routine": "https://drive.google.com/drive/folders/17lDeEAOFAee_r8UUBGBFqfLNnxaIjOPN",
+    "sport_wellbeing": "https://drive.google.com/drive/folders/1r3Hoog1RjC7_m3vxPlHgjG4MAWPMZF8W",
+    "beach_travel": "https://drive.google.com/drive/folders/1_CevMliY-o9bC4JXGohQ68e3Zxm0tcbG",
+    "night_events": "https://drive.google.com/drive/folders/1O2iVEOAt3GseT7UkFnPxL732CUrbjwMb",
+    "social_media_casual": "https://drive.google.com/drive/folders/1JpD5buFuOnLniG8F1EjmP2yVhgQ-l8O_"
+  },
+  "approved_files": [
     {
       "id": "DIANA-MASTER-V01",
-      "type": "MASTER_PROFILE",
-      "status": "CANONICAL",
       "name": "Diana_Matos_MASTER_Visual_Lock_V01.png",
-      "url": "https://drive.google.com/file/d/1_629XtgcfWX9gI4oaWl2P444HLeYVVOw/view?usp=drivesdk",
-      "may_be_reference": true
+      "class": "master",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1_629XtgcfWX9gI4oaWl2P444HLeYVVOw/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-PROFILE-CARD-V01",
+      "name": "Diana_Matos_Profile_Card_CANONICAL_V01.png",
+      "class": "master_profile_card",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1a8F4nMDfp6XWKWvh4VtXsA5fkhcx4fhN/view?usp=drivesdk"
     },
     {
       "id": "DIANA-PROFILE-V01",
-      "type": "PROFILE",
-      "status": "APPROVED_VARIANT",
       "name": "Diana_Matos_Profile_V01.png",
-      "url": "https://drive.google.com/file/d/1zU3wbpDkRSFpv3PUaUtrCrZqpKhlQm8s/view?usp=drivesdk",
-      "may_be_reference": true
+      "class": "portrait",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1zU3wbpDkRSFpv3PUaUtrCrZqpKhlQm8s/view?usp=drivesdk"
     },
     {
-      "id": "DIANA-REF-01",
-      "type": "INSPIRATION_REFERENCE",
-      "status": "REFERENCE_ONLY",
-      "name": "REF_Diana_Source_01.png",
-      "url": "https://drive.google.com/file/d/1CW-FKKqq5jSVAYTbibBGXBiZN9mwUw7x/view?usp=drivesdk",
-      "may_be_reference": false
+      "id": "DIANA-PORTRAIT-LIGHT-V01",
+      "name": "Diana_Matos_Portrait_BlazerLight_V01.png",
+      "class": "portrait",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1PkqPNSIGm0wbumfziYkIzLRqTJQkI3wP/view?usp=drivesdk"
     },
     {
-      "id": "DIANA-REF-02",
-      "type": "INSPIRATION_REFERENCE",
-      "status": "REFERENCE_ONLY",
-      "name": "REF_Diana_Source_02.png",
-      "url": "https://drive.google.com/file/d/1yEkqISjbYmZbnYgB_7rgbVOZyJxn0Ali/view?usp=drivesdk",
-      "may_be_reference": false
+      "id": "DIANA-WORK-LAPTOP-V01",
+      "name": "Diana_Matos_Work_Laptop_V01.png",
+      "class": "work",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1cmDFuC5Rro9KnJKtdxFfRXe3VvDh5ERa/view?usp=drivesdk"
     },
     {
-      "id": "DIANA-REF-03",
-      "type": "INSPIRATION_REFERENCE",
-      "status": "REFERENCE_ONLY",
-      "name": "REF_Diana_Source_03.png",
-      "url": "https://drive.google.com/file/d/1vNVSBKySZ88fZvsg5Q7biP6JrKpNnMJQ/view?usp=drivesdk",
-      "may_be_reference": false
+      "id": "DIANA-WORK-PLANNING-V01",
+      "name": "Diana_Matos_Work_Planning_V01.png",
+      "class": "work",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1MtFwj30qC2dUYE7sDBaWUmFkqAZU0BFb/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-WORK-WIDE-V01",
+      "name": "Diana_Matos_Work_Desk_Wide_V01.png",
+      "class": "work",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/17oJJFGzsSwiabjWYDMFgzMlfGQ8Caz8F/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-FULLBODY-V01",
+      "name": "Diana_Matos_FullBody_Office_V01.png",
+      "class": "full_body",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1-ez6Sapy5WUk302Usz-he_JhZFjFbsCc/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-EVENT-V01",
+      "name": "Diana_Matos_Event_V01.png",
+      "class": "events_networking",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/159_aeYzqM68K6qW3GZkYzurB0nwNPST9/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-CASUAL-CAFE-V01",
+      "name": "Diana_Matos_Casual_Cafe_V01.png",
+      "class": "casual_personal",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1S-pj5FB7blJU78XwlCQvfwWuJjLYsxbv/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-LIFESTYLE-CAFE-V01",
+      "name": "Diana_Matos_Lifestyle_Cafe_V01.png",
+      "class": "lifestyle_personal",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/105k6gBD1TJFbsgAsC4xtrKGDTKSz7YEB/view?usp=drivesdk"
     }
   ],
-  "pending_assets": [
-    "WORK_INDIVIDUAL",
-    "PERSONAL_CASUAL",
-    "TEAM_AFTER_TOMAS_ELISA_LOCK"
-  ]
+  "rejected_files": [
+    {
+      "name": "REJECT_DRIFT_Diana_Cafe_LongHair_V01.png",
+      "reason": "Face/hair drift; not Diana canonical identity.",
+      "url": "https://drive.google.com/file/d/1xx9U2U9HcqkrIvgU0Mr0K3eTHcS1XaDC/view?usp=drivesdk"
+    },
+    {
+      "name": "REJECT_DRIFT_Diana_Work_LongHair_V01.png",
+      "reason": "Face/hair drift; not Diana canonical identity.",
+      "url": "https://drive.google.com/file/d/1byXU5ZvFPkNpwoPMVVS23r4MwJKWlbDM/view?usp=drivesdk"
+    }
+  ],
+  "social_publication_workflow": {
+    "inbox_human": "https://drive.google.com/drive/folders/1WNjx5H5MaQk-UI30rhrJfLvV-YXxq6HL",
+    "approved_packs": "https://drive.google.com/drive/folders/1ffjbHHwBCSz1l73POYh8rgjSJnPI7-W8",
+    "diana_preparation": "https://drive.google.com/drive/folders/1nd7N6ugiuph_13rO4XEJayBPalfj6JQe",
+    "scheduled": "https://drive.google.com/drive/folders/1s--uVxESQDEZi-50xIQ_gNIXzgPvrrQk",
+    "published": "https://drive.google.com/drive/folders/15E6gSrDjO5YTSwh2NGR4GE4VQFogJbqb",
+    "reuse": "https://drive.google.com/drive/folders/1qHZDHXW1zB67EiOYzHm93JlTGJKKxre4",
+    "archive": "https://drive.google.com/drive/folders/1H99D8XsufRg_E0xirruVV4V9HYvjw-lB"
+  }
 }
