@@ -13,7 +13,8 @@
     "social_media": "https://drive.google.com/drive/folders/14XLMQ5ySKA3nFbk0yf9aa7PIc4oVVsua",
     "banners_cards": "https://drive.google.com/drive/folders/1UxE-SgGmrplAXZMbXziVWnsmor3feuNK",
     "whatsapp_community": "https://drive.google.com/drive/folders/1hnVtZwoIFWdQDpKxText0l3JpTvVo2fE",
-    "lifestyle_personal": "https://drive.google.com/drive/folders/1UREVMYKzOLz8hx35f-wuU8RBX1XCRzsI"
+    "lifestyle_personal": "https://drive.google.com/drive/folders/1UREVMYKzOLz8hx35f-wuU8RBX1XCRzsI",
+    "social_publications": "https://drive.google.com/drive/folders/1ZELZMau8Zn7RqzE7tIYNx-VPY0tlZduN"
   },
   "master_files": [
     "Maia_Valente_MASTER_Visual_Lock_V01.png",
@@ -48,5 +49,14 @@
     "Maia_Valente_Lifestyle_Sexta_Noite_Espelho_V01.png",
     "Maia_Valente_Lifestyle_Cafe_Cidade_V01.png",
     "Maia_Valente_Lifestyle_Rooftop_GoldenHour_V01.png"
-  ]
+  ],
+  "social_publication_workflow": {
+    "inbox_human": "https://drive.google.com/drive/folders/1cey_DCV5mY53Q7r0JIbPBMRKtnaUs-HZ",
+    "approved_packs": "https://drive.google.com/drive/folders/1IuBBY_W-gVAEOn67UKF3FeVpRzQAQ3pa",
+    "maia_preparation": "https://drive.google.com/drive/folders/1H5pOyGGXRvT-Chm34qrACSPYxlSXwcR7",
+    "scheduled": "https://drive.google.com/drive/folders/1DYJLXCyZ6xfVpt0SJF5BUE3ar4EQveIE",
+    "published": "https://drive.google.com/drive/folders/17zN9pJ9f2JUKGf_-aNKPY4-8_C-LaQzX",
+    "reuse": "https://drive.google.com/drive/folders/1MtXL-HRWu8h-xsJ6_ADatPKIBAhKNWIG",
+    "archive": "https://drive.google.com/drive/folders/1sFtse0OYqP_ahfdKIJza_UqBODiuoP0V"
+  }
 }
