@@ -84,3 +84,29 @@ Não pode variar silenciosamente:
 - Drive: https://drive.google.com/drive/folders/1bYiD48ySr3AGslGi-uggmYBoB6IfwlmL
 
 > Bio, personalidade e detalhes biográficos adicionais permanecem como **proposta** até validação humana explícita.
+
+
+## Pack visual validado
+
+### Canónicos
+- `Diana_Matos_MASTER_Visual_Lock_V01.png` — master limpo para geração/referência facial.
+- `Diana_Matos_Profile_Card_CANONICAL_V01.png` — perfil público aprovado pela direção.
+
+### Variantes aprovadas
+- `Diana_Matos_Portrait_BlazerLight_V01.png`
+- `Diana_Matos_Work_Laptop_V01.png`
+- `Diana_Matos_Work_Planning_V01.png`
+- `Diana_Matos_Work_Desk_Wide_V01.png`
+- `Diana_Matos_FullBody_Office_V01.png`
+- `Diana_Matos_Event_V01.png`
+- `Diana_Matos_Casual_Cafe_V01.png`
+
+### Rejeitados por drift
+- `REJECT_DRIFT_Diana_Cafe_LongHair_V01.png`
+- `REJECT_DRIFT_Diana_Work_LongHair_V01.png`
+
+Os rejeitados ficam arquivados apenas para auditoria e nunca podem ser usados como referência.
+
+## Estrutura Drive normalizada
+
+`00_MASTER / 01_REFERENCIAS / 02_RETRATOS / 03_CORPO_INTEIRO / 04_TRABALHO / 05_CASUAL_PESSOAL / 06_EVENTOS_NETWORKING / 07_SOCIAL_MEDIA / 08_BANNERS_CARDS / 09_WHATSAPP_COMMUNITY / 10_LIFESTYLE_PESSOAL / 11_PUBLICACOES_SOCIAIS / 99_ARQUIVO`
