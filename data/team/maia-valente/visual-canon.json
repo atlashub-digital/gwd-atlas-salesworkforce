@@ -1,0 +1,44 @@
+{
+  "persona_id": "gwd-maia-valente",
+  "visual_status": "LOCKED",
+  "reference_policy": "REFERENCE_DRIVEN",
+  "drive": {
+    "root": "https://drive.google.com/drive/folders/1AHwlUksWeNHqSqVV4IlOcjMTCOpsN_Cj",
+    "master_folder": "https://drive.google.com/drive/folders/1wAGrbyHduim6hBx5ZEysXOj6qYqG0sjO",
+    "primary_masters": [
+      "Maia_Valente_MASTER_Visual_Lock_V01.png",
+      "Maia_Valente_Master_Profile_V02.png"
+    ]
+  },
+  "locked_traits": {
+    "apparent_age_range": "24-29",
+    "eyes": "brown",
+    "hair": {
+      "color": "dark brown",
+      "length": "long",
+      "texture": "slightly wavy"
+    },
+    "skin": "warm light to medium-light olive",
+    "face": "soft oval, natural proportions",
+    "emotional_signature": [
+      "warm",
+      "approachable",
+      "calm",
+      "confident",
+      "natural"
+    ]
+  },
+  "generation_requirements": {
+    "master_reference_required": true,
+    "text_prompt_only_allowed_for_canonical_use": false,
+    "qa_required": true,
+    "approved_reference_only": true
+  },
+  "qa_results": [
+    "PASS_CANONICAL",
+    "PASS_VARIANT",
+    "REVIEW_REQUIRED",
+    "REJECT_DRIFT"
+  ],
+  "promotion_rule": "Only approved variants may be reused as future visual references."
+}
