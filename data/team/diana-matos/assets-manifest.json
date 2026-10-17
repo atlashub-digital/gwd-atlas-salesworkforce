@@ -123,16 +123,8 @@
     }
   ],
   "rejected_files": [
-    {
-      "name": "REJECT_DRIFT_Diana_Cafe_LongHair_V01.png",
-      "reason": "Face/hair drift; not Diana canonical identity.",
-      "url": "https://drive.google.com/file/d/1xx9U2U9HcqkrIvgU0Mr0K3eTHcS1XaDC/view?usp=drivesdk"
-    },
-    {
-      "name": "REJECT_DRIFT_Diana_Work_LongHair_V01.png",
-      "reason": "Face/hair drift; not Diana canonical identity.",
-      "url": "https://drive.google.com/file/d/1byXU5ZvFPkNpwoPMVVS23r4MwJKWlbDM/view?usp=drivesdk"
-    }
+    "REJECT_DRIFT_Diana_Cafe_LongHair_V01.png",
+    "REJECT_DRIFT_Diana_Work_LongHair_V01.png"
   ],
   "social_publication_workflow": {
     "inbox_human": "https://drive.google.com/drive/folders/1WNjx5H5MaQk-UI30rhrJfLvV-YXxq6HL",
@@ -142,5 +134,61 @@
     "published": "https://drive.google.com/drive/folders/15E6gSrDjO5YTSwh2NGR4GE4VQFogJbqb",
     "reuse": "https://drive.google.com/drive/folders/1qHZDHXW1zB67EiOYzHm93JlTGJKKxre4",
     "archive": "https://drive.google.com/drive/folders/1H99D8XsufRg_E0xirruVV4V9HYvjw-lB"
-  }
+  },
+  "assets": [
+    {
+      "id": "DIANA-PROFILE-CARD-V01",
+      "name": "Diana_Matos_Profile_Card_CANONICAL_V01.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1a8F4nMDfp6XWKWvh4VtXsA5fkhcx4fhN/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-MASTER-V01",
+      "name": "Diana_Matos_MASTER_Visual_Lock_V01.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1_629XtgcfWX9gI4oaWl2P444HLeYVVOw/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-PORTRAIT-V01",
+      "name": "Diana_Matos_Portrait_BlazerLight_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1PkqPNSIGm0wbumfziYkIzLRqTJQkI3wP/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-WORK-LAPTOP-V01",
+      "name": "Diana_Matos_Work_Laptop_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1cmDFuC5Rro9KnJKtdxFfRXe3VvDh5ERa/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-WORK-PLANNING-V01",
+      "name": "Diana_Matos_Work_Planning_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1MtFwj30qC2dUYE7sDBaWUmFkqAZU0BFb/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-WORK-WIDE-V01",
+      "name": "Diana_Matos_Work_Desk_Wide_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/17oJJFGzsSwiabjWYDMFgzMlfGQ8Caz8F/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-FULLBODY-V01",
+      "name": "Diana_Matos_FullBody_Office_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1-ez6Sapy5WUk302Usz-he_JhZFjFbsCc/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-EVENT-V01",
+      "name": "Diana_Matos_Event_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/159_aeYzqM68K6qW3GZkYzurB0nwNPST9/view?usp=drivesdk"
+    },
+    {
+      "id": "DIANA-CASUAL-CAFE-V01",
+      "name": "Diana_Matos_Casual_Cafe_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1S-pj5FB7blJU78XwlCQvfwWuJjLYsxbv/view?usp=drivesdk"
+    }
+  ]
 }
