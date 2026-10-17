@@ -1,0 +1,99 @@
+{
+  "id": "gwd-tomas-rocha-assets",
+  "status": "VISUAL_VALIDATED",
+  "drive_root": "https://drive.google.com/drive/folders/1yio0KWKAeCcVRB2_Dm5ALvLoX71HZQQV",
+  "folders": {
+    "master": "https://drive.google.com/drive/folders/15-sP8DJzFDV8BcbrvFWWOCOn09GFIqqs",
+    "references": "https://drive.google.com/drive/folders/17Vi1_BMIi6cW6t1HAM8Bf0wlcdWBPLrH",
+    "portraits": "https://drive.google.com/drive/folders/1V44ftf2q9IRNtZGmoDrNOZrg5jtYY79J",
+    "full_body": "https://drive.google.com/drive/folders/1CL0euY_SOhar24GoR1b8LbYTKAmfyCG4",
+    "work": "https://drive.google.com/drive/folders/16sSoIN-1gOfDcbtiedDKsQrGPMeKdmEC",
+    "casual_personal": "https://drive.google.com/drive/folders/1jsY6DYC861Yp4KW-wcYBfLujseA7YGa0",
+    "events_networking": "https://drive.google.com/drive/folders/1SW_SMbLNASy2GceFWLOfrxGAAI7r-QW_",
+    "social_media": "https://drive.google.com/drive/folders/19csGwE-YP2BY0oDGPzcIaXx8zpYnSrhc",
+    "banners_cards": "https://drive.google.com/drive/folders/1oijG48JkTCfZ8sSaQq9RpUcxaGU28o3m",
+    "whatsapp_community": "https://drive.google.com/drive/folders/17zQsIKmMguW4EecOLxekp1dtGrsIXguc",
+    "lifestyle_personal": "https://drive.google.com/drive/folders/16Yfp1EidYCQWac9aAXsfxfgRSESI262X",
+    "social_publications": "https://drive.google.com/drive/folders/1nWHaKU4hRAXuL0NbLXqgUfZ8hHaiFddJ",
+    "archive": "https://drive.google.com/drive/folders/1kC8wpY8v4Z38sgAxOCJZLFDpUJXugqoR"
+  },
+  "lifestyle_categories": {
+    "selfies": "https://drive.google.com/drive/folders/1UPcnydmX7zkg62J3XBp1Mjs0WJKUjrsN",
+    "cafe_routine": "https://drive.google.com/drive/folders/1smiNHVsp1ivd0_PvfiXDJCYmrIuR83Qd",
+    "sport_wellbeing": "https://drive.google.com/drive/folders/1-J5-rZ2pmtlaynKBQFwQoIchmYS8FX7v",
+    "beach_travel": "https://drive.google.com/drive/folders/1MAASwcT3CpbsHDMh6gKI9By_A_zlbmBO",
+    "night_events": "https://drive.google.com/drive/folders/1732E6OsgiNSd287uOxO45tW6Nc4G-s1q",
+    "social_media_casual": "https://drive.google.com/drive/folders/1Faoj8xPVZPSK143om-zGE26zhuy8DZNx"
+  },
+  "social_publication_workflow": {
+    "inbox_human": "https://drive.google.com/drive/folders/1WD-O55xdKyWVj5EmGx5pwzNGxBuz4L7Q",
+    "approved_packs": "https://drive.google.com/drive/folders/1rGhY_LwI4NcPAR37JHbp8hhCvzCVJLbm",
+    "tomas_preparation": "https://drive.google.com/drive/folders/1vFSZx3IbDItq7QdQaXz8eV6Munwn6oB1",
+    "scheduled": "https://drive.google.com/drive/folders/1stgz9g7mMIJOqo155yIIM-IvRt8oW_0h",
+    "published": "https://drive.google.com/drive/folders/1sWi9J5oV_aT5U3iKEIhnMBUzGEARURxH",
+    "reuse": "https://drive.google.com/drive/folders/1BwCS2r-NORybQb0TLyCn4Kz3HOULPFfg",
+    "archive": "https://drive.google.com/drive/folders/1C1ffPdg7U5zox6bYXEzM80nMb9uKSpRt"
+  },
+  "assets": [
+    {
+      "id": "TOMAS-MASTER-V01",
+      "name": "Tomas_Rocha_MASTER_Visual_Lock_V01.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1hYaS_g9gAlKRkR9qnXfGrK1dgld7jGyY/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-PROFILE-CARD-V01",
+      "name": "Tomas_Rocha_Profile_Card_CANONICAL_V01.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1vhG7uUuVHuvTOY9V-01w3y-aG6lvTogn/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-PORTRAIT-V01",
+      "name": "Tomas_Rocha_Portrait_Office_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/150xdEnG6wbwXBH1fQ3Gf2CpxTZnOqO2i/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-WORK-ANALYTICS-V01",
+      "name": "Tomas_Rocha_Work_Analytics_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1Hm4jufvjth-kCScjL9GLdM3hRG3WBLF7/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-WORK-RESEARCH-V01",
+      "name": "Tomas_Rocha_Work_Research_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1g2cjCrvN3y9n14ZsJVSOZmPiGje7w-hA/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-FULLBODY-V01",
+      "name": "Tomas_Rocha_FullBody_Office_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1Mva8BJiXMxStDJFMHfzk4U4QU3vU57h0/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-CASUAL-CAFE-V01",
+      "name": "Tomas_Rocha_Casual_Cafe_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1cY0PceO2ZKqh1cgwkRCf1SiEntBYJDdk/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-EVENT-V01",
+      "name": "Tomas_Rocha_Event_Networking_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/15QVWBczTg0tKLy-HFIbs0v-mZZpOInyJ/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-LIFESTYLE-GOLDENHOUR-V01",
+      "name": "Tomas_Rocha_Lifestyle_GoldenHour_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1h9acVNZsKMF6AdzrloKg_gnkqlIj7v2S/view?usp=drivesdk"
+    },
+    {
+      "id": "TOMAS-LIFESTYLE-CAFE-V01",
+      "name": "Tomas_Rocha_Lifestyle_Cafe_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1U3IisSCPycTXc1D5H9KrgUpNl6XM8YFA/view?usp=drivesdk"
+    }
+  ]
+}
