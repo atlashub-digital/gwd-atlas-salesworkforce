@@ -1,6 +1,6 @@
 {
   "id": "gwd-diana-matos",
-  "status": "VISUAL_VALIDATED_NARRATIVE_DRAFT",
+  "status": "VISUAL_VALIDATED",
   "canonical_identity": true,
   "narrative_pending_human_validation": true,
   "project": "GoWorld.Digital",
@@ -62,7 +62,9 @@
       "não envelhecer ou rejuvenescer drasticamente",
       "não transformar em estética corporate rígida",
       "não usar nova interpretação facial como referência sem aprovação"
-    ]
+    ],
+    "canonical_public_asset": "Diana_Matos_Profile_Card_CANONICAL_V01.png",
+    "generation_master": "Diana_Matos_MASTER_Visual_Lock_V01.png"
   },
   "narrative_candidate": {
     "short_bio": "Diana Matos lidera Product, Operations & Growth na GoWorld.Digital, transformando estratégia em prioridades, processos e crescimento mensurável.",
@@ -118,5 +120,14 @@
     "não aprova pagamentos fora da governação",
     "não recebe provider secrets sem escopo autorizado",
     "não executa mudanças destrutivas de produção fora dos gates"
-  ]
+  ],
+  "canonical": true,
+  "narrative_status": "DRAFT_FOR_HUMAN_VALIDATION",
+  "source_of_truth": {
+    "drive_root": "https://drive.google.com/drive/folders/1bYiD48ySr3AGslGi-uggmYBoB6IfwlmL",
+    "profile_doc": "docs/team/diana-matos/PROFILE.md",
+    "visual_canon": "docs/team/diana-matos/VISUAL-CANON.md",
+    "image_protocol": "docs/team/diana-matos/IMAGE-GENERATION-PROTOCOL.md",
+    "asset_manifest": "data/team/diana-matos/assets-manifest.json"
+  }
 }
