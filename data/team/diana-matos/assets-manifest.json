@@ -1,0 +1,21 @@
+{
+  "persona_id": "gwd-diana-matos",
+  "drive_root": "https://drive.google.com/drive/folders/1bYiD48ySr3AGslGi-uggmYBoB6IfwlmL",
+  "folders": {
+    "master": "https://drive.google.com/drive/folders/1EaJ85lfsmskCyKNAIVeL8KsQj7Q5I7Ck",
+    "references": "https://drive.google.com/drive/folders/1Ocb5VZR-U9kirR3Wrs_wA2hHZ5ot2W9X",
+    "portraits": "https://drive.google.com/drive/folders/1yzLTg3MGMzxq_TXXFtdpPIIxlGRjzrTt",
+    "work": "https://drive.google.com/drive/folders/1kY8oOcwZDNESb8vd3tDGxzRDXvWCIPsL",
+    "personal_casual": "https://drive.google.com/drive/folders/1tcVK42YIVNPHyJMm_usFJdf6FmySk_VE",
+    "team": "https://drive.google.com/drive/folders/1VW2Lvw0Ga-ILppMMIomSCqbEVhC1qHrp",
+    "archive": "https://drive.google.com/drive/folders/1FI3dScaPDyAcN2_kPzGXUQJUgtFly99u"
+  },
+  "visual_status": "VALIDATED",
+  "required_pack": [
+    "MASTER_PROFILE",
+    "WORK_INDIVIDUAL",
+    "PERSONAL_CASUAL",
+    "TEAM_AFTER_GROUP_LOCK"
+  ],
+  "assets": []
+}
