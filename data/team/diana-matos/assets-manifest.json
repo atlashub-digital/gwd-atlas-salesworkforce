@@ -17,5 +17,51 @@
     "PERSONAL_CASUAL",
     "TEAM_AFTER_GROUP_LOCK"
   ],
-  "assets": []
+  "assets": [
+    {
+      "id": "DIANA-MASTER-V01",
+      "type": "MASTER_PROFILE",
+      "status": "CANONICAL",
+      "name": "Diana_Matos_MASTER_Visual_Lock_V01.png",
+      "url": "https://drive.google.com/file/d/1_629XtgcfWX9gI4oaWl2P444HLeYVVOw/view?usp=drivesdk",
+      "may_be_reference": true
+    },
+    {
+      "id": "DIANA-PROFILE-V01",
+      "type": "PROFILE",
+      "status": "APPROVED_VARIANT",
+      "name": "Diana_Matos_Profile_V01.png",
+      "url": "https://drive.google.com/file/d/1zU3wbpDkRSFpv3PUaUtrCrZqpKhlQm8s/view?usp=drivesdk",
+      "may_be_reference": true
+    },
+    {
+      "id": "DIANA-REF-01",
+      "type": "INSPIRATION_REFERENCE",
+      "status": "REFERENCE_ONLY",
+      "name": "REF_Diana_Source_01.png",
+      "url": "https://drive.google.com/file/d/1CW-FKKqq5jSVAYTbibBGXBiZN9mwUw7x/view?usp=drivesdk",
+      "may_be_reference": false
+    },
+    {
+      "id": "DIANA-REF-02",
+      "type": "INSPIRATION_REFERENCE",
+      "status": "REFERENCE_ONLY",
+      "name": "REF_Diana_Source_02.png",
+      "url": "https://drive.google.com/file/d/1yEkqISjbYmZbnYgB_7rgbVOZyJxn0Ali/view?usp=drivesdk",
+      "may_be_reference": false
+    },
+    {
+      "id": "DIANA-REF-03",
+      "type": "INSPIRATION_REFERENCE",
+      "status": "REFERENCE_ONLY",
+      "name": "REF_Diana_Source_03.png",
+      "url": "https://drive.google.com/file/d/1vNVSBKySZ88fZvsg5Q7biP6JrKpNnMJQ/view?usp=drivesdk",
+      "may_be_reference": false
+    }
+  ],
+  "pending_assets": [
+    "WORK_INDIVIDUAL",
+    "PERSONAL_CASUAL",
+    "TEAM_AFTER_TOMAS_ELISA_LOCK"
+  ]
 }
