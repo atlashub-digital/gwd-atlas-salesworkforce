@@ -1,0 +1,39 @@
+{
+  "id": "gwd-core-team-v1",
+  "status": "APPROVED",
+  "date": "2026-10-17",
+  "members": [
+    {
+      "id": "gwd-diana-matos",
+      "name": "Diana Matos",
+      "role": "Product, Operations & Growth Lead"
+    },
+    {
+      "id": "gwd-tomas-rocha",
+      "name": "Tomás Rocha",
+      "role": "Research & Content Intelligence"
+    },
+    {
+      "id": "gwd-elisa-duarte",
+      "name": "Elisa Duarte",
+      "role": "Learning Product & Media Editor"
+    },
+    {
+      "id": "gwd-maia-valente",
+      "name": "Maia Valente",
+      "role": "Community, Seller Success & Gamification"
+    }
+  ],
+  "current_human_principal": "SERGIO_PRIMARY",
+  "future_human_candidate": {
+    "name": "Sara Monteiro",
+    "role_candidate": "PDG",
+    "status": "NOT_ACTIVE"
+  },
+  "team_drive": "https://drive.google.com/drive/folders/1jzZDEOcPuUCa1IW295JIu49lfiAuAzJp",
+  "rules": {
+    "exact_core_count": 4,
+    "canonical_team_requires_all_visual_locks": true,
+    "new_members_require_governance_decision": true
+  }
+}
