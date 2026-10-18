@@ -38,21 +38,31 @@
   },
   "team_assets": {
     "canonical_master": {
-      "name": "GWD_TEAM_MASTER_Official_V01.png",
-      "url": "https://drive.google.com/file/d/1klFhkNIlhfelQDrjOfUyZkzeBnTVvQVR/view?usp=drivesdk"
+      "name": "GWD_TEAM_MASTER_Official_V02.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1ZlLsjRqZwsMuoxhehuH9hY3zYOFSJ7dF/view?usp=drivesdk",
+      "supersedes": "GWD_TEAM_MASTER_Official_V01.png"
     },
     "approved_variants": [
       {
-        "name": "GWD_TEAM_Office_V01.png",
-        "url": "https://drive.google.com/file/d/1Qw2uO7TKRG1F0qDKYIl2xWnDIfJ7TpdS/view?usp=drivesdk"
+        "name": "GWD_TEAM_Office_V02.png",
+        "status": "APPROVED_VARIANT",
+        "url": "https://drive.google.com/file/d/1Kign6zkQwOTkPprgGtExX7hvpJpVv66g/view?usp=drivesdk"
       },
       {
-        "name": "GWD_TEAM_Collaboration_V01.png",
-        "url": "https://drive.google.com/file/d/1TmG12huxC1SxbxJJMQPn3u5EZGnse4mI/view?usp=drivesdk"
+        "name": "GWD_TEAM_Collaboration_V02.png",
+        "status": "APPROVED_VARIANT",
+        "url": "https://drive.google.com/file/d/1FRlTsUAxnrZPL5SrJltdUbfC6zEAnXGa/view?usp=drivesdk"
       },
       {
-        "name": "GWD_TEAM_Rooftop_GoldenHour_V01.png",
-        "url": "https://drive.google.com/file/d/1-HW9I0jQSOq-FdXZKHvkrs1wXqRP1RuB/view?usp=drivesdk"
+        "name": "GWD_TEAM_Lounge_V01.png",
+        "status": "APPROVED_VARIANT",
+        "url": "https://drive.google.com/file/d/1HiDuil57OhydC_4Xi1JI1ODvYMJPp5dL/view?usp=drivesdk"
+      },
+      {
+        "name": "GWD_TEAM_Event_Booth_V01.png",
+        "status": "APPROVED_VARIANT",
+        "url": "https://drive.google.com/file/d/1aDD4TsDtjGPahv4UF_Ig2lr3138Nn82w/view?usp=drivesdk"
       }
     ],
     "approved_pairs": [
@@ -73,7 +83,33 @@
         "url": "https://drive.google.com/file/d/19KumfPih8CU3nR-iEFtzNV9UmTvSZn30/view?usp=drivesdk"
       }
     ],
-    "drive_document": "https://docs.google.com/document/d/1e42AhkqhSggmwowiZAxWQUrFMnK8xD8_17KW7orEotA/edit?usp=drivesdk"
+    "drive_document": "https://docs.google.com/document/d/1e42AhkqhSggmwowiZAxWQUrFMnK8xD8_17KW7orEotA/edit?usp=drivesdk",
+    "previous_master": {
+      "name": "GWD_TEAM_MASTER_Official_V01.png",
+      "url": "https://drive.google.com/file/d/1klFhkNIlhfelQDrjOfUyZkzeBnTVvQVR/view?usp=drivesdk"
+    },
+    "legacy_approved": [
+      {
+        "name": "GWD_TEAM_MASTER_Official_V01.png",
+        "status": "SUPERSEDED_APPROVED",
+        "url": "https://drive.google.com/file/d/1klFhkNIlhfelQDrjOfUyZkzeBnTVvQVR/view?usp=drivesdk"
+      },
+      {
+        "name": "GWD_TEAM_Office_V01.png",
+        "status": "APPROVED_LEGACY",
+        "url": "https://drive.google.com/file/d/1Qw2uO7TKRG1F0qDKYIl2xWnDIfJ7TpdS/view?usp=drivesdk"
+      },
+      {
+        "name": "GWD_TEAM_Collaboration_V01.png",
+        "status": "APPROVED_LEGACY",
+        "url": "https://drive.google.com/file/d/1TmG12huxC1SxbxJJMQPn3u5EZGnse4mI/view?usp=drivesdk"
+      },
+      {
+        "name": "GWD_TEAM_Rooftop_GoldenHour_V01.png",
+        "status": "APPROVED_LEGACY",
+        "url": "https://drive.google.com/file/d/1-HW9I0jQSOq-FdXZKHvkrs1wXqRP1RuB/view?usp=drivesdk"
+      }
+    ]
   },
-  "updated_at": "2026-10-17"
+  "updated_at": "2026-10-18"
 }
