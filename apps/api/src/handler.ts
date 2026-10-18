@@ -10,7 +10,9 @@ export async function verifyToken(token:string):Promise<User> {
  if(!url||!key)throw new Error("AUTH_UNAVAILABLE");
  const response=await fetch(new URL("/auth/v1/user",url),{headers:{apikey:key,Authorization:"Bearer "+token},signal:AbortSignal.timeout(8000)});
  if(!response.ok)throw new Error("UNAUTHORIZED");
- const user=await response.json();uuid(user.id);return user;
+ const user=await response.json();uuid(user.id);
+ // Only a server-confirmed email may claim an acquisition lead.
+ return {id:user.id,email:user.email_confirmed_at?user.email:undefined};
 }
 export function createHandler(tx:Tx=transaction,auth=verifyToken) {
  return async function handle(request:Request):Promise<Response> {
