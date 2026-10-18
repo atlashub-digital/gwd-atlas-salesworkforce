@@ -22,3 +22,32 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+      - name: Install browser tooling
+        run: |
+          npm install --prefix /tmp/gwd-browser --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          node /tmp/gwd-browser/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Browser E2E with isolated Postgres and Auth stub
+        env:
+          GWD_API_URL: http://localhost:3138
+          GWD_APP_URL: http://localhost:3001
+          SUPABASE_URL: http://localhost:3139
+          SUPABASE_PUBLISHABLE_KEY: test-publishable
+          PLAYWRIGHT_MODULE: /tmp/gwd-browser/node_modules/playwright
+        run: |
+          pnpm exec tsx tests/browser/fixture.mts > /tmp/gwd-fixture.log 2>&1 &
+          pnpm --filter @gwd/web start > /tmp/gwd-web.log 2>&1 &
+          pnpm --filter @gwd/app start > /tmp/gwd-app.log 2>&1 &
+          curl --retry 30 --retry-all-errors --retry-delay 1 -f http://localhost:3138/health
+          curl --retry 30 --retry-all-errors --retry-delay 1 -f http://localhost:3000/
+          curl --retry 30 --retry-all-errors --retry-delay 1 -f http://localhost:3001/entrar
+          node tests/browser/verify.cjs
+      - name: Browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gwd-v1-browser-evidence
+          path: |
+            test-results
+            /tmp/gwd-fixture.log
+            /tmp/gwd-web.log
+            /tmp/gwd-app.log

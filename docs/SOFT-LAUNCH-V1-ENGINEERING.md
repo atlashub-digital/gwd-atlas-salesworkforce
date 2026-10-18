@@ -82,3 +82,9 @@ Next apps use their own .env.local during local development.
 Codex: code/tests/CI/handoff. Helena: staging secrets, migrations, Vercel/VPS, networks, DNS after explicit GO.
 Diana: product/ops/growth. Tomas: research/content. Elisa: learning. Maia: journey/community.
 No new mentor persona or dedicated agent created.
+
+## Browser verification
+CI uses Playwright 1.62.1, production Next builds, an isolated PGlite database and a local Auth protocol stub.
+This verifies the assembled browser → BFF → API → database flow without provider credentials or outbound email.
+It does not homologate SMTP, Supabase production Auth, staging routing or production RLS.
+Screenshots/logs are retained as CI artifacts; fixture data never enters deployed application bundles.

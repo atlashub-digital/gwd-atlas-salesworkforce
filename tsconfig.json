@@ -24,7 +24,8 @@
     "apps/**/*.tsx",
     "packages/**/*.ts",
     "packages/**/*.tsx",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "tests/**/*.mts"
   ],
   "exclude": [
     "node_modules",
