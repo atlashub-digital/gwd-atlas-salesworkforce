@@ -1,0 +1,5 @@
+import type { ReactNode } from "react";
+export function Brand(){return <span className="brand"><span className="brand-mark" aria-hidden="true">g<span>↗</span></span><span>GoWorld<span className="brand-dot">.Digital</span></span></span>}
+export function Status({children="EM PREPARAÇÃO"}:{children?:ReactNode}){return <span className="status">{children}</span>}
+export function EmptyState({title,description,status="EM PREPARAÇÃO"}:{title:string;description:string;status?:string}){return <section className="card empty"><span className="empty-symbol" aria-hidden="true">↗</span><Status>{status}</Status><h2>{title}</h2><p>{description}</p><p className="small muted">O teu percurso de aprendizagem e comunidade continua disponível.</p><a className="button secondary" href="/jornada">Continuar a jornada</a></section>}
+export function PageHeading({eyebrow,title,description}:{eyebrow:string;title:string;description:string}){return <header className="page-heading"><span className="eyebrow">{eyebrow}</span><h1>{title}</h1><p>{description}</p></header>}

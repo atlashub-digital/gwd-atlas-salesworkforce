@@ -1,22 +1,27 @@
 {
   "name": "gwd-atlas-salesworkforce",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "tsc --noEmit"
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0"
   },
-  "dependencies": {
-    "next": "16.1.1",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+  "scripts": {
+    "dev": "pnpm --parallel --filter @gwd/web --filter @gwd/app dev",
+    "build": "pnpm --filter @gwd/web build && pnpm --filter @gwd/app build",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:integration": "tsx --test tests/integration/*.test.ts",
+    "dev:api": "pnpm --filter @gwd/api dev",
+    "dev:worker": "pnpm --filter @gwd/worker dev"
   },
   "devDependencies": {
-    "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "typescript": "^5"
+    "typescript": "5.9.3",
+    "tsx": "4.20.6",
+    "@types/node": "22.19.7",
+    "@types/pg": "8.16.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@electric-sql/pglite": "0.5.10"
   }
 }

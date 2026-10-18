@@ -1,0 +1,18 @@
+{
+  "name": "@gwd/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build --webpack",
+    "start": "next start -p 3000"
+  },
+  "dependencies": {
+    "next": "16.3.8",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "@gwd/ui": "workspace:*",
+    "@gwd/config": "workspace:*",
+    "@gwd/domain": "workspace:*"
+  }
+}

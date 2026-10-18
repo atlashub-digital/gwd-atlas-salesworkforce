@@ -1,3 +1,4 @@
+// Preserved Foundation V0 commercial contracts. Inactive; not imported by production V1.
 export type ParticipantCapability = "AFFILIATE" | "SELLER";
 
 export type Participant = {
