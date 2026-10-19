@@ -13,3 +13,4 @@ test-results/
 .pnpm-store/
 *.log
 migration-reference/
+visual-reference/
