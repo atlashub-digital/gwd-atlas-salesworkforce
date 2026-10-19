@@ -22,6 +22,10 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+          GWD_API_URL: http://localhost:3138
+          GWD_APP_URL: http://localhost:3001
+          SUPABASE_URL: http://localhost:3139
+          SUPABASE_PUBLISHABLE_KEY: test-publishable
       - name: Install browser tooling
         run: |
           npm install --prefix /tmp/gwd-browser --ignore-scripts --no-audit --no-fund playwright@1.62.1
