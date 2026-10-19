@@ -1,14 +1,23 @@
+import {useId} from "react";
 import type {ReactNode,HTMLAttributes,AnchorHTMLAttributes} from "react";
 type Children={children:ReactNode;className?:string};
-export function Brand(){return <span className="brand"><span className="brand-mark" aria-hidden="true">g<span>↗</span></span><span>GoWorld<span className="brand-dot">.Digital</span></span></span>}
+const cx=(...names:(string|false|null|undefined)[])=>names.filter(Boolean).join(" ");
+/** Own SVG lockup: globe glyph + "GWD" in the blue→cyan brand gradient. */
+export function Brand({label="GoWorld.Digital",className}:{label?:string;className?:string}){const id="gwd"+useId().replace(/[^a-zA-Z0-9_-]/g,"");return <span className={cx("brand",className)}><svg className="brand-lockup" viewBox="0 0 136 40" role="img" aria-label={label}><defs><linearGradient id={id} x1="0" y1="0" x2="1" y2="0.35"><stop offset="0" style={{stopColor:"var(--gwd-blue-500)"}}/><stop offset="1" style={{stopColor:"var(--gwd-cyan-400)"}}/></linearGradient></defs><g fill="none" stroke={"url(#"+id+")"} strokeWidth="2.2" strokeLinecap="round"><circle cx="20" cy="20" r="16.5"/><ellipse cx="20" cy="20" rx="7.4" ry="16.5"/><path d="M4.6 14h30.8M4.6 26h30.8"/></g><circle cx="33.4" cy="9.2" r="3.4" style={{fill:"var(--gwd-cyan-400)"}}/><text x="46" y="29.5" className="brand-word" fill={"url(#"+id+")"}>GWD</text></svg></span>}
 export const BrandLockup=Brand;
 export function Container({children,className=""}:Children){return <div className={"container "+className}>{children}</div>}
-export function Section({children,className="",...props}:HTMLAttributes<HTMLElement>){return <section className={"section "+className} {...props}>{children}</section>}
-export function Button({children,className="",...props}:AnchorHTMLAttributes<HTMLAnchorElement>){return <a className={"button "+className} {...props}>{children}</a>}
-export function Status({children="EM PREPARAÇÃO"}:{children?:ReactNode}){return <span className="status">{children}</span>}
+export function Section({children,className="",tone,...props}:HTMLAttributes<HTMLElement>&{tone?:"default"|"raised"|"bare"}){return <section className={cx("section",tone&&tone!=="default"&&"section--"+tone,className)} {...props}>{children}</section>}
+export type ButtonVariant="primary"|"secondary"|"ghost";
+export type ButtonSize="small"|"large";
+/** Class string so framework links (next/link) render as Button without wrapping. */
+export function buttonClass(variant:ButtonVariant="primary",size?:ButtonSize,className?:string){return cx("button",variant!=="primary"&&variant,size,className)}
+export function Button({children,className="",variant="primary",size,...props}:AnchorHTMLAttributes<HTMLAnchorElement>&{variant?:ButtonVariant;size?:ButtonSize}){return <a className={buttonClass(variant,size,className)} {...props}>{children}</a>}
+export type BadgeTone="warning"|"info"|"success"|"neutral";
+export function Status({children="EM PREPARAÇÃO",tone="warning"}:{children?:ReactNode;tone?:BadgeTone}){return <span className={cx("status",tone!=="warning"&&"status--"+tone)}>{children}</span>}
 export const Badge=Status;
 export function Card({children,className="",...props}:HTMLAttributes<HTMLElement>){return <article className={"card "+className} {...props}>{children}</article>}
-export function FeatureCard({children,className=""}:Children){return <Card className={"feature-card "+className}>{children}</Card>}
+export function FeatureCard({children,className="",icon,eyebrow,title,body}:{children?:ReactNode;className?:string;icon?:ReactNode;eyebrow?:string;title?:ReactNode;body?:ReactNode}){return <Card className={"feature-card "+className}>{icon&&<span className="feature-icon" aria-hidden="true">{icon}</span>}{eyebrow&&<span className="eyebrow">{eyebrow}</span>}{title&&<h3>{title}</h3>}{body&&<p>{body}</p>}{children}</Card>}
+export function SectionHeading({eyebrow,title,lead,align="start",id,children}:{eyebrow?:string;title:ReactNode;lead?:ReactNode;align?:"start"|"center"|"split";id?:string;children?:ReactNode}){return <header className={cx("section-heading","section-heading--"+align)}><div>{eyebrow&&<span className="eyebrow">{eyebrow}</span>}<h2 id={id}>{title}</h2></div>{(lead||children)&&<div className="section-heading-aside">{lead&&<p className="lead">{lead}</p>}{children}</div>}</header>}
 export const OpportunityCard=FeatureCard;
 export function StatCard({label,value,description}:{label:string;value:ReactNode;description?:string}){return <Card><span className="eyebrow">{label}</span><div className="stat">{value}</div>{description&&<p>{description}</p>}</Card>}
 export function Hero({children,className=""}:Children){return <section className={"hero "+className}>{children}</section>}

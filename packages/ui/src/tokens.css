@@ -1,20 +1,63 @@
+/* GWD brand tokens — single source of truth (04_BRAND_TOKENS, Visual Recovery W1).
+   Components consume semantic tokens only; never hard-code hex outside this file. */
 :root {
  color-scheme:dark;
- --gwd-bg-950:#001020;--gwd-bg-900:#001830;--gwd-bg-850:#002040;
+
+ /* Palette */
+ --gwd-navy-950:#001020;--gwd-navy-900:#001830;--gwd-navy-850:#002040;
  --gwd-surface-800:#06264a;--gwd-surface-750:#0a315c;
- --gwd-blue-600:#0060f0;--gwd-blue-500:#0078f0;
- --gwd-cyan-500:#00c8f0;--gwd-cyan-400:#00e0f0;
- --gwd-text-primary:#f4f8ff;--gwd-text-secondary:#b8c7dc;
- --gwd-border:rgba(108,188,255,.24);--gwd-control-border:rgba(108,188,255,.55);--gwd-success:#19d978;
- --gwd-warning:#f4bf4f;--gwd-danger:#ff5d70;
- --bg:var(--gwd-bg-950);--surface:var(--gwd-bg-900);--line:var(--gwd-border);
+ --gwd-blue-600:#0060f0;--gwd-blue-500:#0a84ff;
+ --gwd-cyan-500:#00c8f0;--gwd-cyan-400:#00e5ff;
+ --gwd-success:#22c55e;--gwd-warning:#ffc107;--gwd-danger:#ff5d70;
+ --gwd-white:#f8fafc;--gwd-text-primary:#f4f8ff;--gwd-text-secondary:#b8c7dc;
+ --gwd-border:rgba(108,188,255,.24);--gwd-border-strong:rgba(108,188,255,.42);--gwd-control-border:rgba(108,188,255,.55);
+
+ /* Legacy aliases (member app + V0 pages) */
+ --gwd-bg-950:var(--gwd-navy-950);--gwd-bg-900:var(--gwd-navy-900);--gwd-bg-850:var(--gwd-navy-850);
+
+ /* Semantic roles */
+ --bg:var(--gwd-navy-950);--surface:var(--gwd-navy-900);--line:var(--gwd-border);
  --ink:var(--gwd-text-primary);--muted:var(--gwd-text-secondary);
- --accent:var(--gwd-cyan-400);--action:var(--gwd-blue-600);
- --radius:20px;--radius-small:10px;--content-width:1280px;
- --shadow:0 24px 80px rgba(0,16,32,.35);
- --glow:0 0 90px rgba(0,200,240,.12);
- --hero-wash:radial-gradient(ellipse at 85% 35%,rgba(0,120,240,.18),transparent 65%);
- --banner-wash:linear-gradient(115deg,var(--gwd-bg-850),var(--surface));
- --button-hover:var(--gwd-blue-600);
- font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);
+ /* White on --action/--button-hover must stay ≥ 4.5:1 (AA); blue-500 is decorative only. */
+ --accent:var(--gwd-cyan-400);--action:var(--gwd-blue-600);--button-hover:color-mix(in srgb,var(--gwd-blue-600) 86%,var(--gwd-navy-950));
+ --accent-br:var(--gwd-success);
+
+ /* Gradients & light — glow is an accent, never a default */
+ --gwd-gradient-brand:linear-gradient(100deg,var(--gwd-blue-500) 0%,var(--gwd-cyan-400) 100%);
+ --gwd-gradient-surface:linear-gradient(160deg,color-mix(in srgb,var(--gwd-surface-800) 82%,transparent),color-mix(in srgb,var(--gwd-navy-900) 92%,transparent));
+ --gwd-scrim-left:linear-gradient(90deg,var(--gwd-navy-950) 0%,color-mix(in srgb,var(--gwd-navy-950) 55%,transparent) 22%,transparent 48%);
+ --gwd-scrim-bottom:linear-gradient(0deg,var(--gwd-navy-950) 4%,color-mix(in srgb,var(--gwd-navy-950) 78%,transparent) 34%,transparent 68%);
+ --gwd-scrim-right:linear-gradient(270deg,var(--gwd-navy-950) 8%,color-mix(in srgb,var(--gwd-navy-950) 80%,transparent) 42%,transparent 78%);
+ --gwd-glow-blue:color-mix(in srgb,var(--gwd-blue-500) 38%,transparent);
+ --gwd-glow-cyan:color-mix(in srgb,var(--gwd-cyan-500) 22%,transparent);
+ --shadow:0 24px 80px color-mix(in srgb,var(--gwd-navy-950) 70%,transparent);
+ --shadow-lift:0 30px 70px -20px color-mix(in srgb,var(--gwd-navy-950) 90%,transparent),0 0 0 1px var(--gwd-border-strong);
+ --glow:0 0 90px var(--gwd-glow-cyan);
+ --hero-wash:radial-gradient(ellipse at 85% 0%,color-mix(in srgb,var(--gwd-blue-500) 16%,transparent),transparent 60%);
+ --banner-wash:linear-gradient(115deg,var(--gwd-navy-850),var(--surface));
+
+ /* Radius */
+ --radius-hero:32px;--radius-card:20px;--radius-button:14px;--radius-input:12px;--radius-pill:999px;
+ --radius:var(--radius-card);--radius-small:var(--radius-input);
+
+ /* Spacing — 8px rhythm */
+ --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;
+ --space-7:40px;--space-8:48px;--space-9:64px;--space-10:80px;--space-11:96px;
+
+ /* Typography (font families injected by next/font; system fallbacks keep the member app stable) */
+ --gwd-font-display:var(--font-gwd-display,"Plus Jakarta Sans"),ui-sans-serif,system-ui,"Segoe UI",Arial,sans-serif;
+ --gwd-font-body:var(--font-gwd-body,"Inter"),ui-sans-serif,system-ui,"Segoe UI",Arial,sans-serif;
+ --text-display-xl:clamp(3rem,6vw,6.5rem);
+ --text-h2:clamp(1.9rem,3vw,3rem);
+ --text-h3:clamp(1.25rem,1.6vw,1.5rem);
+ --text-lead:clamp(1.05rem,1.2vw,1.2rem);
+ --text-body:1rem;--text-small:.875rem;
+ --text-eyebrow:.75rem;--tracking-eyebrow:.18em;
+
+ /* Layout & motion */
+ --content-width:1280px;
+ --ease-out:cubic-bezier(.2,.7,.2,1);
+ --duration-hover:.24s;
+
+ font-family:var(--gwd-font-body);background:var(--bg);color:var(--ink);
 }

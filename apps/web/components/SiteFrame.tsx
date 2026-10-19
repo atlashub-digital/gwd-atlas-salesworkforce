@@ -1,3 +1,5 @@
-import {Brand,Container,Navbar,Footer} from "@gwd/ui";
-import Link from "next/link";
-export default function SiteFrame({children}:{children:React.ReactNode}){return <div className="public-site"><Container><a className="skip" href="#conteudo">Saltar para conteúdo</a><Navbar><Link href="/" aria-label="GoWorld.Digital — início"><Brand/></Link><nav aria-label="Navegação principal"><Link href="/comunidade">Comunidade</Link><Link href="/oportunidades">Oportunidades</Link><Link href="/academy">Academy</Link><a href={(process.env.GWD_APP_URL??"http://localhost:3001")+"/entrar"}>Já participo</a><Link className="button small" href="/entrar">Começar ↗</Link></nav></Navbar><main id="conteudo">{children}</main><Footer><div><Brand/><p>Pessoas · Conteúdo · Vendas<br/>Uma comunidade que aprende, cria e cresce em conjunto.<br/>Uma iniciativa AtlasHub.</p></div><div><p>Participar não constitui vínculo de emprego nem garantia de rendimento.</p><Link href="/privacidade">Privacidade</Link> · <Link href="/entrar">Falar do meu interesse</Link></div></Footer></Container></div>}
+import {Container} from "@gwd/ui";
+import Navbar from "./Navbar";
+import SiteFooter from "./SiteFooter";
+/** `bleed` lets a page own its full-width sections (homepage); other pages stay inside the content container. */
+export default function SiteFrame({children,bleed=false}:{children:React.ReactNode;bleed?:boolean}){return <div className="public-site"><a className="skip" href="#conteudo">Saltar para conteúdo</a><Navbar/><main id="conteudo">{bleed?children:<Container>{children}</Container>}</main><SiteFooter/></div>}

@@ -1,14 +1,115 @@
 import Link from "next/link";
-import Image from "next/image";
-import {Hero,MediaHero,NetworkArt,Section,FeatureCard,SplitSection,TeamMember,Status} from "@gwd/ui";
+import {academy} from "@gwd/domain";
+import {Container,Section,SectionHeading,FeatureCard,Card,Status,buttonClass} from "@gwd/ui";
 import SiteFrame from "../components/SiteFrame";
+import MediaPanel from "../components/MediaPanel";
+import MarketPanel from "../components/MarketPanel";
+import PathCard from "../components/PathCard";
+import StepList from "../components/StepList";
+import TeamStrip from "../components/TeamStrip";
+import ValueStrip from "../components/ValueStrip";
+import GlobalNetwork from "../components/GlobalNetwork";
+import Icon from "../components/Icon";
 import {media} from "../lib/media";
-export default function Home(){return <SiteFrame>
-<Hero><div className="hero-copy"><span className="eyebrow">Pessoas · Conteúdo · Vendas</span><h1>O teu mundo.<br/>Mais <em>possibilidades.</em></h1><p>Aprende, encontra a tua comunidade e descobre o teu caminho no mercado digital. Um passo de cada vez, com pessoas ao teu lado.</p><div className="actions"><Link className="button" href="/entrar">Quero fazer parte ↗</Link><Link className="button secondary" href="/comunidade">Conhecer a comunidade</Link></div><p className="small">Community-Powered Sales Workforce<br/>Brasil e Europa. Percursos diferentes, uma vontade de avançar.</p></div><MediaHero><NetworkArt/><figure><Image src={media.team.src} alt={media.team.alt} width={media.team.width} height={media.team.height} sizes="(max-width:760px) 100vw, 50vw" preload/><figcaption>A EQUIPA DIGITAL GWD · LIGAÇÕES QUE NOS MOVEM</figcaption></figure><div className="media-note"><strong>Aprender. Criar. Conectar.</strong><small>De pessoas para pessoas. Vamos juntos.</small></div></MediaHero></Hero>
-<Section><div className="section-head"><div><span className="eyebrow">Encontra o teu caminho</span><h2>Há mais de uma forma<br/>de começar no digital.</h2></div><p>Conhece os percursos, desenvolve competências e escolhe por onde queres avançar.</p></div><div className="grid">{[["01","Social Media","Transforma ideias em conteúdo. Aprende a comunicar, planear e distribuir com intenção.","social-media"],["02","Afiliados","Conhece a distribuição por recomendação e as regras de atribuição comercial.","afiliados"],["03","Revendedores","Prepara-te para operar com produtos e condições comerciais aprovadas.","revendedores"]].map(([n,t,d,href])=><FeatureCard key={n}><span className="index">{n} / PERCURSO</span><h3>{t}</h3><p>{d}</p>{n!=="01"&&<Status/>}<div><Link className="link" href={"/"+href}>Explorar percurso ↗</Link></div></FeatureCard>)}</div></Section>
-<Section><div className="section-head"><div><span className="eyebrow">Uma rede, diferentes contextos</span><h2>Próximos de ti.<br/>Ligados ao mundo.</h2></div><p>Escolhe o teu mercado para conhecer o ponto de partida. As oportunidades comerciais dependem de aprovação.</p></div><div className="grid two">{[["Europa","europa","Mais ligações. Novos horizontes.","◎"],["Brasil","brasil","O digital também começa perto.","↗"]].map(([t,slug,d,symbol])=><article className={"card market-card "+(slug==="brasil"?"br":"")} key={slug}><span className="market-symbol" aria-hidden="true">{symbol}</span><h3>{t}</h3><p>{d}</p><Status>EM BREVE</Status><div><Link className="link" href={"/oportunidades/"+slug}>Explorar {t} ↗</Link></div></article>)}</div></Section>
-<Section><div className="section-head"><div><span className="eyebrow">GWD Start</span><h2>O primeiro passo<br/>não precisa de ser sozinho.</h2></div><p>A Maia acompanha a lógica da tua jornada. A Elisa organiza o ponto de partida na Academy.</p></div><div className="grid">{[["01","Conta-nos sobre ti","Escolhe o mercado e os teus interesses no onboarding."],["02","Aprende os fundamentos","Avança na jornada GWD Start e lê os conteúdos iniciais."],["03","Liga-te à comunidade","Conhece as regras, participa e explora oportunidades aprovadas."]].map(([n,t,d])=><FeatureCard key={n}><span className="index">{n} / PRIMEIROS PASSOS</span><h3>{t}</h3><p>{d}</p></FeatureCard>)}</div></Section>
-<SplitSection><Image className="split-media" src={media.collaboration.src} alt={media.collaboration.alt} width={media.collaboration.width} height={media.collaboration.height} sizes="(max-width:760px) 100vw, 50vw"/><div><span className="eyebrow">Conhecimento que aproxima</span><h2>Aprender em conjunto.<br/>Avançar com confiança.</h2><p>Na Academy, começa pelos fundamentos. Na comunidade, encontra espaço para partilhar aprendizagens e conhecer as regras de participação.</p><div className="actions"><Link className="button" href="/academy">Explorar a Academy ↗</Link><Link className="link" href="/comunidade">A nossa comunidade ↗</Link></div></div></SplitSection>
-<Section><div className="section-head"><div><span className="eyebrow">A equipa digital GWD</span><h2>Pessoas no centro.<br/>Um propósito partilhado.</h2></div><p>Quatro personas digitais com responsabilidades claras no teu percurso.</p></div><div className="team-grid">{[["Diana Matos","Produto, operações e crescimento"],["Tomás Rocha","Pesquisa e inteligência de conteúdo"],["Elisa Duarte","Aprendizagem e edição de media"],["Maia Valente","Comunidade, Seller Success e gamificação"]].map(([name,role])=><TeamMember key={name} name={name} role={role}/>)}</div></Section>
-<Section><div className="banner"><div><span className="eyebrow">O teu próximo capítulo</span><h2>Um mundo de caminhos.<br/>Começa pelo teu.</h2><p>Regista o teu interesse e prepara o teu perfil.</p></div><Link className="button" href="/entrar">Começar agora ↗</Link></div></Section>
+import {appEntryUrl} from "../lib/site";
+import {values,pillars,paths,steps,opportunities,team} from "../lib/home";
+
+const academyPreview=academy.map(m=>({...m,summary:m.body.split(". ")[0]+"."}));
+const Arrow=()=><span className="arrow" aria-hidden="true">→</span>;
+
+export default function Home(){return <SiteFrame bleed>
+ {/* 1. Hero */}
+ <section className="home-hero" aria-labelledby="hero-title">
+  <GlobalNetwork/>
+  <Container className="home-hero-grid">
+   <div className="home-hero-copy">
+    <span className="eyebrow">Comunidade global · Formação · Oportunidades</span>
+    <h1 id="hero-title" className="display-xl">Começa no <span className="text-gradient">digital.</span></h1>
+    <p className="lead">Pessoas. Conteúdo. Vendas. Uma comunidade global onde pessoas aprendem, encontram oportunidades, divulgam, vendem e crescem no mercado digital.</p>
+    <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
+    <p className="home-hero-note">Participar não constitui vínculo de emprego nem garantia de rendimento.</p>
+   </div>
+   <MediaPanel media={media.teamGroup} className="home-hero-media" scrim="left" glow preload sizes="(max-width:900px) 100vw, 60vw">
+    <figcaption>Diana · Tomás · Elisa · Maia — a equipa digital GWD</figcaption>
+   </MediaPanel>
+  </Container>
+ </section>
+
+ {/* 2. Value strip */}
+ <Container><ValueStrip items={values}/></Container>
+
+ {/* 3. O que é a GWD */}
+ <Section tone="bare" className="reveal" aria-labelledby="o-que-e"><Container>
+  <SectionHeading id="o-que-e" align="split" eyebrow="O que é a GWD" title="Uma comunidade para começar, aprender e avançar no digital." lead="A GoWorld.Digital junta pessoas, conteúdo e vendas num só percurso. Primeiro aprendes e participas; os percursos comerciais chegam depois, com regras claras."/>
+  <div className="pillar-grid">{pillars.map(p=><FeatureCard key={p.eyebrow} icon={<Icon name={p.icon}/>} eyebrow={p.eyebrow} title={p.title} body={p.body}/>)}</div>
+ </Container></Section>
+
+ {/* 4. Escolhe o teu caminho */}
+ <Section className="reveal" aria-labelledby="caminhos"><Container>
+  <SectionHeading id="caminhos" align="split" eyebrow="Escolhe o teu caminho" title="Há mais de uma forma de começar." lead="Três percursos com responsabilidades diferentes. Conhece-os, aprende os fundamentos e escolhe por onde queres avançar."/>
+  <div className="path-grid">{paths.map(p=><PathCard key={p.index} {...p}/>)}</div>
+ </Container></Section>
+
+ {/* 5. Europa + Brasil */}
+ <Section className="reveal" aria-labelledby="mercados"><Container>
+  <SectionHeading id="mercados" align="split" eyebrow="Europa e Brasil" title="Próximos de ti. Ligados ao mundo." lead="Duas equipas digitais, dois contextos. Escolhe o teu mercado para conhecer o ponto de partida."/>
+  <div className="market-grid">
+   <MarketPanel media={media.marketEuropa} eyebrow="Digital Team Europa" title="O teu país não limita as tuas oportunidades." body="Aprendizagem e comunidade para explorar o mercado europeu, com condições apresentadas em cada oportunidade aprovada." href="/oportunidades/europa" linkLabel="Explorar Europa"/>
+   <MarketPanel media={media.marketBrasil} accent="br" eyebrow="Digital Team Brasil" title="O digital pode ser o teu próximo passo." body="Conteúdo, aprendizagem e comunidade para quem quer começar no mercado brasileiro." href="/oportunidades/brasil" linkLabel="Explorar Brasil"/>
+  </div>
+ </Container></Section>
+
+ {/* 6. Como funciona */}
+ <Section id="como-funciona" className="reveal" aria-labelledby="como-funciona-title"><Container>
+  <SectionHeading id="como-funciona-title" align="split" eyebrow="Como funciona" title="Do interesse ao crescimento, passo a passo." lead="Um percurso simples e honesto: primeiro pertences e aprendes, depois escolhes e executas."/>
+  <MediaPanel media={media.howItWorks} className="how-media" scrim="bottom" sizes="(max-width:1280px) 100vw, 1280px"/>
+  <StepList steps={steps}/>
+ </Container></Section>
+
+ {/* 7. Comunidade */}
+ <Section className="reveal" aria-labelledby="comunidade"><Container className="split">
+  <MediaPanel media={media.communityGlobal} className="split-media-panel" glow sizes="(max-width:900px) 100vw, 55vw"/>
+  <div className="split-copy">
+   <SectionHeading id="comunidade" eyebrow="Comunidade" title="Ninguém começa sozinho."/>
+   <p className="lead">Na comunidade GWD partilhas dúvidas e aprendizagens com pessoas de vários países, que estão a dar os mesmos primeiros passos no digital.</p>
+   <ul className="check-list">
+    <li><Icon name="people"/><span><strong>Aprender em conjunto.</strong> A comunidade começa na escuta e na partilha.</span></li>
+    <li><Icon name="link"/><span><strong>Canais oficiais.</strong> Os espaços aprovados ficam disponíveis na área de participante quando ativados.</span></li>
+    <li><Icon name="shield"/><span><strong>Regras claras.</strong> Sem spam, promessas de rendimento ou partilha de dados de terceiros.</span></li>
+   </ul>
+   <Link className={buttonClass("secondary")} href="/comunidade">Conhecer a comunidade <Arrow/></Link>
+  </div>
+ </Container></Section>
+
+ {/* 8. Academy */}
+ <Section className="reveal" aria-labelledby="academy"><Container>
+  <SectionHeading id="academy" align="split" eyebrow="Academy" title="Aprender para avançar." lead="Os primeiros conteúdos da Academy, organizados pela Elisa Duarte. Fundamentos claros e aplicáveis."><Link className="text-link" href="/academy">Ver a Academy<Icon name="arrow"/></Link></SectionHeading>
+  <ol className="academy-grid">{academyPreview.map((m,i)=><li key={m.id}><Card className="academy-card"><span className="academy-card-index">Módulo {String(i+1).padStart(2,"0")}</span><h3>{m.title}</h3><p>{m.summary}</p><span className="academy-card-owner"><Icon name="book"/>{m.owner}</span></Card></li>)}</ol>
+ </Container></Section>
+
+ {/* 9. Oportunidades */}
+ <Section className="reveal" aria-labelledby="oportunidades"><Container>
+  <SectionHeading id="oportunidades" align="split" eyebrow="Oportunidades" title="Publicadas quando estão prontas." lead="Ainda não há oportunidades publicadas. Cada uma chega com critérios, condições e elegibilidade visíveis antes de participares."/>
+  <ul className="opportunity-list">{opportunities.map(o=><li key={o.title}><div><h3>{o.title}</h3><p>{o.body}</p></div><Status tone={o.status==="EM BREVE"?"neutral":"warning"}>{o.status}</Status><Link className="text-link" href={o.href}>Saber mais<span className="sr-only">: {o.title}</span><Icon name="arrow"/></Link></li>)}</ul>
+ </Container></Section>
+
+ {/* 10. Equipa */}
+ <Section className="reveal" aria-labelledby="equipa"><Container>
+  <SectionHeading id="equipa" align="split" eyebrow="A equipa digital GWD" title="Pessoas no centro. Um propósito partilhado." lead="Quatro personas digitais com responsabilidades claras no teu percurso."/>
+  <MediaPanel media={media.collaboration} className="team-media" scrim="bottom" sizes="(max-width:1280px) 100vw, 1280px"/>
+  <TeamStrip members={team}/>
+ </Container></Section>
+
+ {/* 11. CTA final */}
+ <section className="final-cta reveal" aria-labelledby="cta-final"><Container>
+  <div className="final-cta-card">
+   <MediaPanel media={media.communityBanner} className="final-cta-media" scrim="right" sizes="(max-width:900px) 100vw, 1280px"/>
+   <div className="final-cta-copy">
+    <span className="eyebrow">O teu próximo capítulo</span>
+    <h2 id="cta-final">O teu talento pode chegar a qualquer lugar do mundo.</h2>
+    <p className="lead">Regista o teu interesse, entra na comunidade e começa pela jornada GWD Start.</p>
+    <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
+   </div>
+  </div>
+ </Container></section>
 </SiteFrame>}
