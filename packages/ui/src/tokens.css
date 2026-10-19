@@ -15,6 +15,6 @@
  --glow:0 0 90px rgba(0,200,240,.12);
  --hero-wash:radial-gradient(ellipse at 85% 35%,rgba(0,120,240,.18),transparent 65%);
  --banner-wash:linear-gradient(115deg,var(--gwd-bg-850),var(--surface));
- --button-hover:var(--gwd-blue-500);
+ --button-hover:var(--gwd-blue-600);
  font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);
 }

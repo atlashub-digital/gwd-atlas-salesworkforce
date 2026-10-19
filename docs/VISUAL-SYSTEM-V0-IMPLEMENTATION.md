@@ -8,6 +8,8 @@ Scope: presentation delta over the accepted functional V1, following [VISUAL-SYS
 
 Public web uses large type, canonical people imagery, decorative SVG network lines, blue actions and selective cyan accents. Member app uses flat navy surfaces, compact navigation and activity from the existing persisted endpoints. Green is restricted to success and the Brazil accent.
 
+Primary text contrast is 18.01:1 on the page background; secondary text 10.43:1 on the surface; action text 5.02:1, including hover; cyan links 11.80:1. Keyboard focus is explicit. Reduced-motion preferences disable transitions and smooth scrolling.
+
 ## Approved media
 
 The typed manifest is `apps/web/lib/media.ts`. WebP derivatives are served locally by Next Image, with intrinsic dimensions, responsive sizes and hero preload. All three retain the approved master identities; group photos preserve all four canonical personas.
