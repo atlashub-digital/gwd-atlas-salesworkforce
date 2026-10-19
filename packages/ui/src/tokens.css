@@ -5,7 +5,7 @@
  --gwd-blue-600:#0060f0;--gwd-blue-500:#0078f0;
  --gwd-cyan-500:#00c8f0;--gwd-cyan-400:#00e0f0;
  --gwd-text-primary:#f4f8ff;--gwd-text-secondary:#b8c7dc;
- --gwd-border:rgba(108,188,255,.24);--gwd-success:#19d978;
+ --gwd-border:rgba(108,188,255,.24);--gwd-control-border:rgba(108,188,255,.55);--gwd-success:#19d978;
  --gwd-warning:#f4bf4f;--gwd-danger:#ff5d70;
  --bg:var(--gwd-bg-950);--surface:var(--gwd-bg-900);--line:var(--gwd-border);
  --ink:var(--gwd-text-primary);--muted:var(--gwd-text-secondary);
