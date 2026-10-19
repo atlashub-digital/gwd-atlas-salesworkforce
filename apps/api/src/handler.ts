@@ -25,7 +25,7 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken) {
   if(route==="/v1/leads"&&method==="POST") {
    const body=object(await request.json());if(body.website)throw new InputError("Pedido inválido.");
    const input=leadInput(body);
-   await tx(null,async c=>{await c.query("insert into gwd.leads(name,email,market,interest,source,utm) values($1,$2,$3,$4,$5,$6)",[input.name,input.email,input.market,input.interest,input.source,JSON.stringify(input.utm)]);});
+   await tx(null,async c=>{await c.query("insert into gwd.leads(name,email,market,interest,source,utm) values($1,$2,$3,$4,$5,$6) on conflict do nothing",[input.name,input.email,input.market,input.interest,input.source,JSON.stringify(input.utm)]);});
    return json({accepted:true},201);
   }
   const bearer=request.headers.get("authorization");

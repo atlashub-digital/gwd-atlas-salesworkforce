@@ -15,6 +15,8 @@ test("persisted Lead → Auth identity → Participant → Onboarding → Journe
  assert.equal((await call("/v1/leads",{name:"Participant",email:"participant@example.com",market:"BR",interest:"LEARNING",consent:false},null)).status,400);
  assert.equal((await call("/v1/leads",{name:"Participant",email:"participant@example.com",market:"BR",interest:"LEARNING",consent:true,utm_source:"instagram"},null)).status,201);
  assert.equal((await db.query<{total:number}>("select count(*)::int as total from gwd.leads")).rows[0].total,1);
+ assert.equal((await call("/v1/leads",{name:"Participant",email:"PARTICIPANT@EXAMPLE.COM",market:"BR",interest:"LEARNING",consent:true},null)).status,201);
+ assert.equal((await db.query<{total:number}>("select count(*)::int as total from gwd.leads")).rows[0].total,1);
  assert.equal((await call("/v1/me")).status,200);
  assert.equal((await call("/v1/journeys")).status,409);
  assert.equal((await call("/v1/me",{name:"Participant",market:"BR",interest:"AFFILIATE",complete:true,capabilities:["AUTHORIZED_SELLER"]},a,"PATCH")).status,200);
