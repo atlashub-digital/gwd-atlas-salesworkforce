@@ -27,6 +27,7 @@ jobs:
           npm install --prefix /tmp/gwd-browser --ignore-scripts --no-audit --no-fund playwright@1.62.1
           node /tmp/gwd-browser/node_modules/playwright/cli.js install --with-deps chromium
       - name: Browser E2E with isolated Postgres and Auth stub
+        timeout-minutes: 5
         env:
           GWD_API_URL: http://localhost:3138
           GWD_APP_URL: http://localhost:3001
