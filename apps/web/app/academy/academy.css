@@ -1,0 +1,151 @@
+/* GWD Academy Streaming V1 — estilos da Academy (tokens only — packages/ui/src/tokens.css).
+   Breakpoints herdados do site: mobile < 760px · desktop ≥ 1180px. */
+
+/* ---------- Home hero ---------- */
+.ac-hero{position:relative;isolation:isolate;padding:var(--space-9) 0 var(--space-8)}
+.ac-hero-grid{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:var(--space-8);align-items:center}
+.ac-hero-copy .lead{max-width:36rem;color:var(--muted)}
+.ac-hero-copy .actions{margin-top:var(--space-6);display:flex;gap:var(--space-3);flex-wrap:wrap}
+.ac-demo-note{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-eyebrow);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:650}
+.ac-featured{border-radius:var(--radius-hero);border:1px solid var(--gwd-border-strong);overflow:hidden;background:var(--gwd-gradient-surface);box-shadow:var(--shadow-lift)}
+.ac-featured-media{position:relative;aspect-ratio:16/9;display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.ac-featured-body{padding:var(--space-6)}
+.ac-featured-body h2{margin:var(--space-3) 0}
+.ac-featured-body p{color:var(--muted);margin:0 0 var(--space-5);line-height:1.65}
+.ac-chip-row{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-4)}
+
+/* ---------- Posters (gradientes com iniciais — nunca fotos fake) ---------- */
+.ac-poster{width:100%;aspect-ratio:16/9;display:grid;place-items:center;border-radius:var(--radius-card);position:relative;overflow:hidden}
+.ac-poster::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 70% 15%,color-mix(in srgb,var(--gwd-cyan-400) 22%,transparent),transparent 55%)}
+.ac-poster span{position:relative;z-index:1;font-family:var(--gwd-font-display);font-weight:800;font-size:clamp(2rem,4vw,3rem);letter-spacing:.06em;color:var(--gwd-white);text-shadow:0 2px 24px rgba(0,16,32,.5)}
+.ac-poster--small span{font-size:1.4rem}
+.ac-poster--tile{border-radius:var(--radius-card) var(--radius-card) 0 0}
+
+/* ---------- Chips de tier / estado ---------- */
+.ac-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--radius-pill);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--gwd-border)}
+.ac-chip--free{color:var(--gwd-success);border-color:color-mix(in srgb,var(--gwd-success) 45%,transparent)}
+.ac-chip--member{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.ac-chip--premium{color:var(--gwd-warning);border-color:color-mix(in srgb,var(--gwd-warning) 45%,transparent)}
+.ac-chip--certified{color:var(--gwd-white);border-color:var(--gwd-border-strong);background:color-mix(in srgb,var(--gwd-blue-500) 25%,transparent)}
+.ac-chip--mode{color:var(--muted)}
+.ac-chip--state-done{color:var(--gwd-success)}
+.ac-chip--state-progress{color:var(--accent)}
+.ac-chip--state-todo{color:var(--muted)}
+.ac-chip--state-locked{color:var(--gwd-danger)}
+
+/* ---------- Continuar a aprender ---------- */
+.ac-continue{margin:var(--space-8) 0}
+.ac-continue-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-5)}
+.ac-continue-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-5)}
+.ac-continue-card{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);background:var(--gwd-gradient-surface);border-radius:var(--radius-card);border:1px solid var(--line);transition:border-color var(--duration-hover),transform var(--duration-hover) var(--ease-out)}
+.ac-continue-card:hover{border-color:var(--gwd-border-strong);transform:translateY(-2px)}
+.ac-continue-card h3{margin:0;font-size:1.05rem}
+.ac-continue-card .ac-meta{font-size:var(--text-small);color:var(--muted)}
+.ac-empty{padding:var(--space-5);border:1px dashed var(--gwd-border);border-radius:var(--radius-card);color:var(--muted);font-size:var(--text-small)}
+
+/* ---------- Catálogo / filtros ---------- */
+.ac-filters{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-6)}
+.ac-filter{padding:10px 18px;border-radius:var(--radius-pill);border:1px solid var(--gwd-border);background:transparent;color:var(--muted);font:inherit;font-size:var(--text-small);font-weight:600;cursor:pointer;min-height:44px;transition:color var(--duration-hover),border-color var(--duration-hover)}
+.ac-filter:hover{color:var(--ink)}
+.ac-filter[aria-pressed="true"]{color:var(--gwd-white);background:var(--action);border-color:transparent}
+.ac-series-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--space-5)}
+.ac-series-card{display:flex;flex-direction:column;background:var(--gwd-gradient-surface);border-radius:var(--radius-card);border:1px solid var(--line);overflow:hidden;transition:border-color var(--duration-hover),transform var(--duration-hover) var(--ease-out),box-shadow var(--duration-hover)}
+.ac-series-card:hover{border-color:var(--gwd-border-strong);transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+.ac-series-card-body{display:flex;flex-direction:column;gap:var(--space-2);padding:var(--space-5);flex:1}
+.ac-series-card-body h3{margin:0}
+.ac-series-card-body p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.6}
+.ac-series-card-foot{margin-top:auto;padding-top:var(--space-4)}
+.ac-locked-note{font-size:var(--text-small);color:var(--muted)}
+
+/* ---------- Página de série ---------- */
+.ac-series-head{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:var(--space-7);align-items:center;padding:var(--space-8) 0 var(--space-6)}
+.ac-series-head h1{margin:var(--space-3) 0}
+.ac-series-head p{color:var(--muted);max-width:56ch;line-height:1.7}
+.ac-season{border:1px solid var(--line);border-radius:var(--radius-card);background:var(--gwd-gradient-surface);margin-bottom:var(--space-4);overflow:hidden}
+.ac-season summary{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-5);cursor:pointer;font-family:var(--gwd-font-display);font-weight:700;min-height:44px}
+.ac-season summary::-webkit-details-marker{display:none}
+.ac-season-count{font-size:var(--text-small);color:var(--muted);font-weight:500}
+.ac-episode-list{list-style:none;margin:0;padding:0 var(--space-3) var(--space-3)}
+.ac-episode-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:var(--space-4);padding:var(--space-4);border-top:1px solid var(--line);border-radius:var(--radius-small);transition:background var(--duration-hover)}
+.ac-episode-row:hover{background:color-mix(in srgb,var(--gwd-surface-800) 45%,transparent)}
+.ac-episode-row.is-current{outline:1px solid var(--gwd-border-strong)}
+.ac-ep-code{font-family:var(--gwd-font-display);font-weight:800;color:var(--accent);font-size:.95rem;min-width:3.2rem}
+.ac-episode-row h3{margin:0;font-size:1rem;font-weight:600}
+.ac-episode-row .ac-ep-summary{margin:2px 0 0;font-size:var(--text-small);color:var(--muted)}
+.ac-episode-link{text-decoration:none;color:inherit}
+.ac-episode-link:hover h3{color:var(--accent)}
+.ac-locked-row{opacity:.65}
+.ac-locked-row .ac-episode-link{cursor:not-allowed}
+.ac-progress-mini{display:flex;align-items:center;gap:var(--space-3)}
+.ac-progress-mini .progress{width:160px}
+
+/* ---------- Página de episódio ---------- */
+.ac-episode-grid{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:var(--space-7);align-items:start;padding:var(--space-7) 0}
+.ac-player{position:relative;aspect-ratio:16/9;background:var(--gwd-navy-850);border:1px solid var(--gwd-border-strong);border-radius:var(--radius-card);overflow:hidden;display:grid;place-items:center}
+.ac-player-inner{display:grid;place-items:center;gap:var(--space-4);text-align:center;padding:var(--space-5)}
+.ac-player-badge{font-size:var(--text-eyebrow);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:650}
+.ac-play{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;border:1px solid var(--gwd-border-strong);background:color-mix(in srgb,var(--gwd-blue-600) 30%,var(--gwd-navy-950));color:var(--gwd-white);cursor:pointer;font-size:1.4rem;transition:transform var(--duration-hover) var(--ease-out),background var(--duration-hover)}
+.ac-play:hover{transform:scale(1.06);background:var(--action)}
+.ac-player-hud{position:absolute;left:0;right:0;bottom:0;display:grid;gap:6px;padding:var(--space-4)}
+.ac-player-hud .progress{width:100%}
+.ac-player-hud-row{display:flex;justify-content:space-between;font-size:var(--text-small);color:var(--muted)}
+.ac-tabs{display:flex;gap:var(--space-1);margin-top:var(--space-5);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ac-tab{padding:14px 20px;min-height:44px;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);font:inherit;font-weight:600;font-size:var(--text-small);cursor:pointer}
+.ac-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.ac-tabpanel{padding:var(--space-5) 0}
+.ac-reader{max-width:64ch;display:grid;gap:var(--space-5)}
+.ac-reader h3{margin:0}
+.ac-reader p{margin:0;color:var(--muted);line-height:1.8}
+.ac-reader-progress{font-size:var(--text-small);color:var(--muted)}
+.ac-notes textarea{width:100%;min-height:140px;resize:vertical}
+.ac-list-reset{list-style:none;margin:0;padding:0;display:grid;gap:var(--space-3)}
+
+/* ---------- Telegram handoff / lock ---------- */
+.ac-handoff{display:grid;gap:var(--space-4);padding:var(--space-6);border:1px solid var(--gwd-border-strong);border-radius:var(--radius-card);background:var(--gwd-gradient-surface)}
+.ac-handoff h3{margin:0}
+.ac-handoff p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.6}
+.ac-token{font-family:ui-monospace,monospace;font-size:var(--text-small);color:var(--accent);word-break:break-all}
+.ac-lock{display:grid;gap:var(--space-3);justify-items:start;padding:var(--space-7);border:1px solid var(--gwd-border-strong);border-radius:var(--radius-hero);background:radial-gradient(ellipse at 20% 0%,color-mix(in srgb,var(--gwd-blue-500) 14%,transparent),transparent 60%),var(--gwd-gradient-surface)}
+.ac-lock h2{margin:0}
+.ac-lock p{margin:0;color:var(--muted);max-width:52ch;line-height:1.7}
+.ac-quiz{display:grid;gap:var(--space-4)}
+.ac-quiz fieldset{border:0;padding:0;margin:0;display:grid;gap:var(--space-2)}
+.ac-quiz legend{font-weight:600;margin-bottom:var(--space-3)}
+.ac-quiz label{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border:1px solid var(--line);border-radius:var(--radius-input);cursor:pointer;min-height:44px}
+.ac-quiz label:hover{border-color:var(--gwd-border-strong)}
+.ac-quiz-result{font-weight:700}
+.ac-quiz-result[data-state="pass"]{color:var(--gwd-success)}
+.ac-quiz-result[data-state="fail"]{color:var(--gwd-danger)}
+
+/* ---------- Gamificação ---------- */
+.ac-gamification{display:grid;gap:var(--space-4);padding:var(--space-5);border:1px solid var(--line);border-radius:var(--radius-card);background:var(--gwd-gradient-surface)}
+.ac-gamification h2{margin:0;font-size:1.05rem}
+.ac-xp{display:flex;align-items:baseline;gap:var(--space-2)}
+.ac-xp strong{font-family:var(--gwd-font-display);font-size:2rem;font-weight:800;background:var(--gwd-gradient-brand);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ac-badge-row{display:flex;gap:var(--space-2);flex-wrap:wrap}
+.ac-badge{padding:6px 12px;border-radius:var(--radius-pill);font-size:.75rem;font-weight:600;border:1px solid var(--gwd-border);color:var(--muted)}
+.ac-badge[data-unlocked="true"]{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 50%,transparent)}
+.ac-gamification .small{margin:0}
+.ac-series-side{display:grid;gap:var(--space-3);padding:var(--space-5);border:1px solid var(--line);border-radius:var(--radius-card)}
+.ac-series-side h2{margin:0;font-size:1.05rem}
+.ac-side-episodes{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ac-side-episodes a{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:var(--space-3);align-items:center;padding:10px 8px;border-radius:var(--radius-small);text-decoration:none;color:var(--muted);font-size:var(--text-small);min-height:44px}
+.ac-side-episodes a:hover{background:color-mix(in srgb,var(--gwd-surface-800) 50%,transparent);color:var(--ink)}
+.ac-side-episodes a[aria-current="page"]{color:var(--ink);background:color-mix(in srgb,var(--gwd-blue-500) 14%,transparent)}
+.ac-side-code{font-weight:800;color:var(--accent);font-size:.8rem;min-width:2.6rem}
+.ac-side-state{font-size:.85rem}
+
+/* ---------- Responsivo (mobile: empilha, tabs thumb-friendly ≥44px) ---------- */
+@media (max-width:1179px){
+  .ac-hero-grid,.ac-series-head,.ac-episode-grid{grid-template-columns:1fr}
+  .ac-continue-grid,.ac-series-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:759px){
+  .ac-hero{padding:var(--space-5) 0 var(--space-7)}
+  .ac-hero-copy .actions{flex-direction:column;align-items:stretch}
+  .ac-continue-grid,.ac-series-grid{grid-template-columns:1fr}
+  .ac-episode-row{grid-template-columns:auto minmax(0,1fr);row-gap:var(--space-2)}
+  .ac-episode-row .ac-chip-row{grid-column:1/-1}
+  .ac-progress-mini .progress{width:100%}
+  .ac-player{aspect-ratio:4/3}
+}
