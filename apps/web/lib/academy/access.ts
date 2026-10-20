@@ -43,7 +43,8 @@ export async function fetchEpisodeAccess(episodeId: string): Promise<EpisodeAcce
     const data = (await response.json()) as {entitlement?: {active?: boolean; ref?: string}};
     if (typeof data.entitlement?.active !== "boolean") return null;
     return {canAccess: data.entitlement.active, source: "aro-api", entitlementRef: data.entitlement.ref};
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && typeof (error as {digest?: string}).digest === "string") throw error; // nunca engolir bailout do Next
     return null;
   }
 }
@@ -85,7 +86,8 @@ export async function xpSummaryFromLedger(): Promise<XpSummary> {
     const data = (await response.json()) as {xp?: {total?: number}};
     const total = Number(data.xp?.total ?? 0);
     return Number.isFinite(total) && total > 0 ? {total, level: "EXPLORER", source: "ledger"} : xpSummary();
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && typeof (error as {digest?: string}).digest === "string") throw error; // nunca engolir bailout do Next
     return xpSummary();
   }
 }

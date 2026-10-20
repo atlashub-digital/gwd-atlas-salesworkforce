@@ -12,7 +12,6 @@ import "../../academy.css";
 export function generateStaticParams(){return allSeries().map(s => ({slug: s.slug}));}
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{return {title:(await params).slug.replace(/-/g," ")};}
 
-export const dynamic = "force-dynamic"; // catálogo via API (GWD_API_URL) com fallback estático
 
 export default async function SeriesPage({params}:{params:Promise<{slug:string}>}){
   const loaded = await loadSeries((await params).slug);

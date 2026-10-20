@@ -174,7 +174,10 @@ async function apiGetJson(path: string): Promise<Record<string, unknown> | null>
     const response = await fetch(new URL(path, base), {signal: AbortSignal.timeout(2500), cache: "no-store"});
     if (!response.ok) return null;
     return (await response.json()) as Record<string, unknown>;
-  } catch {
+  } catch (error) {
+    // Nunca engolir sinais internos do Next (bailout de renderização dinâmica):
+    // engoli-los transforma um bailout em 500 real.
+    if (error instanceof Error && typeof (error as {digest?: string}).digest === "string") throw error;
     return null;
   }
 }

@@ -37,7 +37,8 @@ async function apiPostProgress(path: string, payload: Record<string, unknown>): 
     if (!response.ok) return null;
     const data = (await response.json()) as {progress?: EpisodeProgress};
     return data.progress ?? null;
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && typeof (error as {digest?: string}).digest === "string") throw error; // nunca engolir bailout do Next
     return null;
   }
 }
@@ -63,7 +64,8 @@ function readAll(): Record<string, EpisodeProgress> {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as Record<string, EpisodeProgress>) : {};
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && typeof (error as {digest?: string}).digest === "string") throw error; // nunca engolir bailout do Next
     return {};
   }
 }
@@ -72,7 +74,8 @@ function writeAll(all: Record<string, EpisodeProgress>): void {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && typeof (error as {digest?: string}).digest === "string") throw error; // nunca engolir bailout do Next
     /* storage indisponível — progresso demo perde-se, honesto por omissão */
   }
 }

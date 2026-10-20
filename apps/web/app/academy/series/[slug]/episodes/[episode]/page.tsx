@@ -20,7 +20,6 @@ export async function generateMetadata({params}:{params:Promise<{slug:string;epi
   return found ? {title: found.episode.title} : {};
 }
 
-export const dynamic = "force-dynamic"; // catálogo + entitlement via API com fallback estático
 
 export default async function EpisodePage({params}:{params:Promise<{slug:string;episode:string}>}){
   const p = await params;

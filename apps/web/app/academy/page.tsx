@@ -9,7 +9,6 @@ import "./academy.css";
 
 export const metadata:Metadata = {title:"Academy"};
 
-export const dynamic = "force-dynamic"; // catálogo via API (GWD_API_URL) com fallback estático
 
 export default async function AcademyHome(){
   const {series} = await loadAllSeries();
