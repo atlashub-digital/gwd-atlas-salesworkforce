@@ -8,6 +8,9 @@ const server=createServer(async(req,res)=>{
  if(buckets.size>10000){for(const [key,value] of buckets)if(value.until<now)buckets.delete(key);if(buckets.size>10000){res.writeHead(503).end();return;}}
  let bucket=buckets.get(ip);if(!bucket||bucket.until<now){bucket={count:0,until:now+60000};buckets.set(ip,bucket);}
  if(++bucket.count>120){res.writeHead(429,{"Retry-After":"60"}).end();return;}
+ // Academy progress: bucket dedicado (heartbeat 20–30s → 60/min por IP é folgado mas limitado).
+ const academyPath=(req.url??"").startsWith("/v1/academy/progress")||(req.url??"").startsWith("/v1/academy/telegram-handoff");
+ if(academyPath){const key="acad:"+ip;let ab=buckets.get(key);if(!ab||ab.until<now){ab={count:0,until:now+60000};buckets.set(key,ab);}if(++ab.count>60){res.writeHead(429,{"Retry-After":"60"}).end();return;}}
  const chunks:Buffer[]=[];let size=0;
  try{
   for await(const chunk of req){size+=chunk.length;if(size>16384){res.writeHead(413).end();return;}chunks.push(Buffer.from(chunk));}

@@ -11,6 +11,7 @@
     "build": "pnpm --filter @gwd/web build && pnpm --filter @gwd/app build",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
+    "seed:academy": "tsx packages/db/seed-academy.ts",
     "test:integration": "tsx --test tests/integration/*.test.ts",
     "dev:api": "pnpm --filter @gwd/api dev",
     "dev:worker": "pnpm --filter @gwd/worker dev"

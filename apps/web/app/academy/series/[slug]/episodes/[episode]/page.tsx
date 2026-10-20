@@ -1,9 +1,9 @@
 import type {Metadata} from "next";
 import Link from "next/link";
 import {notFound} from "next/navigation";
-import {allSeries, getEpisode} from "../../../../../../lib/academy/catalog";
+import {allSeries, loadEpisode} from "../../../../../../lib/academy/catalog";
 import {providerFor} from "../../../../../../lib/academy/providers";
-import {canAccess} from "../../../../../../lib/academy/access";
+import {resolveAccess} from "../../../../../../lib/academy/access";
 import {formatDuration} from "../../../../../../lib/academy/progress";
 import SiteFrame from "../../../../../../components/SiteFrame";
 import EpisodeWorkspace from "../../../../components/EpisodeWorkspace";
@@ -16,16 +16,20 @@ export function generateStaticParams(){
 }
 export async function generateMetadata({params}:{params:Promise<{slug:string;episode:string}>}):Promise<Metadata>{
   const p = await params;
-  return getEpisode(p.slug, p.episode)?.episode ? {title:getEpisode(p.slug, p.episode)!.episode.title} : {};
+  const found = await loadEpisode(p.slug, p.episode);
+  return found ? {title: found.episode.title} : {};
 }
+
+export const dynamic = "force-dynamic"; // catálogo + entitlement via API com fallback estático
 
 export default async function EpisodePage({params}:{params:Promise<{slug:string;episode:string}>}){
   const p = await params;
-  const found = getEpisode(p.slug, p.episode);
+  const found = await loadEpisode(p.slug, p.episode);
   if (!found) notFound();
   const {series, episode} = found;
   const provider = providerFor(episode);
-  const locked = !canAccess(episode.accessTier);
+  const access = await resolveAccess(episode);
+  const locked = !access.canAccess;
   return (
     <SiteFrame>
       <p className="small" style={{paddingTop:"var(--space-5)"}}><Link className="link" href={`/academy/series/${series.slug}`}>← {series.title}</Link> · <Link className="link" href="/academy">Academy</Link></p>

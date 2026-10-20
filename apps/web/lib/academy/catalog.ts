@@ -3,7 +3,7 @@
    e tiers FREE/MEMBER/PREMIUM/CERTIFIED. Nenhuma media real: posters são gradientes
    CSS com iniciais (nunca fotos fake de pessoas) e providers devolvem null. */
 
-import type {AccessTier, Episode, EpisodeAsset, Series} from "./types";
+import type {AccessTier, Episode, EpisodeAsset, Season, Series} from "./types";
 
 export const DEMO_CATALOG_LABEL = "Demo catalog V1";
 
@@ -155,6 +155,92 @@ export const series: Series[] = [
 ];
 
 export const categories = ["fundamentos", "social-media", "vendas"] as const;
+
+/* ---------- API-first (GWD_API_URL, server components) com fallback ao estático ---------- */
+/* A DB (via API) é a fonte de verdade para published/tiers/policies/assets; o catálogo
+   estático mantém-se como fallback para CI/E2E sem DB e como metadados de apresentação. */
+
+export type CatalogSource = "api" | "static";
+
+function apiBase(): string | undefined {
+  const base = process.env.GWD_API_URL;
+  return base ? base.replace(/\/+$/, "") : undefined;
+}
+
+async function apiGetJson(path: string): Promise<Record<string, unknown> | null> {
+  const base = apiBase();
+  if (!base) return null;
+  try {
+    const response = await fetch(new URL(path, base), {signal: AbortSignal.timeout(2500), cache: "no-store"});
+    if (!response.ok) return null;
+    return (await response.json()) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function mapApiEpisode(raw: Record<string, unknown>): Episode | null {
+  if (typeof raw.id !== "string" || typeof raw.slug !== "string" || !Array.isArray(raw.assets)) return null;
+  return {
+    id: raw.id,
+    slug: raw.slug,
+    seriesId: String(raw.seriesId ?? ""),
+    seasonNumber: Number(raw.seasonNumber ?? 1),
+    number: Number(raw.number ?? 1),
+    code: String(raw.code ?? ""),
+    title: String(raw.title ?? ""),
+    summary: String(raw.summary ?? ""),
+    episodeType: (raw.episodeType as Episode["episodeType"]) ?? "VIDEO",
+    deliveryMode: (raw.deliveryMode as Episode["deliveryMode"]) ?? "WEBPLAYER",
+    provider: (raw.provider as Episode["provider"]) ?? "ATLAS_MEDIA",
+    accessTier: (raw.accessTier as AccessTier) ?? "MEMBER",
+    hybridPolicy: raw.hybridPolicy as Episode["hybridPolicy"],
+    durationSeconds: Number(raw.durationSeconds ?? 0),
+    assets: raw.assets as EpisodeAsset[],
+  };
+}
+
+function mapApiSeries(raw: Record<string, unknown>): Series | null {
+  if (typeof raw.slug !== "string" || !Array.isArray(raw.episodes)) return null;
+  const episodes = raw.episodes.map(e => mapApiEpisode(e as Record<string, unknown>)).filter((e): e is Episode => e !== null);
+  if (!episodes.length) return null;
+  const seriesId = String(raw.id ?? episodes[0].seriesId);
+  return {
+    id: seriesId,
+    slug: raw.slug,
+    title: String(raw.title ?? raw.slug),
+    subtitle: String(raw.subtitle ?? ""),
+    description: String(raw.description ?? ""),
+    category: String(raw.category ?? ""),
+    featured: Boolean(raw.featured),
+    posterInitials: String(raw.posterInitials ?? raw.slug.slice(0, 2).toUpperCase()),
+    posterGradient: String(raw.posterGradient ?? "linear-gradient(140deg,#002040 0%,#0a84ff 100%)"),
+    seasons: (raw.seasons as Season[]) ?? [{number: 1, title: "Temporada 1", episodeIds: episodes.map(e => e.id)}],
+    episodes: episodes.map(e => ({...e, seriesId})),
+  };
+}
+
+export async function loadAllSeries(): Promise<{series: Series[]; source: CatalogSource}> {
+  const data = await apiGetJson("/v1/academy/series");
+  const items = data && Array.isArray(data.items) ? data.items : null;
+  const mapped = items ? items.map(s => mapApiSeries(s as Record<string, unknown>)).filter((s): s is Series => s !== null) : [];
+  return mapped.length ? {series: mapped, source: "api"} : {series, source: "static"};
+}
+
+export async function loadSeries(slug: string): Promise<{series: Series; source: CatalogSource} | null> {
+  const data = await apiGetJson(`/v1/academy/series/${encodeURIComponent(slug)}`);
+  const raw = data && data.series ? mapApiSeries(data.series as Record<string, unknown>) : null;
+  if (raw) return {series: raw, source: "api"};
+  const fallback = getSeries(slug);
+  return fallback ? {series: fallback, source: "static"} : null;
+}
+
+export async function loadEpisode(seriesSlug: string, episodeSlug: string): Promise<{series: Series; episode: Episode; source: CatalogSource} | null> {
+  const loaded = await loadSeries(seriesSlug);
+  if (!loaded) return null;
+  const episode = loaded.series.episodes.find(e => e.slug === episodeSlug);
+  return episode ? {series: loaded.series, episode, source: loaded.source} : null;
+}
 
 export function allSeries(): Series[] {
   return series;

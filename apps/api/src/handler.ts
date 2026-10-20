@@ -1,6 +1,7 @@
 import { flags } from "@gwd/config";
 import { InputError, leadInput, object, profileInput, text, uuid } from "@gwd/contracts";
 import { academy, starterSteps, validStep } from "@gwd/domain";
+import { AcademyError, academyRoute, publicAcademyRoute } from "./academy";
 import { transaction } from "@gwd/db";
 import type { PoolClient } from "pg";
 type Tx = typeof transaction;
@@ -28,6 +29,8 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken) {
    await tx(null,async c=>{await c.query("insert into gwd.leads(name,email,market,interest,source,utm) values($1,$2,$3,$4,$5,$6) on conflict do nothing",[input.name,input.email,input.market,input.interest,input.source,JSON.stringify(input.utm)]);});
    return json({accepted:true},201);
   }
+  const publicAcademy=await publicAcademyRoute(route,method,tx);
+  if(publicAcademy)return publicAcademy;
   const bearer=request.headers.get("authorization");
   if(!bearer?.startsWith("Bearer "))return json({error:"Inicia sessão para continuar."},401);
   const user=await auth(bearer.slice(7));uuid(user.id);
@@ -49,6 +52,8 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken) {
    }
    const participant=(await c.query("select * from gwd.participants where id=$1",[user.id])).rows[0];
    if(!participant?.onboarding_completed)return json({error:"Conclui primeiro o onboarding.",code:"ONBOARDING_REQUIRED"},409);
+   const academyResponse=await academyRoute({request,route,method,c,userId:user.id});
+   if(academyResponse)return academyResponse;
    if(route==="/v1/journeys"&&method==="GET") {
     const result=await c.query("select step_id from gwd.journey_progress where participant_id=$1",[user.id]);
     return json({id:"gwd-start",title:"GWD Start",owner:"Maia Valente",steps:starterSteps,completed:result.rows.map(r=>r.step_id)});
@@ -81,6 +86,7 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken) {
    return json({error:"Recurso indisponível."},404);
   });
  }catch(error) {
+  if(error instanceof AcademyError)return json({error:error.message,code:error.code},error.status);
   if(error instanceof InputError||error instanceof SyntaxError)return json({error:error instanceof SyntaxError?"Pedido inválido.":error.message},400);
   if(error instanceof Error&&error.message==="UNAUTHORIZED")return json({error:"A sessão expirou. Volta a entrar."},401);
   console.error("gwd.request.failed",error instanceof Error?error.name:"Error");

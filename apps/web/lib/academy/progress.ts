@@ -14,6 +14,34 @@ import type {CompletionMethod, Episode, EpisodeProgress} from "./types";
 
 const STORAGE_KEY = "gwd_academy_progress_demo_v1";
 
+/* API server-authoritative (POST /v1/academy/progress/*). Mesma assinatura do mock:
+   tenta a API primeiro; em erro/401/422 (incl. regra server a recusar) faz fallback
+   local honesto para CI/E2E. O servidor é sempre a verdade; o local é só espelho demo. */
+
+function apiBase(): string | undefined {
+  const base = typeof process !== "undefined" ? process.env?.GWD_API_URL : undefined;
+  return base ? base.replace(/\/+$/, "") : undefined;
+}
+
+async function apiPostProgress(path: string, payload: Record<string, unknown>): Promise<EpisodeProgress | null> {
+  const base = apiBase();
+  if (!base) return null;
+  try {
+    const response = await fetch(new URL(path, base), {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload),
+      credentials: "include",
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return null;
+    const data = (await response.json()) as {progress?: EpisodeProgress};
+    return data.progress ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function emptyProgress(episode: Episode): EpisodeProgress {
   return {
     episode_id: episode.id,
@@ -66,8 +94,18 @@ export async function sendHeartbeat(input: {
   engagedSeconds: number;
   durationSeconds: number;
 }): Promise<EpisodeProgress> {
-  // TODO(POST /v1/academy): POST /v1/academy/progress/heartbeat
   const {episode, lastPositionSeconds, engagedSeconds, durationSeconds} = input;
+  const viaApi = await apiPostProgress("/v1/academy/progress/heartbeat", {
+    episode_id: episode.id,
+    position_s: lastPositionSeconds,
+    engaged_s: engagedSeconds,
+  });
+  if (viaApi) {
+    const all = readAll();
+    all[episode.id] = viaApi; // espelho local do estado server (nunca fonte de verdade)
+    writeAll(all);
+    return viaApi;
+  }
   const all = readAll();
   const prev = all[episode.id] ?? emptyProgress(episode);
   const now = new Date().toISOString();
@@ -108,7 +146,19 @@ export function completionRuleMet(p: EpisodeProgress, ended: boolean): boolean {
 
 /** Conclusão explícita (self-attempted / quiz pass). Em produção: server-only. */
 export async function markCompleted(episode: Episode, method: CompletionMethod): Promise<EpisodeProgress> {
-  // TODO(POST /v1/academy): POST /v1/academy/progress/complete (idempotente, server-authoritative)
+  if (episode.deliveryMode === "TELEGRAM" || episode.deliveryMode === "EXTERNAL") {
+    await apiPostProgress("/v1/academy/telegram-handoff-opened", {episode_id: episode.id});
+  }
+  const viaApi = await apiPostProgress("/v1/academy/progress/complete", {
+    episode_id: episode.id,
+    method,
+  });
+  if (viaApi) {
+    const all = readAll();
+    all[episode.id] = viaApi; // espelho local do estado server
+    writeAll(all);
+    return viaApi;
+  }
   const all = readAll();
   const prev = all[episode.id] ?? emptyProgress(episode);
   const now = new Date().toISOString();

@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import Link from "next/link";
-import {featuredSeries, DEMO_CATALOG_LABEL} from "../../lib/academy/catalog";
+import {loadAllSeries, DEMO_CATALOG_LABEL} from "../../lib/academy/catalog";
 import {formatDuration} from "../../lib/academy/progress";
 import SiteFrame from "../../components/SiteFrame";
 import CatalogExplorer from "./components/CatalogExplorer";
@@ -9,8 +9,11 @@ import "./academy.css";
 
 export const metadata:Metadata = {title:"Academy"};
 
-export default function AcademyHome(){
-  const featured = featuredSeries();
+export const dynamic = "force-dynamic"; // catálogo via API (GWD_API_URL) com fallback estático
+
+export default async function AcademyHome(){
+  const {series} = await loadAllSeries();
+  const featured = series.find(s => s.featured);
   const featuredFree = featured ? featured.episodes.filter(e => e.accessTier === "FREE").length : 0;
   const featuredDuration = featured ? featured.episodes.reduce((a, e) => a + e.durationSeconds, 0) : 0;
   return (

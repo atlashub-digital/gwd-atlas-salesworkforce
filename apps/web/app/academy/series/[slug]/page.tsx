@@ -1,7 +1,7 @@
 import type {Metadata} from "next";
 import Link from "next/link";
 import {notFound} from "next/navigation";
-import {allSeries, getSeries} from "../../../../lib/academy/catalog";
+import {allSeries, loadSeries} from "../../../../lib/academy/catalog";
 import {formatDuration} from "../../../../lib/academy/progress";
 import {DEMO_PARTICIPANT_TIER} from "../../../../lib/academy/access";
 import SiteFrame from "../../../../components/SiteFrame";
@@ -12,9 +12,12 @@ import "../../academy.css";
 export function generateStaticParams(){return allSeries().map(s => ({slug: s.slug}));}
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{return {title:(await params).slug.replace(/-/g," ")};}
 
+export const dynamic = "force-dynamic"; // catálogo via API (GWD_API_URL) com fallback estático
+
 export default async function SeriesPage({params}:{params:Promise<{slug:string}>}){
-  const s = getSeries((await params).slug);
-  if (!s) notFound();
+  const loaded = await loadSeries((await params).slug);
+  if (!loaded) notFound();
+  const s = loaded.series;
   const freeCount = s.episodes.filter(e => e.accessTier === "FREE").length;
   const duration = s.episodes.reduce((a, e) => a + e.durationSeconds, 0);
   const lockedCount = s.episodes.filter(e => e.accessTier !== "FREE").length; // participante demo FREE
