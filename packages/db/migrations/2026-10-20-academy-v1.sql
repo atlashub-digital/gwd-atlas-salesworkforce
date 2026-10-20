@@ -200,3 +200,29 @@ insert into gwd.academy_completion_policies(policy_key, version, rules, active) 
  ('TELEGRAM_SELF_ATTESTED_V1', 1, '{"require_handoff":true,"completion_method":"SELF_ATTESTED"}', true),
  ('TELEGRAM_QUIZ_VERIFIED_V1', 1, '{"require_handoff":true,"completion_method":"QUIZ_VERIFIED"}', true)
 on conflict (policy_key, version) do nothing;
+
+-- ===== Suplemento RLS: INSERT/UPDATE via gwd_api + quizzes public read (aplicado 2026-10-20) =====
+create policy academy_progress_own_insert on gwd.academy_episode_progress
+  for insert to gwd_api with check (participant_id = (select auth.uid()));
+create policy academy_progress_own_update on gwd.academy_episode_progress
+  for update to gwd_api using (participant_id = (select auth.uid()))
+  with check (participant_id = (select auth.uid()));
+
+create policy academy_events_own_insert on gwd.academy_learning_events
+  for insert to gwd_api with check (participant_id = (select auth.uid()));
+
+create policy academy_enrollments_own_insert on gwd.academy_enrollments
+  for insert to gwd_api with check (participant_id = (select auth.uid()));
+
+create policy academy_quiz_attempts_own_insert on gwd.academy_quiz_attempts
+  for insert to gwd_api with check (participant_id = (select auth.uid()));
+
+create policy academy_capability_awards_own_insert on gwd.participant_capability_awards
+  for insert to gwd_api with check (participant_id = (select auth.uid()));
+
+create policy academy_quizzes_public_read on gwd.academy_quizzes
+  for select using (exists (
+    select 1 from gwd.academy_episodes e
+    join gwd.academy_seasons sn on sn.id = e.season_id
+    join gwd.academy_series s on s.id = sn.series_id
+    where e.id = episode_id and e.published and s.status = 'PUBLISHED'));
