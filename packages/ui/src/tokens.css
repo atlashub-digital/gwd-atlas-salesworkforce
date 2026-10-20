@@ -11,6 +11,9 @@
  --gwd-success:#22c55e;--gwd-warning:#ffc107;--gwd-danger:#ff5d70;
  --gwd-white:#f8fafc;--gwd-text-primary:#f4f8ff;--gwd-text-secondary:#b8c7dc;
  --gwd-border:rgba(108,188,255,.24);--gwd-border-strong:rgba(108,188,255,.42);--gwd-control-border:rgba(108,188,255,.55);
+ /* Light surface (conversion cards). Ink/action ≥ 4.5:1 and control border ≥ 3:1 on paper. */
+ --gwd-paper:#ffffff;--gwd-paper-muted:#eef3fa;--gwd-paper-line:#d5dfec;--gwd-paper-control:#73849b;
+ --gwd-paper-ink:#0b1b33;--gwd-paper-text:#45556c;--gwd-paper-danger:#c0182f;
 
  /* Legacy aliases (member app + V0 pages) */
  --gwd-bg-950:var(--gwd-navy-950);--gwd-bg-900:var(--gwd-navy-900);--gwd-bg-850:var(--gwd-navy-850);

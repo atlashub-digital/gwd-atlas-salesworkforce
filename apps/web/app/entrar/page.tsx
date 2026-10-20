@@ -1,7 +1,35 @@
 import Image from "next/image";
 import SiteFrame from "../../components/SiteFrame";
 import LeadForm from "../../components/LeadForm";
-import {PageHeading} from "@gwd/ui";
-import {media} from "../../lib/media";
+import Icon,{type IconName} from "../../components/Icon";
+import {media,objectPosition} from "../../lib/media";
 import {appUrl,appEntryUrl} from "../../lib/site";
-export default function Entrar(){return <SiteFrame><div className="form-layout"><div><PageHeading eyebrow="O primeiro passo" title="Vamos descobrir o teu caminho." description="Conta-nos o que te move. Depois do registo, entra na plataforma, prepara o teu perfil e começa a jornada GWD Start."/><p>Aprendizagem e comunidade primeiro. Os percursos comerciais são ativados separadamente, com regras claras.</p><a className="link" href={appEntryUrl}>Já tenho conta →</a><figure className="portrait"><Image src={media.maia.src} alt={media.maia.alt} width={media.maia.width} height={media.maia.height} sizes="110px"/><figcaption><strong>Maia Valente</strong><small>Persona digital GWD · Comunidade</small><small>O teu percurso começa com um primeiro passo.</small></figcaption></figure></div><LeadForm appUrl={appUrl}/></div></SiteFrame>}
+const benefits:readonly {icon:IconName;title:string;text:string}[]=[
+ {icon:"learn",title:"Formação prática",text:"Aprende ao teu ritmo, com etapas claras."},
+ {icon:"people",title:"Comunidade ativa",text:"Partilha e cresce com quem está no mesmo caminho."},
+ {icon:"tools",title:"Ferramentas e suporte",text:"Materiais e acompanhamento para cada passo."},
+ {icon:"globe",title:"Oportunidades na Europa e no Brasil",text:"Percursos ativados com regras claras."}
+];
+export default function Entrar(){return <SiteFrame bleed><section className="entrar">
+ <figure className="entrar-media">
+  <Image src={media.maia.src} alt={media.maia.alt} fill preload sizes="(max-width:1179px) 100vw, 44vw" style={{objectFit:"cover",objectPosition:objectPosition(media.maia)}}/>
+  <span className="entrar-media-scrim" aria-hidden="true"/>
+  <p className="entrar-note" aria-hidden="true">Aprende. Conecta.<br/>Divulga. Cresce.</p>
+ </figure>
+ <div className="container entrar-grid">
+  <div className="entrar-copy">
+   <span className="eyebrow">O primeiro passo</span>
+   <h1>Dá o primeiro passo na <span className="text-gradient">GWD.</span></h1>
+   <p className="lead">Junta-te a uma comunidade global de pessoas que aprendem, divulgam, vendem e crescem no mercado digital.</p>
+  </div>
+  <ul className="entrar-benefits">{benefits.map(b=><li key={b.title}><span className="entrar-benefit-icon"><Icon name={b.icon}/></span><div><strong>{b.title}</strong><span>{b.text}</span></div></li>)}</ul>
+  <div className="entrar-card">
+   <nav className="entrar-tabs" aria-label="Acesso à GWD"><span aria-current="page">Criar conta</span><a href={appEntryUrl}>Já tenho conta</a></nav>
+   <LeadForm appUrl={appUrl}/>
+  </div>
+  <figure className="entrar-quote">
+   <blockquote><p>“A GWD ajudou-me a transformar o meu interesse em oportunidades reais de aprendizagem, criação e performance.”</p></blockquote>
+   <figcaption><Image src={media.maia.src} alt="Maia Valente" width={44} height={44} sizes="44px" style={{objectFit:"cover",objectPosition:objectPosition(media.maia)}}/><span><strong>Maia</strong><small>Comunidade GWD · persona digital</small></span></figcaption>
+  </figure>
+ </div>
+</section></SiteFrame>}
