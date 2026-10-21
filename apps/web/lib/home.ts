@@ -20,12 +20,11 @@ export const paths=[
  {index:"03",icon:"bag",title:"Revendedor Autorizado",body:"Opera dentro de condições comerciais aprovadas. O interesse não concede o estatuto de vendedor.",href:"/revendedores",status:"EM PREPARAÇÃO",tone:"warning"}
 ] as const;
 export const steps=[
- {title:"Interesse",body:"Regista o teu interesse e indica o teu mercado: Europa, Brasil ou outro."},
- {title:"Comunidade",body:"Conheces as regras e as pessoas com quem vais aprender."},
- {title:"Aprendizagem",body:"Completas a jornada GWD Start e os fundamentos da Academy."},
- {title:"Caminho",body:"Escolhes por onde avançar: Social Media, afiliação ou revenda autorizada."},
- {title:"Execução",body:"Quando um percurso é ativado para ti, trabalhas com materiais e regras aprovadas."},
- {title:"Crescimento",body:"Evoluis com a comunidade, ao teu ritmo e sem promessas de rendimento."}
+ {title:"Mostra o teu interesse",body:"Regista-te gratuitamente e indica o teu mercado: Europa, Brasil ou outro."},
+ {title:"Entra na comunidade",body:"Conheces as regras e recebes acesso aos canais oficiais quando forem ativados."},
+ {title:"Aprende e evolui",body:"Segues a jornada GWD Start e os fundamentos da Academy, ao teu ritmo."},
+ {title:"Escolhe o teu caminho",body:"Social Media, Afiliado ou Revendedor Autorizado — cada um com regras próprias."},
+ {title:"Cresce connosco",body:"Participas em campanhas e oportunidades aprovadas, sem promessas de rendimento."}
 ] as const;
 export const opportunities=[
  {title:"Digital Team Europa",body:"Oportunidades para o mercado europeu, publicadas após validação dos critérios.",href:"/oportunidades/europa",status:"EM BREVE"},
