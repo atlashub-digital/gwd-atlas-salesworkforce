@@ -365,3 +365,31 @@ body{font-size:var(--text-body);-webkit-font-smoothing:antialiased;text-renderin
  .entrar-card{position:relative;z-index:2}
  .entrar-benefits,.entrar-quote{margin-top:4px}
 }
+
+/* V2: market artwork, display hierarchy and five benefits from the targets. */
+.market-hero{min-height:650px}
+.market-hero-content{padding-block:80px 24px}
+.market-hero-copy{max-width:540px}
+.market-hero h1{font-size:clamp(3.8rem,7vw,6.5rem);margin:4px 0 20px}
+.market-hero-copy>.eyebrow{letter-spacing:0;font-size:clamp(1.3rem,2.7vw,2.2rem);font-weight:800}
+.market-hero-copy .lead{font-weight:700;line-height:1.25}
+.market-benefits{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px;margin-top:40px;padding:28px;border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--gwd-navy-950) 90%,transparent)}
+.market-benefits li{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;font-size:13px;line-height:1.4}
+.market-benefits li:before{display:none}
+.market-benefits svg{width:32px;height:32px;color:var(--gwd-cyan-400)}
+.market-editorial-image{object-position:65% center}
+@media(max-width:759px){
+ .market-hero{padding-top:230px;min-height:0}
+ .market-hero-content{padding-block:16px 24px}
+ .market-hero h1{font-size:clamp(3rem,15vw,4.5rem);margin-bottom:16px}
+ .market-hero-copy .lead{font-size:1.35rem}
+ .market-hero-copy>p:not(.lead):not(.small){font-size:.9rem;line-height:1.55}
+ .market-benefits{grid-template-columns:1fr;gap:18px;padding:20px;margin-top:24px}
+ .market-benefits li{flex-direction:row;text-align:left;font-size:13px}
+ .market-benefits svg{width:26px;height:26px;flex:none}
+ .market-hero--br .market-benefits{grid-template-columns:repeat(3,minmax(0,1fr));padding:18px 8px;gap:12px}
+ .market-hero--br .market-benefits li{flex-direction:column;text-align:center;font-size:11px}
+ .market-hero--br .market-benefits li:nth-child(n+4){grid-column:span 1}
+}
+
+.hero-cities{overflow:hidden}.hero-cities img{transform:scale(3);transform-origin:100% 0}@media(max-width:759px){.hero-cities{height:85px;opacity:.3}}
