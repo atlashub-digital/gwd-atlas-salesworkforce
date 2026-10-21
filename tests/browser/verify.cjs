@@ -4,7 +4,22 @@ const fs=require('fs'),path=require('path');const out=path.resolve('test-results
 const evidence=[];async function checkPage(route,width){if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Overflow '+width+' '+route);await page.locator('h1').waitFor();const broken=await page.locator('img').evaluateAll(async imgs=>{imgs.forEach(i=>{i.loading="eager"});await Promise.all(imgs.map(i=>i.decode().catch(()=>{})));return imgs.filter(i=>!i.complete||!i.naturalWidth||!i.alt).map(i=>i.src)});if(broken.length)throw Error('Broken/unlabelled media '+broken.join(','));if(await page.locator('h1').count()!==1)throw Error('Heading hierarchy '+route);}
 for(const width of [360,390,768,1024,1440,1920]){await page.setViewportSize({width,height:960});for(const route of routes){const routeTimeout = route === '/entrar' ? 90000 : 60000; const response=await page.goto('http://localhost:3000'+route,{waitUntil:'load',timeout:routeTimeout});if(response.status()!==200)throw Error(route+' HTTP '+response.status());await checkPage(route,width);const name={'/':'home','/entrar':'entrar','/oportunidades/europa':'europa','/oportunidades/brasil':'brasil'}[route];if(name&&[1440,390].includes(width)){const file=name+'-'+width+'.png';await page.screenshot({path:path.join(out,file),fullPage:true});evidence.push({route,width,file});}}}
 // GWD Academy Streaming V1 — passos NOVOS (rotas demo; não altera passos existentes)
-for(const academyRoute of ['/academy/series/gwd-start','/academy/series/conecta-que-converte','/academy/series/domina-instagram','/academy/series/gwd-start/episodes/boas-vindas-gwd','/academy/series/domina-instagram/episodes/stories-que-vendem']){await page.goto('http://localhost:3000'+academyRoute,{waitUntil:'load',timeout:90000});await page.locator('h1').first().waitFor({timeout:15000});if((await page.locator('h1').count())!==1)throw Error('Heading hierarchy '+academyRoute);if((await page.locator('img').count())>0)throw Error('Academy demo não deve ter fotos fake '+academyRoute);}
+const academyRoutes = ['/academy/series/gwd-start','/academy/series/conecta-que-converte','/academy/series/domina-instagram','/academy/series/gwd-start/episodes/boas-vindas-gwd','/academy/series/domina-instagram/episodes/stories-que-vendem'];
+for(const academyRoute of academyRoutes){
+  await page.goto('http://localhost:3000'+academyRoute,{waitUntil:'load',timeout:90000});
+  await page.locator('h1').first().waitFor({timeout:15000});
+  if((await page.locator('h1').count())!==1)throw Error('Heading hierarchy '+academyRoute);
+  if((await page.locator('img').count())>0)throw Error('Academy demo não deve ter fotos fake '+academyRoute);
+  // Visual evidence: capture at 390 (mobile) and 1440 (desktop)
+  for(const vw of [390, 1440]){
+    await page.setViewportSize({width:vw, height:960});
+    await page.waitForTimeout(200);
+    const name = academyRoute.replace(/^\//,'').replace(/\//g,'-');
+    const file = `academy-${name}-${vw}.png`;
+    await page.screenshot({path:path.join(out,file),fullPage:true});
+    evidence.push({route:academyRoute,width:vw,file});
+  }
+}
 
 // /entrar page with explicit wait for content
 await page.goto('http://localhost:3000/entrar?utm_source=instagram&utm_campaign=soft-launch-test',{waitUntil:'load',timeout:90000});
