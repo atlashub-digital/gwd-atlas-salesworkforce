@@ -36,6 +36,12 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastEngagedRef = useRef<number>(0);
 
+  const videoAsset = episode.assets.find(a => a.kind === "video");
+  const readerAsset = episode.assets.find(a => a.kind === "reader");
+  const quizAsset = episode.assets.find(a => a.kind === "quiz");
+  const resourceAsset = episode.assets.find(a => a.kind === "resource");
+  const duration = videoAsset?.durationSeconds ?? episode.durationSeconds;
+
   const handleTimeUpdate = useCallback(() => {
     if (!videoRef.current) return;
     const currentTime = videoRef.current.currentTime;
@@ -58,12 +64,6 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
   const handlePlay = useCallback(() => {
     setPlaying(true);
   }, []);
-
-  const videoAsset = episode.assets.find(a => a.kind === "video");
-  const readerAsset = episode.assets.find(a => a.kind === "reader");
-  const quizAsset = episode.assets.find(a => a.kind === "quiz");
-  const resourceAsset = episode.assets.find(a => a.kind === "resource");
-  const duration = videoAsset?.durationSeconds ?? episode.durationSeconds;
   const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
   const [loadingUrl, setLoadingUrl] = useState(false);
 
@@ -172,7 +172,6 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
                   ref={videoRef}
                   controls
                   className="ac-video"
-                  poster={videoAsset?.metadata?.posterUrl as string | undefined}
                   onTimeUpdate={handleTimeUpdate}
                   onEnded={handleEnded}
                   onPause={handlePause}
