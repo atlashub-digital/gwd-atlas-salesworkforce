@@ -36,3 +36,18 @@ export function TeamMember({name,role}:{name:string;role:string}){return <articl
 export function Alert({children}:Children){return <div className="notice" role="status">{children}</div>}
 export const Toast=Alert;
 export function NetworkArt(){return <svg className="network-art" viewBox="0 0 400 400" fill="none" aria-hidden="true"><circle cx="200" cy="200" r="160" stroke="currentColor"/><ellipse cx="200" cy="200" rx="80" ry="160" stroke="currentColor"/><ellipse cx="200" cy="200" rx="160" ry="65" stroke="currentColor"/><path d="M60 120Q200 210 340 120M60 280Q200 190 340 280M40 200H360M200 40V360" stroke="currentColor"/><path d="M85 120Q320 70 300 290M60 240Q180 50 340 190" stroke="currentColor" strokeDasharray="4 8"/>{[[85,120],[300,290],[60,240],[340,190],[200,40],[200,200]].map(([x,y])=><circle key={x+":"+y} cx={x} cy={y} r="5" fill="currentColor"/>)}</svg>}
+
+/** Shared outline icons for app navigation; decorative alongside visible labels. */
+export function NavIcon({name}:{name:string}){
+ const paths:Record<string,string>={
+ dashboard:"M3 10 12 3l9 7v11h-6v-7H9v7H3Z",
+ jornada:"M5 4h14v16H5Z M9 8h6 M9 12h6 M9 16h3",
+ academy:"m2 8 10-5 10 5-10 5Z M6 11v6q6 5 12 0v-6 M22 8v9",
+ comunidade:"M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M1 21v-3a7 7 0 0 1 14 0v3 M17 4a4 4 0 0 1 0 8 M18 15q5 0 5 6",
+ oportunidades:"M3 8h18v13H3Z M8 8V4h8v4 M3 13h18 M10 13v3h4v-3",
+ pontos:"m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1Z",
+ perfil:"M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10 M3 22v-2a9 9 0 0 1 18 0v2",
+ configuracoes:"M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2"
+ };
+ return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.oportunidades}/></svg>;
+}

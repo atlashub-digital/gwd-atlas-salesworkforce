@@ -53,3 +53,57 @@
 }
 
 .course-cover{padding:0;overflow:hidden;position:relative}.course-cover img{width:100%;height:100%;object-fit:cover}@media(max-width:760px){.course-cover img{position:absolute;inset:0;object-position:60% center}}
+
+/* V3: compact operational shell and journey cards. */
+.sidebar .brand-lockup{height:42px;width:104px}
+.sidebar nav a{gap:12px;font-size:12px;padding:9px 12px}
+.sidebar nav a svg{width:18px;height:18px;flex:none}
+.app-topbar{min-height:64px;padding-block:12px}
+.app-mobile-brand{display:none}
+.app-content .page-heading h1{font-size:clamp(1.6rem,2.3vw,2.1rem)}
+.dashboard-primary{gap:20px}
+.dashboard-primary .card{padding:24px}
+.dashboard-journey h2{font-size:22px}
+.dashboard-journey>.eyebrow{font-size:13px;color:var(--ink);letter-spacing:0;text-transform:none}
+.dashboard-journey .journey-map{margin-block:12px 18px}
+.journey-map li:after{content:"";position:absolute;left:36px;right:-16px;top:18px;height:1px;background:var(--line)}
+.journey-map li:last-child:after{display:none}
+.dashboard-points .stat{font-size:48px}
+.dashboard-explore .card{padding:22px;background:linear-gradient(135deg,var(--gwd-surface-800),var(--gwd-navy-900))}
+.dashboard-explore .card>svg{color:var(--accent);width:30px;height:30px;margin-bottom:20px}
+.member-journey{max-width:850px}
+.member-journey .step{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:22px;margin:14px 0}
+.member-journey .step.current{border-color:var(--gwd-cyan-500);background:linear-gradient(100deg,var(--gwd-surface-750),var(--gwd-navy-900))}
+.member-journey .step.locked{background:var(--gwd-navy-900)}
+.member-journey .step h2{font-size:18px}
+.member-journey .step .step-number{background:var(--gwd-surface-750)}
+.member-journey .step.done .step-number{background:var(--gwd-success)}
+@media(max-width:760px){
+ .app-topbar{position:sticky;top:0;z-index:25;background:var(--gwd-navy-950);min-height:64px}
+ .app-mobile-brand{display:block;margin-right:auto}
+ .app-mobile-brand .brand-lockup{height:32px;width:76px}
+ .app-topbar .menu-button{order:2;font-size:0;width:36px;height:36px;justify-content:center;align-items:center}
+ .app-topbar .menu-button:before{content:"☰";font-size:20px}
+ .app-topbar>a:last-child{font-size:11px}
+ .app-content .page-heading{padding:24px 0 16px}
+ .app-content .page-heading .eyebrow{font-size:10px}
+ .app-content .page-heading h1{font-size:24px;margin:8px 0}
+ .app-content .page-heading p{font-size:13px;margin:8px 0}
+ .dashboard-primary .card{padding:20px}
+ .dashboard-journey .journey-map{margin:16px 0 0;padding:0}
+ .journey-map li{padding-bottom:16px;gap:12px}
+ .journey-map li>span{width:28px;height:28px;font-size:12px}
+ .journey-map li:after{left:14px;top:28px;bottom:0;width:1px;height:auto;right:auto}
+ .journey-map strong{font-size:12px}.journey-map small{font-size:10px;margin-top:3px}
+ .dashboard-journey h2{font-size:19px;margin-block:10px}
+ .dashboard-journey .progress{margin:16px 0 10px}
+ .dashboard-journey>.button{padding:11px 20px;font-size:13px;width:100%}
+ .dashboard-points{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 16px}
+ .dashboard-points>.stat{grid-column:2;grid-row:1/3;margin:0;font-size:36px}
+ .dashboard-points>p{grid-column:1/-1;margin:0;font-size:12px}
+ .dashboard-points>.link{grid-column:1;margin:0}
+ .member-bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .member-journey .step{padding:16px;gap:12px}
+ .member-journey .step h2{font-size:16px}
+ .member-journey .step p{font-size:13px}
+}
