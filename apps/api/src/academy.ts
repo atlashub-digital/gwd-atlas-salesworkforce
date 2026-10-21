@@ -5,6 +5,7 @@
 import {InputError} from "@gwd/contracts";
 import type {PoolClient} from "pg";
 import {aroAdapter} from "./aro";
+import {atlasMediaConfig,requestPlayback} from "./media";
 import * as catalogModule from "../../../apps/web/lib/academy/catalog";
 
 type CatalogSeries = {slug: string; subtitle?: string; category?: string; posterInitials?: string; posterGradient?: string};
@@ -383,6 +384,23 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     const entitlement = await aroAdapter().checkEntitlement({participantId: userId, entitlementRef, tier: episode.access_tier as "FREE"});
     const progress = progressJson(progressRows.rows[0] ?? emptyProgressRow(episode.id), episode);
     return json({episode: episodeJson(episode, assets.get(episode.id) ?? []), progress, entitlement: {ref: entitlementRef, ...entitlement}});
+  }
+
+  /* POST /v1/academy/episodes/:id/playback — GWD access → ARO (via Atlas Media catalog) → short-lived HLS token. */
+  const playbackMatch = method === "POST" ? /^\/v1\/academy\/episodes\/([^/]+)\/playback$/.exec(route) : null;
+  if (playbackMatch) {
+    const episode = await episodeByRef(c, decodeURIComponent(playbackMatch[1]));
+    if (!episode) return json({error: "Episódio indisponível."}, 404);
+    const entitlementRef = episode.entitlement_ref ?? episode.series_entitlement_ref ?? `gwd.academy.series:${episode.series_slug}`;
+    const entitlement = await aroAdapter().checkEntitlement({participantId: userId, entitlementRef, tier: episode.access_tier as "FREE"});
+    if (!entitlement.active) return json({code: "ENTITLEMENT_DENIED", error: "O teu acesso a este episódio não está ativo."}, 403);
+    const video = (await c.query<{asset_ref: string; access_policy_ref: string | null}>(
+      `select asset_ref, access_policy_ref from gwd.academy_episode_assets
+        where episode_id=$1 and kind='VIDEO' and provider='ATLAS_MEDIA' and superseded_at is null order by position limit 1`, [episode.id])).rows[0];
+    if (!video) return json({code: "MEDIA_NOT_LINKED", error: "Este episódio não tem vídeo no WebPlayer."}, 409);
+    const email = (await c.query<{email: string | null}>(`select nullif(lower(current_setting('request.jwt.claim.email', true)), '') as email`)).rows[0]?.email ?? null;
+    const result = await requestPlayback(atlasMediaConfig(), {assetRef: video.asset_ref, policyRef: video.access_policy_ref ?? entitlementRef, email});
+    return result.ok ? json({manifest_url: result.manifestUrl, expires_at: result.expiresAt, provider: result.provider}) : json({code: result.code, error: result.error}, result.status);
   }
 
   if (!route.startsWith("/v1/academy/")) return null;
