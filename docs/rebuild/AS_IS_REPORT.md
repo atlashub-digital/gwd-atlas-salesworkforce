@@ -33,7 +33,7 @@ Nota: os targets individuais são de baixa resolução (170–596 px); as refer�
 
 ## Bloqueios de ambiente desta sessão
 1. **Sem credenciais de escrita GitHub** neste host (sem `gh`, sem token, sem chave SSH) → sem push, PR, CI ou preview Vercel por git.
-2. **Disco do host de desenvolvimento a 98%** (≈1 GB livre) → `pnpm install` + `next build` + Playwright não cabem. ≈14,8 GB de imagens Docker não usadas recuperáveis, mas o host é partilhado.
+2. ~~Disco do host de desenvolvimento a 98%~~ → resolvido (imagens Docker sem contentor removidas com OK do responsável; 12 GB livres).
 3. Media/ARO/Telegram: ver MEDIA_VPS_AS_IS.md (decisões Helena).
 
 ## Prioridades
