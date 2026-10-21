@@ -14,6 +14,7 @@ import "../../../../academy.css";
 export function generateStaticParams(){
   return allSeries().flatMap(s => s.episodes.map(e => ({slug: s.slug, episode: e.slug})));
 }
+export const dynamic = "force-dynamic"; // episódio: generateMetadata chama API (loadEpisode); evita bailout em geração estática
 export async function generateMetadata({params}:{params:Promise<{slug:string;episode:string}>}):Promise<Metadata>{
   const p = await params;
   const found = await loadEpisode(p.slug, p.episode);
