@@ -9,18 +9,16 @@ import JourneyScreen from "./member/JourneyScreen";
 import CommunityScreen from "./member/CommunityScreen";
 import OpportunitiesScreen from "./member/OpportunitiesScreen";
 import PointsScreen from "./member/PointsScreen";
-import AcademyScreen from "./member/AcademyScreen";
-import type {Community,Item,Journey,Me,Opportunity,Points} from "./member/types";
+import type {Community,Journey,Me,Opportunity,Points} from "./member/types";
 /** Loads the real API data for one member route and renders its screen. Commercial modules stay gated by config. */
 export default function MemberScreen({screen}:{screen:string}){
- const [me,setMe]=useState<Me|null>(null),[journey,setJourney]=useState<Journey|null>(null),[points,setPoints]=useState<Points|null>(null),[community,setCommunity]=useState<Community|null>(null),[items,setItems]=useState<Item[]>([]),[opportunities,setOpportunities]=useState<Opportunity[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState(""),[busy,setBusy]=useState(false),[rules,setRules]=useState(false);
+ const [me,setMe]=useState<Me|null>(null),[journey,setJourney]=useState<Journey|null>(null),[points,setPoints]=useState<Points|null>(null),[community,setCommunity]=useState<Community|null>(null),[opportunities,setOpportunities]=useState<Opportunity[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState(""),[busy,setBusy]=useState(false),[rules,setRules]=useState(false);
  const load=useCallback(async()=>{setLoading(true);setError("");try{
   const profile=await api("me");setMe(profile);
   if(!profile.participant?.onboarding_completed&&screen!=="onboarding"&&screen!=="perfil"){window.location.assign("/onboarding");return;}
   if(screen==="dashboard"){const [j,p]=await Promise.all([api("journeys"),api("gamification/summary")]);setJourney(j);setPoints(p);}
   if(screen==="jornada")setJourney(await api("journeys"));
   if(screen==="pontos")setPoints(await api("gamification/summary"));
-  if(screen==="academy")setItems((await api("academy")).items);
   if(screen==="comunidade")setCommunity(await api("community"));
   if(screen==="oportunidades")setOpportunities((await api("opportunities")).items);
  }catch(e){setError(e instanceof Error?e.message:"Não foi possível carregar.");}finally{setLoading(false);}},[screen]);
@@ -34,7 +32,6 @@ export default function MemberScreen({screen}:{screen:string}){
  return <>{error&&<div className="notice error" role="alert" style={{marginTop:20}}>{error}<button className="button small secondary" onClick={()=>void load()}>Tentar novamente</button></div>}
   {screen==="dashboard"&&<Dashboard name={participant?.display_name} journey={journey} points={points}/>}
   {screen==="jornada"&&<JourneyScreen journey={journey} busy={busy} complete={id=>void complete(id)}/>}
-  {screen==="academy"&&<AcademyScreen items={items}/>}
   {screen==="oportunidades"&&<OpportunitiesScreen opportunities={opportunities}/>}
   {screen==="comunidade"&&<CommunityScreen community={community} rules={rules} setRules={setRules} busy={busy} join={()=>void join()}/>}
   {screen==="pontos"&&<PointsScreen points={points}/>}

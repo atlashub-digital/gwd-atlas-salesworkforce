@@ -491,6 +491,19 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     return json({recorded: true}); // sem XP (doc §2.8)
   }
 
+  /* GET /v1/academy/progress?series=<slug> — this participant's per-episode state for one series (server truth). */
+  if (route === "/v1/academy/progress" && method === "GET") {
+    const slug = new URL(request.url).searchParams.get("series") ?? "";
+    if (!slug) throw new InputError("Série em falta.");
+    const rows = (await c.query<ProgressRow & {slug: string}>(
+      `select p.*, e.slug from gwd.academy_episode_progress p
+         join gwd.academy_episodes e on e.id = p.episode_id
+         join gwd.academy_seasons sn on sn.id = e.season_id
+         join gwd.academy_series s on s.id = sn.series_id
+        where p.participant_id = $1 and s.slug = $2`, [userId, slug])).rows;
+    return json({items: rows.map(r => ({episodeId: r.episode_id, episodeSlug: r.slug, status: r.status, lastPositionSeconds: r.last_position_seconds, progressPercent: Number(r.progress_percent)}))});
+  }
+
   if (route === "/v1/academy/progress/summary" && method === "GET") {
     const progressRows = (await c.query<ProgressRow & {slug: string; title: string; series_slug: string; series_title: string}>(
       `select p.*, e.slug, e.title, s.slug as series_slug, s.title as series_title
