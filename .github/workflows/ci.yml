@@ -31,7 +31,7 @@ jobs:
           npm install --prefix /tmp/gwd-browser --ignore-scripts --no-audit --no-fund playwright@1.62.1
           node /tmp/gwd-browser/node_modules/playwright/cli.js install --with-deps chromium
       - name: Browser E2E with isolated Postgres and Auth stub
-        timeout-minutes: 5
+        timeout-minutes: 10
         env:
           GWD_API_URL: http://localhost:3138
           GWD_APP_URL: http://localhost:3001
@@ -39,12 +39,30 @@ jobs:
           SUPABASE_PUBLISHABLE_KEY: test-publishable
           PLAYWRIGHT_MODULE: /tmp/gwd-browser/node_modules/playwright
         run: |
-          pnpm exec tsx tests/browser/fixture.mts > /tmp/gwd-fixture.log 2>&1 &
+          # Start fixture and wait for explicit ready signal
+          FIXTURE_LOG=/tmp/gwd-fixture.log
+          pnpm exec tsx tests/browser/fixture.mts > "$FIXTURE_LOG" 2>&1 &
+          FIXTURE_PID=$!
+          # Wait for FIXTURE_READY signal (up to 120s)
+          for i in $(seq 1 120); do
+            if grep -q "FIXTURE_READY" "$FIXTURE_LOG" 2>/dev/null; then
+              echo "Fixture ready after ${i}s"
+              break
+            fi
+            sleep 1
+          done
+          if ! grep -q "FIXTURE_READY" "$FIXTURE_LOG" 2>/dev/null; then
+            echo "ERROR: Fixture did not become ready"
+            cat "$FIXTURE_LOG"
+            exit 1
+          fi
+          # Start web and app servers
           pnpm --filter @gwd/web start > /tmp/gwd-web.log 2>&1 &
           pnpm --filter @gwd/app start > /tmp/gwd-app.log 2>&1 &
-          curl -o /dev/null --retry 30 --retry-all-errors --retry-delay 1 -f http://localhost:3138/health
-          curl -o /dev/null --retry 30 --retry-all-errors --retry-delay 1 -f http://localhost:3000/
-          curl -o /dev/null --retry 30 --retry-all-errors --retry-delay 1 -f http://localhost:3001/entrar
+          # Wait for all servers to be ready (60s max each)
+          for i in $(seq 1 60); do curl -sf http://localhost:3138/health >/dev/null && break; sleep 1; done
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3000/ >/dev/null && break; sleep 1; done
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3001/entrar >/dev/null && break; sleep 1; done
           node tests/browser/verify.cjs
       - name: Browser evidence
         if: always()

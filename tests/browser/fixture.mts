@@ -21,3 +21,5 @@ if(req.url==="/auth/v1/logout"){res.end("{}");return;}
 res.writeHead(401);res.end("{}");});
 api.listen(3138,()=>console.log("TEST API on 3138 - isolated PGlite, commercial OFF"));
 auth.listen(3139,()=>console.log("TEST Auth on 3139 - local stub only, no email sent"));
+// Explicit ready signal for CI
+console.log("FIXTURE_READY");
