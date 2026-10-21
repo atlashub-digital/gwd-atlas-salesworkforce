@@ -6,7 +6,6 @@ import SiteFrame from "../components/SiteFrame";
 import MediaPanel from "../components/MediaPanel";
 import MarketPanel from "../components/MarketPanel";
 import PathCard from "../components/PathCard";
-import StepList from "../components/StepList";
 import TeamStrip from "../components/TeamStrip";
 import ValueStrip from "../components/ValueStrip";
 import GlobalNetwork from "../components/GlobalNetwork";
@@ -19,19 +18,20 @@ const academyPreview=academy.map(m=>({...m,summary:m.body.split(". ")[0]+"."}));
 const Arrow=()=><span className="arrow" aria-hidden="true">→</span>;
 
 export default function Home(){return <SiteFrame bleed>
- {/* 1. Hero */}
+ {/* 1. Hero — target 01/02 homepage */}
  <section className="home-hero" aria-labelledby="hero-title">
-  <Image className="home-editorial-image" src={media.teamGroup.src} alt={media.teamGroup.alt} fill preload sizes="100vw"/>
-  <div className="hero-cities" aria-hidden="true"><Image src={media.marketEuropa.src} alt="" fill sizes="55vw"/></div><GlobalNetwork/>
+  <div className="home-hero-photo"><Image src={media.communityGlobal.src} alt={media.communityGlobal.alt} fill preload sizes="(max-width:759px) 100vw, 62vw"/></div>
+  <GlobalNetwork/>
   <Container className="home-hero-grid">
    <div className="home-hero-copy">
     <span className="eyebrow">Comunidade global · Formação · Oportunidades</span>
-    <h1 id="hero-title" className="display-xl">Começa no <span className="text-gradient">digital.</span></h1>
-    <p className="lead">Pessoas. Conteúdo. Novos caminhos. Uma comunidade sem fronteiras.</p>
+    <h1 id="hero-title">Começa no <span className="text-accent">digital.</span></h1>
+    <p className="lead">Pessoas reais. Conteúdo. Vendas. Oportunidades sem fronteiras.</p>
     <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
     <p className="home-hero-note">Participar não constitui vínculo de emprego nem garantia de rendimento.</p>
    </div>
   </Container>
+  <p className="home-hero-script" aria-hidden="true">O teu talento pode chegar a qualquer lugar do mundo.</p>
   <Container className="hero-benefits"><ValueStrip items={values}/></Container>
  </section>
 
@@ -56,16 +56,19 @@ export default function Home(){return <SiteFrame bleed>
   </div>
  </Container></Section>
 
- {/* 6. Como funciona */}
+ {/* 6. Como funciona — target 09 */}
  <Section id="como-funciona" className="reveal" aria-labelledby="como-funciona-title"><Container>
-  <SectionHeading id="como-funciona-title" align="split" eyebrow="Como funciona" title="Do interesse ao crescimento, passo a passo." lead="Um percurso simples e honesto: primeiro pertences e aprendes, depois escolhes e executas."/>
-  <MediaPanel media={media.howItWorks} className="how-media" scrim="bottom" sizes="(max-width:1280px) 100vw, 1280px"/>
-  <StepList steps={steps}/>
+  <div className="how-scene"><GlobalNetwork/>
+   <span className="eyebrow">Como funciona</span>
+   <h2 id="como-funciona-title">Como funciona a GWD?</h2>
+   <p>Um percurso simples e honesto: primeiro pertences e aprendes, depois escolhes e cresces.</p>
+   <ol className="how-steps">{steps.map((step,i)=><li key={step.title}><span className="how-steps-node" aria-hidden="true">{i+1}</span><h3>{step.title}</h3><p>{step.body}</p></li>)}</ol>
+  </div>
  </Container></Section>
 
  {/* 7. Comunidade */}
  <Section className="reveal" aria-labelledby="comunidade"><Container className="split">
-  <MediaPanel media={media.communityGlobal} className="split-media-panel" glow sizes="(max-width:900px) 100vw, 55vw"/>
+  <MediaPanel media={media.collaboration} className="split-media-panel" glow sizes="(max-width:900px) 100vw, 55vw"/>
   <div className="split-copy">
    <SectionHeading id="comunidade" eyebrow="Comunidade" title="Ninguém começa sozinho."/>
    <p className="lead">Na comunidade GWD partilhas dúvidas e aprendizagens com pessoas de vários países, que estão a dar os mesmos primeiros passos no digital.</p>
@@ -93,7 +96,7 @@ export default function Home(){return <SiteFrame bleed>
  {/* 10. Equipa */}
  <Section className="reveal" aria-labelledby="equipa"><Container>
   <SectionHeading id="equipa" align="split" eyebrow="A equipa digital GWD" title="Pessoas no centro. Um propósito partilhado." lead="Quatro personas digitais com responsabilidades claras no teu percurso."/>
-  <MediaPanel media={media.collaboration} className="team-media" scrim="bottom" sizes="(max-width:1280px) 100vw, 1280px"/>
+  <MediaPanel media={media.team} className="team-media" scrim="bottom" sizes="(max-width:1280px) 100vw, 1280px"/>
   <TeamStrip members={team}/>
  </Container></Section>
 

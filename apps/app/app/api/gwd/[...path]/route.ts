@@ -1,10 +1,13 @@
 import {cookies} from "next/headers";
 import {authFetch,clearSession,sameOrigin,saveSession} from "../../../../lib/session";
-const allowed=new Set(["me","journeys","journeys/gwd-start/progress","academy","opportunities","community","gamification/summary","feature-flags"]);
+const allowed=new Set(["me","journeys","journeys/gwd-start/progress","academy","opportunities","community","gamification/summary","feature-flags",
+ "academy/series","academy/progress","academy/progress/heartbeat","academy/progress/complete","academy/progress/summary","academy/telegram-handoff-opened"]);
+/** Academy Streaming resources addressed by slug/id; anything else stays blocked. */
+const academyPattern=/^academy\/(series\/[a-z0-9-]+|episodes\/[a-z0-9-]+(\/playback)?|quiz\/[a-z0-9-]+\/submit)$/;
 async function proxy(request:Request,{params}:{params:Promise<{path:string[]}>}){
  if(request.method!=="GET"&&!sameOrigin(request))return Response.json({error:"Origem inválida."},{status:403});
  const route=(await params).path.join("/");
- if(!allowed.has(route))return Response.json({error:"Recurso indisponível."},{status:404});
+ if(!allowed.has(route)&&!academyPattern.test(route))return Response.json({error:"Recurso indisponível."},{status:404});
  const base=process.env.GWD_API_URL;if(!base)return Response.json({error:"A plataforma está em preparação."},{status:503});
  const jar=await cookies();let token=jar.get("gwd-access")?.value;
  if(!token){
@@ -15,7 +18,8 @@ async function proxy(request:Request,{params}:{params:Promise<{path:string[]}>})
  try{
   const body=request.method==="GET"?undefined:await request.text();
   if(body&&body.length>16384)return Response.json({error:"Pedido demasiado grande."},{status:413});
-  const response=await fetch(new URL("/v1/"+route,base),{method:request.method,headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body,cache:"no-store",signal:AbortSignal.timeout(12000)});
+  const target=new URL("/v1/"+route,base);const series=new URL(request.url).searchParams.get("series");if(route==="academy/progress"&&series)target.searchParams.set("series",series);
+  const response=await fetch(target,{method:request.method,headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body,cache:"no-store",signal:AbortSignal.timeout(12000)});
   if(response.status===401)await clearSession();
   return new Response(await response.text(),{status:response.status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});
  }catch{return Response.json({error:"O serviço está temporariamente indisponível. Tenta novamente."},{status:503});}

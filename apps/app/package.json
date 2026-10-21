@@ -8,11 +8,12 @@
     "start": "next start -p 3001"
   },
   "dependencies": {
+    "@gwd/config": "workspace:*",
+    "@gwd/domain": "workspace:*",
+    "@gwd/ui": "workspace:*",
+    "hls.js": "1.5.17",
     "next": "16.3.8",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "@gwd/ui": "workspace:*",
-    "@gwd/config": "workspace:*",
-    "@gwd/domain": "workspace:*"
+    "react-dom": "19.2.3"
   }
 }

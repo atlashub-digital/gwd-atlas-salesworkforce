@@ -19,7 +19,7 @@ export default function Entrar(){return <SiteFrame bleed><section className="ent
  <div className="container entrar-grid">
   <div className="entrar-copy">
    <span className="eyebrow">O primeiro passo</span>
-   <h1>Dá o primeiro passo na <span className="text-gradient">GWD.</span></h1>
+   <h1>O teu próximo passo <span className="text-accent">começa aqui.</span></h1>
    <p className="lead">Junta-te a uma comunidade global de pessoas que aprendem, divulgam, vendem e crescem no mercado digital.</p>
   </div>
   <ul className="entrar-benefits">{benefits.map(b=><li key={b.title}><span className="entrar-benefit-icon"><Icon name={b.icon}/></span><div><strong>{b.title}</strong><span>{b.text}</span></div></li>)}</ul>

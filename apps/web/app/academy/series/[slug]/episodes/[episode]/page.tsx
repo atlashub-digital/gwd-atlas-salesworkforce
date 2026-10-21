@@ -2,13 +2,11 @@ import type {Metadata} from "next";
 import Link from "next/link";
 import {notFound} from "next/navigation";
 import {allSeries, loadEpisode} from "../../../../../../lib/academy/catalog";
-import {providerFor} from "../../../../../../lib/academy/providers";
-import {resolveAccess} from "../../../../../../lib/academy/access";
 import {formatDuration} from "../../../../../../lib/academy/progress";
 import SiteFrame from "../../../../../../components/SiteFrame";
-import EpisodeWorkspace from "../../../../components/EpisodeWorkspace";
 import EpisodeSidebar from "../../../../components/EpisodeSidebar";
-import {DemoBadge, ModeChip, TierChip} from "../../../../components/bits";
+import {ModeChip, Poster, TierChip} from "../../../../components/bits";
+import {appUrl} from "../../../../../../lib/site";
 import "../../../../academy.css";
 
 export function generateStaticParams(){
@@ -27,9 +25,7 @@ export default async function EpisodePage({params}:{params:Promise<{slug:string;
   const found = await loadEpisode(p.slug, p.episode);
   if (!found) notFound();
   const {series, episode} = found;
-  const provider = providerFor(episode);
-  const access = await resolveAccess(episode);
-  const locked = !access.canAccess;
+  const watchUrl = `${appUrl}/academy/series/${series.slug}/episodes/${episode.slug}`;
   return (
     <SiteFrame>
       <p className="small" style={{paddingTop:"var(--space-5)"}}><Link className="link" href={`/academy/series/${series.slug}`}>← {series.title}</Link> · <Link className="link" href="/academy">Academy</Link></p>
@@ -40,17 +36,16 @@ export default async function EpisodePage({params}:{params:Promise<{slug:string;
             <ModeChip mode={episode.deliveryMode}/>
             <TierChip tier={episode.accessTier}/>
             <span className="ac-chip ac-chip--mode">{formatDuration(episode.durationSeconds)}</span>
-            <DemoBadge/>
           </div>
           <h1 id="ac-episode-title">{episode.title}</h1>
           <p className="lead" style={{color:"var(--muted)"}}>{episode.summary}</p>
-          <EpisodeWorkspace series={series} episode={episode} locked={locked}/>
+          <div className="ac-teaser">
+            <Poster initials={series.posterInitials} gradient={series.posterGradient} title={series.title} slug={series.slug}/>
+            <div><h2>Vê este episódio na tua área GWD</h2><p>O vídeo, a leitura e o teu progresso estão na plataforma: o acesso é verificado no servidor e retomas exatamente onde ficaste.</p><a className="button" href={watchUrl}>Ver na minha Academy ↗</a></div>
+          </div>
         </div>
         <EpisodeSidebar series={series} episode={episode}/>
       </section>
-      <p className="small muted" style={{paddingBottom:"var(--space-6)"}}>
-        Delivery: {episode.deliveryMode} · provider {provider.kind} · progresso anexado a episode_id (independente do provider). TODO(POST /v1/academy): heartbeats e conclusões serão gravados no servidor com regras idempotentes.
-      </p>
     </SiteFrame>
   );
 }

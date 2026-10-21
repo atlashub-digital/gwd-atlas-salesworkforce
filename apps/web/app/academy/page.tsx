@@ -3,6 +3,7 @@ import Link from "next/link";
 import {loadAllSeries, DEMO_CATALOG_LABEL} from "../../lib/academy/catalog";
 import {formatDuration} from "../../lib/academy/progress";
 import SiteFrame from "../../components/SiteFrame";
+import {appUrl} from "../../lib/site";
 import CatalogExplorer from "./components/CatalogExplorer";
 import {DemoBadge, Poster, TierChip} from "./components/bits";
 import "./academy.css";
@@ -22,17 +23,17 @@ export default async function AcademyHome(){
           <div className="ac-hero-copy">
             <span className="eyebrow">GWD Academy · Aprender para avançar</span>
             <h1 id="ac-hero-title">Aprende hoje o que o mercado digital exige.</h1>
-            <p className="lead">Séries organizadas por temporada, com vídeo, leitura e prática. O progresso é teu: fica registado, auditável e retoma exatamente onde ficaste.</p>
+            <p className="lead">Séries organizadas por temporada, com vídeo, leitura e prática. Vês e aprendes na tua área GWD, onde o progresso fica registado e retoma exatamente onde ficaste.</p>
             <div className="actions">
               <Link className="button" href="/academy/series/gwd-start">Começar por GWD Start ↗</Link>
-              <Link className="button secondary" href="/entrar">Registar o meu interesse ↗</Link>
+              <a className="button secondary" href={appUrl+"/academy"}>A minha Academy ↗</a>
             </div>
             <p className="small muted">Estados de progresso honestos — a Academy nunca apresenta números que não existam. <DemoBadge/></p>
           </div>
           {featured && (
             <div className="ac-featured">
               <div className="ac-featured-media">
-                <Poster initials={featured.posterInitials} gradient={featured.posterGradient} title={featured.title}/>
+                <Poster initials={featured.posterInitials} gradient={featured.posterGradient} title={featured.title} slug={featured.slug}/>
               </div>
               <div className="ac-featured-body">
                 <div className="ac-chip-row"><TierChip tier="PREMIUM"/><span className="ac-chip ac-chip--mode">{featured.episodes.length} episódios</span></div>
@@ -47,7 +48,7 @@ export default async function AcademyHome(){
           )}
         </div>
       </section>
-      <CatalogExplorer/>
+      <CatalogExplorer appAcademyUrl={appUrl+"/academy"}/>
     </SiteFrame>
   );
 }

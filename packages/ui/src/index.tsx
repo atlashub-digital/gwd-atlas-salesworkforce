@@ -47,7 +47,17 @@ export function NavIcon({name}:{name:string}){
  oportunidades:"M3 8h18v13H3Z M8 8V4h8v4 M3 13h18 M10 13v3h4v-3",
  pontos:"m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1Z",
  perfil:"M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10 M3 22v-2a9 9 0 0 1 18 0v2",
- configuracoes:"M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2"
+ configuracoes:"M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M12 2v3 M12 19v3 M2 12h3 M19 12h3 M5 5l2 2 M17 17l2 2 M5 19l2-2 M17 7l2-2",
+ campanhas:"M4 10v4h3l8 4V6L7 10H4Z M18.5 9.5a3.5 3.5 0 0 1 0 5",
+ toolkit:"M14.5 6.5a4 4 0 0 0 5 5L21 13l-8 8-2.5-2.5 M10.5 18.5l-7-7a2.1 2.1 0 0 1 3-3l7 7",
+ ranking:"M4 20V12h4v8Z M10 20V6h4v14Z M16 20v-10h4v10Z",
+ vendas:"M5 8h14l-1 12H6L5 8Z M9 10V7a3 3 0 0 1 6 0v3",
+ ganhos:"M3 7h18v12H3Z M3 11h18 M7 15h4",
+ menu:"M4 7h16 M4 12h16 M4 17h16",
+ lock:"M6 11h12v10H6Z M8 11V8a4 4 0 0 1 8 0v3",
+ check:"m5 12 4.5 4.5L19 7",
+ play:"M8 5v14l11-7Z",
+ arrow:"M5 12h14 M13 6l6 6-6 6"
  };
  return <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]??paths.oportunidades}/></svg>;
 }

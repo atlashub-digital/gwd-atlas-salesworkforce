@@ -149,3 +149,9 @@
   .ac-progress-mini .progress{width:100%}
   .ac-player{aspect-ratio:4/3}
 }
+/* Rebuild R5: photo posters and the public episode teaser (watching happens in the member app). */
+.ac-poster--photo{position:relative;overflow:hidden}
+.ac-teaser{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:var(--space-5);align-items:center;margin-top:var(--space-6);padding:var(--space-5);border:1px solid var(--line);border-radius:var(--radius-card);background:var(--gwd-gradient-surface)}
+.ac-teaser h2{font-size:1.3rem;margin:0 0 var(--space-3)}
+.ac-teaser p{margin:0 0 var(--space-5)}
+@media(max-width:759px){.ac-teaser{grid-template-columns:1fr}}
