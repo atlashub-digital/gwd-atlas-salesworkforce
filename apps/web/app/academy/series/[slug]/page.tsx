@@ -3,7 +3,6 @@ import Link from "next/link";
 import {notFound} from "next/navigation";
 import {allSeries, loadSeries} from "../../../../lib/academy/catalog";
 import {formatDuration} from "../../../../lib/academy/progress";
-import {DEMO_PARTICIPANT_TIER} from "../../../../lib/academy/access";
 import SiteFrame from "../../../../components/SiteFrame";
 import SeriesSeasons from "../../components/SeriesSeasons";
 import {DemoBadge, Poster, TierChip} from "../../components/bits";
@@ -23,7 +22,7 @@ export default async function SeriesPage({params}:{params:Promise<{slug:string}>
   return (
     <SiteFrame>
       <section className="ac-series-head" aria-labelledby="ac-series-title">
-        <Poster initials={s.posterInitials} gradient={s.posterGradient} title={s.title}/>
+        <Poster initials={s.posterInitials} gradient={s.posterGradient} title={s.title} slug={s.slug}/>
         <div>
           <span className="eyebrow">Série · {s.category}</span>
           <h1 id="ac-series-title">{s.title}</h1>
@@ -34,7 +33,7 @@ export default async function SeriesPage({params}:{params:Promise<{slug:string}>
             <span className="ac-chip ac-chip--mode">{s.seasons.length} temporada{s.seasons.length > 1 ? "s" : ""}</span>
             <span className="ac-chip ac-chip--mode">{formatDuration(duration)}</span>
           </div>
-          <p className="small muted">{freeCount} episódios abertos · {lockedCount} exigem acesso (participante demo: {DEMO_PARTICIPANT_TIER}) · <DemoBadge/></p>
+          <p className="small muted">{freeCount} episódios abertos · {lockedCount} exigem acesso de membro ou Premium · <DemoBadge/></p>
           <p className="small"><Link className="link" href="/academy">← Voltar à Academy</Link></p>
         </div>
       </section>
