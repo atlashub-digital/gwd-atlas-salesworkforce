@@ -1,0 +1,173 @@
+{
+  "id": "gwd-elisa-duarte-assets",
+  "status": "VISUAL_VALIDATED",
+  "drive_root": "https://drive.google.com/drive/folders/1Wj1FaQ5_rdtOnx3G3eb7T7g505EdiYPy",
+  "folders": {
+    "master": "https://drive.google.com/drive/folders/1PtHIwtGhbxvyJtobEvJvNInnWaFdB6OC",
+    "references": "https://drive.google.com/drive/folders/1eNVSPcOC0Xjcyu9U3KCA7_9eQv989tJR",
+    "portraits": "https://drive.google.com/drive/folders/1EUPKU3a3jtg4nmMF0J-bGYZeQc-Evgy0",
+    "full_body": "https://drive.google.com/drive/folders/1QTMoRWPLp1Xb5suHdsqT89ss9mYttO4X",
+    "work": "https://drive.google.com/drive/folders/1TQQ4ZRjuVxckrJ6hVzmR6dxWiykpOVfQ",
+    "casual_personal": "https://drive.google.com/drive/folders/1kvzIM8xe8t7_iEXR1mdM5goGR5F0Kpws",
+    "events_networking": "https://drive.google.com/drive/folders/1vC1FVyNK-MvhWLjN0PWn55_oY86atigE",
+    "social_media": "https://drive.google.com/drive/folders/1kre-Eu8G8brq6zxP1GIoMr6SFL7MXTd6",
+    "banners_cards": "https://drive.google.com/drive/folders/1XPDieAmDBfx75FykspFT2Pao1Ye0-GtD",
+    "whatsapp_community": "https://drive.google.com/drive/folders/1ZrZjMOdeiJcMSKmv2wCy8nph2HzFpVdP",
+    "lifestyle_personal": "https://drive.google.com/drive/folders/1ZiJFUulLVZMU9VMKdC_i2MPwS4LNIjg_",
+    "social_publications": "https://drive.google.com/drive/folders/1LSU_lln0PSOmNWYj5DA7OwyuqcZF5CP0",
+    "archive": "https://drive.google.com/drive/folders/1fJyncfR7zUiJ5n172w3jxUfrYYMR0Zyz"
+  },
+  "lifestyle_categories": {
+    "selfies": "https://drive.google.com/drive/folders/1_h-V4WPtawjUHpa8qqhx4luIP9u9hqdn",
+    "cafe_routine": "https://drive.google.com/drive/folders/106olzicJ4fowY5UzEKwCAAKGbLINZNfe",
+    "sport_wellbeing": "https://drive.google.com/drive/folders/1ZrB8M32ACVk862Y4zJbP8Xk9WjJ4P8-X",
+    "beach_travel": "https://drive.google.com/drive/folders/1R2oHlg3xP2hOMbm6fsI_jl5yKNCvqyME",
+    "night_events": "https://drive.google.com/drive/folders/1gh2b9GEZfk_zDMCLKLhUJrMYWUXtgOfH",
+    "social_media_casual": "https://drive.google.com/drive/folders/1kay0ZZwgJiVywRUYH6SydzZ3cbxgjKbG"
+  },
+  "social_publication_workflow": {
+    "inbox_human": "https://drive.google.com/drive/folders/1MCVHft954KOkDvIkVzcpDXUSTcerMLZu",
+    "approved_packs": "https://drive.google.com/drive/folders/1-Dyu30sXZFGUNq7gSjK1Un2ttAu14xq8",
+    "elisa_preparation": "https://drive.google.com/drive/folders/1k_6PbgzTWT_hsM5FZJy7xK62GZnYG3Af",
+    "scheduled": "https://drive.google.com/drive/folders/1C55HqI7aOHVR4j486w7TjZWx5PK9LY0v",
+    "published": "https://drive.google.com/drive/folders/1UTVuWcmqLCPBrzrk9yVO1uU_dZMLc1q2",
+    "reuse": "https://drive.google.com/drive/folders/1b0qi2N_jJHpENiSIw2TetfUiXtprLPuc",
+    "archive": "https://drive.google.com/drive/folders/1HusyrBQotDxSg3jbN7EnA6AbRjDrd81V"
+  },
+  "assets": [
+    {
+      "id": "ELISA-MASTER-V01",
+      "name": "Elisa_Duarte_MASTER_Visual_Lock_V01.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1HwXKZx5kGsrAZ2dUq80wBKbH12p_llaX/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-PROFILE-CARD-V01",
+      "name": "Elisa_Duarte_Profile_Card_CANONICAL_V01.png",
+      "status": "CANONICAL",
+      "url": "https://drive.google.com/file/d/1_wSeG7lG5w7XugZ4ZHbiMertXfF321l2/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-PORTRAIT-V01",
+      "name": "Elisa_Duarte_Portrait_Office_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1W_bTT6-6kRdTsTUERJCtv83LPCmlu483/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-FULLBODY-V01",
+      "name": "Elisa_Duarte_FullBody_Office_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1u55RfKsrz590gqn8nb_N7sWaEeh2bCsp/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-WORK-GLOBAL-V01",
+      "name": "Elisa_Duarte_Work_Global_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/12tPmkSwZhXS3lEnQU39lc9qbzXYltHWd/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-WORK-COLLAB-V01",
+      "name": "Elisa_Duarte_Work_Collaboration_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1tVAQXF5rPumNyPsPvQMGk60CDv3tkWGC/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-CASUAL-CAFE-V01",
+      "name": "Elisa_Duarte_Casual_Cafe_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1T2GKrjWypyhFgsDtujebFg8pGJBMlTCU/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-EVENT-V01",
+      "name": "Elisa_Duarte_Event_Networking_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1EaOa-XflikuHkOJDxUPn_1llwA50YkkS/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-SELFIE-V01",
+      "name": "Elisa_Duarte_Lifestyle_Selfie_GoldenHour_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1MK-LQwTlLYeHbirXBXoeKAeXOwukqwQl/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-HOME-V01",
+      "name": "Elisa_Duarte_Lifestyle_Home_Workspace_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1FTx5cBcXdLBMcJ9_8otqC3kmNUXbNPId/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-CAFE-V01",
+      "name": "Elisa_Duarte_Lifestyle_Cafe_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1uovzQVcPvKHu6rY0sgQBIgbj433KMJme/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-PERSONA-BOARD-V01",
+      "name": "Elisa_Duarte_Persona_Board_V01.png",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1Z1u_KMh_QZYagCL34SaaPZKpxV4J-3KT/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-BEACH-V01",
+      "name": "Elisa_Duarte_Lifestyle_Beach_Stroll_V01.png",
+      "class": "lifestyle_personal",
+      "category": "beach_travel",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1ry_QN6rzHOeGMcdzCQedAwI_XDBd4AWK/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-PAJAMA-V01",
+      "name": "Elisa_Duarte_Lifestyle_Pajama_Selfie_V01.png",
+      "class": "lifestyle_personal",
+      "category": "selfies",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1ZKGBNmV2yZKbIfPS38eCNJjGYYhKvJRh/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-MORNING-BEDROOM-V01",
+      "name": "Elisa_Duarte_Lifestyle_Morning_Bedroom_V01.png",
+      "class": "lifestyle_personal",
+      "category": "selfies",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/14IMN2sDWtAbsH1jiA4aYWD3anmrxHBOu/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-BREAKFAST-V01",
+      "name": "Elisa_Duarte_Lifestyle_Breakfast_V01.png",
+      "class": "lifestyle_personal",
+      "category": "cafe_routine",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1K27eA4nxwH9lSR7dXSZH2VFejnH9dMXi/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-PARK-V01",
+      "name": "Elisa_Duarte_Lifestyle_Park_Walk_V01.png",
+      "class": "lifestyle_personal",
+      "category": "sport_wellbeing",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1KMGXB7-5Q-LmgaOREe6TDAQZFWizbxPO/view?usp=drivesdk"
+    },
+    {
+      "id": "ELISA-LIFESTYLE-GYM-V01",
+      "name": "Elisa_Duarte_Lifestyle_Gym_V01.png",
+      "class": "lifestyle_personal",
+      "category": "sport_wellbeing",
+      "status": "APPROVED_VARIANT",
+      "url": "https://drive.google.com/file/d/1shGkzA8uSsa6LSKYjPQcVzSDD-7Jn5Py/view?usp=drivesdk"
+    }
+  ],
+  "references": [
+    {
+      "name": "REF_Elisa_Source_01.png",
+      "status": "REFERENCE_ONLY",
+      "url": "https://drive.google.com/file/d/1--NdI8PlTqTQnyKithZvdVR58Qm2-Qxo/view?usp=drivesdk"
+    },
+    {
+      "name": "REF_Elisa_Source_02.png",
+      "status": "REFERENCE_ONLY",
+      "url": "https://drive.google.com/file/d/1FGNBoxKLkjqOyRtUhtHy9uR2kxfCqhLo/view?usp=drivesdk"
+    }
+  ],
+  "lifecycle_note": "Lifestyle assets are narrative Tier C variants unless separately promoted into Life Canon. They do not create permanent biographical facts.",
+  "updated_at": "2026-10-17"
+}

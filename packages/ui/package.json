@@ -1,0 +1,13 @@
+{
+  "name": "@gwd/ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./styles.css": "./src/styles.css"
+  },
+  "peerDependencies": {
+    "react": "19.2.3"
+  }
+}

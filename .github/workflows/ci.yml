@@ -1,0 +1,81 @@
+name: GWD V1
+on:
+  push:
+    branches: [main, feat/gwd-soft-launch-v1]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:integration
+      - run: pnpm build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+          GWD_API_URL: http://localhost:3138
+          GWD_APP_URL: http://localhost:3001
+          SUPABASE_URL: http://localhost:3139
+          SUPABASE_PUBLISHABLE_KEY: test-publishable
+      - name: Install browser tooling
+        run: |
+          npm install --prefix /tmp/gwd-browser --ignore-scripts --no-audit --no-fund playwright@1.62.1
+          node /tmp/gwd-browser/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Browser E2E with isolated Postgres and Auth stub
+        timeout-minutes: 15
+        env:
+          GWD_API_URL: http://localhost:3138
+          GWD_APP_URL: http://localhost:3001
+          SUPABASE_URL: http://localhost:3139
+          SUPABASE_PUBLISHABLE_KEY: test-publishable
+          PLAYWRIGHT_MODULE: /tmp/gwd-browser/node_modules/playwright
+        run: |
+          # Start fixture and wait for explicit ready signal
+          FIXTURE_LOG=/tmp/gwd-fixture.log
+          pnpm exec tsx tests/browser/fixture.mts > "$FIXTURE_LOG" 2>&1 &
+          FIXTURE_PID=$!
+          # Wait for FIXTURE_READY signal (up to 120s)
+          for i in $(seq 1 120); do
+            if grep -q "FIXTURE_READY" "$FIXTURE_LOG" 2>/dev/null; then
+              echo "Fixture ready after ${i}s"
+              break
+            fi
+            sleep 1
+          done
+          if ! grep -q "FIXTURE_READY" "$FIXTURE_LOG" 2>/dev/null; then
+            echo "ERROR: Fixture did not become ready"
+            cat "$FIXTURE_LOG"
+            exit 1
+          fi
+          # Start web and app servers AFTER fixture is ready
+          pnpm --filter @gwd/web start > /tmp/gwd-web.log 2>&1 &
+          WEB_PID=$!
+          pnpm --filter @gwd/app start > /tmp/gwd-app.log 2>&1 &
+          APP_PID=$!
+          # Wait for all servers to be ready (120s max each)
+          echo "Waiting for API (3138)..."
+          for i in $(seq 1 120); do curl -sf http://localhost:3138/health >/dev/null && break; sleep 1; done
+          echo "Waiting for Web (3000)..."
+          for i in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3000/ >/dev/null && break; sleep 1; done
+          echo "Waiting for App (3001)..."
+          for i in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3001/entrar >/dev/null && break; sleep 1; done
+          node tests/browser/verify.cjs
+      - name: Browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gwd-v1-browser-evidence
+          path: |
+            test-results
+            /tmp/gwd-fixture.log
+            /tmp/gwd-web.log
+            /tmp/gwd-app.log

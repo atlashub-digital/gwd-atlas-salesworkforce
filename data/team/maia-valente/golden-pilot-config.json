@@ -1,0 +1,47 @@
+{
+  "id": "GWD-PERSONA-GP-001",
+  "persona_id": "gwd-maia-valente",
+  "status": "ACTIVE_BUILD",
+  "purpose": "Golden Pilot for persistent digital persona integration across company operations, channels, social presence and controlled lifestyle storytelling.",
+  "truth_sources": {
+    "github": "canonical_technical",
+    "notion": "human_operational",
+    "drive": "visual_media"
+  },
+  "human_controlled": [
+    "master_chronology",
+    "master_editorial_line",
+    "canonical_biography",
+    "major_personal_arcs",
+    "new_recurring_characters",
+    "major_travel",
+    "autonomy_level"
+  ],
+  "layers": [
+    "professional",
+    "lifestyle_simulated",
+    "curiosity_research",
+    "social_interaction"
+  ],
+  "publication_mode": "APPROVAL_REQUIRED",
+  "future_modes": [
+    "AUTONOMOUS_LOW_RISK",
+    "AUTONOMOUS_WITH_GATES"
+  ],
+  "principal_runtime_ref": "SERGIO_PRIMARY",
+  "principal_identifiers_storage": "private_runtime_allowlist_only",
+  "current_phases": {
+    "GP0": "COMPLETE",
+    "GP1": "IN_PROGRESS",
+    "GP2": "PENDING",
+    "GP3": "PENDING",
+    "GP4": "PENDING",
+    "GP5": "PENDING",
+    "GP6": "PENDING"
+  },
+  "simulated_lifestyle": true,
+  "direct_human_impersonation": false,
+  "current_base": "Goiânia, GO, Brasil",
+  "default_language": "pt-BR",
+  "asset_root": "https://drive.google.com/drive/folders/1AHwlUksWeNHqSqVV4IlOcjMTCOpsN_Cj"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@gwd/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@gwd/config": "workspace:*",
+    "@gwd/contracts": "workspace:*",
+    "@gwd/db": "workspace:*",
+    "@gwd/domain": "workspace:*",
+    "tsx": "4.20.6"
+  }
+}

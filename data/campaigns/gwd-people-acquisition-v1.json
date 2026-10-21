@@ -1,0 +1,28 @@
+{
+  "id": "GWD-PEOPLE-ACQUISITION-V1",
+  "status": "DRAFT_VISUAL_READY_FOR_VALIDATION",
+  "date": "2026-10-18",
+  "markets": [
+    "EUROPE",
+    "BRAZIL"
+  ],
+  "paths": [
+    "SOCIAL_MEDIA",
+    "AFFILIATE",
+    "AUTHORIZED_SELLER"
+  ],
+  "funnel": [
+    "LEAD",
+    "COMMUNITY",
+    "QUALIFICATION",
+    "STARTER_TRACK",
+    "AFFILIATE_OR_AUTHORIZED_SELLER"
+  ],
+  "drive_root": "https://drive.google.com/drive/folders/1AfeHPnj68ll9heh1IVZ_cdpuUHMDOa62",
+  "governance": {
+    "employment_claims": false,
+    "guaranteed_income_claims": false,
+    "explicit_partner_positioning": true,
+    "human_approval_required_before_campaign_launch": true
+  }
+}

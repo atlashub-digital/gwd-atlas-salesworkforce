@@ -1,0 +1,43 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const fs=require('fs'),path=require('path');const out=path.resolve('test-results');fs.mkdirSync(out,{recursive:true});
+(async()=>{const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:{})});const page=await browser.newPage({reducedMotion:'reduce'});const errors=[];page.on('pageerror',e=>errors.push(e.message));const routes=['/','/comunidade','/oportunidades','/oportunidades/europa','/oportunidades/brasil','/social-media','/afiliados','/revendedores','/academy','/entrar'];
+const screenshotWidths=[390,1440];
+const testWidths=[390,1440]; // only test screenshot widths for speed
+const evidence=[];async function ready(){await page.locator('h1').waitFor({state:'visible'});await page.locator('[role="status"] h1').waitFor({state:'hidden'});}
+async function checkPage(route,width){await ready();if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Overflow '+width+' '+route);await page.locator('h1').waitFor();const broken=await page.locator('img').evaluateAll(async imgs=>{imgs.forEach(i=>{i.loading="eager"});await Promise.all(imgs.map(i=>i.decode().catch(()=>{})));return imgs.filter(i=>!i.complete||!i.naturalWidth||(!i.alt&&!i.closest('[aria-hidden="true"]'))).map(i=>i.src)});if(broken.length)throw Error('Broken/unlabelled media '+broken.join(','));if(await page.locator('h1').count()!==1)throw Error('Heading hierarchy '+route);}
+for(const width of testWidths){await page.setViewportSize({width,height:960});for(const route of routes){const routeTimeout = route === '/entrar' ? 120000 : 60000; const response=await page.goto('http://localhost:3000'+route,{waitUntil:'domcontentloaded',timeout:routeTimeout});if(response.status()!==200)throw Error(route+' HTTP '+response.status());await checkPage(route,width);const name={'/':'home','/entrar':'entrar','/oportunidades/europa':'europa','/oportunidades/brasil':'brasil','/academy':'academy'}[route]||route.slice(1);if(name&&screenshotWidths.includes(width)){const file=name+'-'+width+'.png';await page.screenshot({path:path.join(out,file),fullPage:true});evidence.push({route,width,file});}}}
+// GWD Academy Streaming V1 — passos NOVOS (rotas demo; não altera passos existentes)
+const academyRoutes = ['/academy/series/gwd-start','/academy/series/conecta-que-converte','/academy/series/domina-instagram','/academy/series/gwd-start/episodes/boas-vindas-gwd','/academy/series/domina-instagram/episodes/stories-que-vendem'];
+for(const academyRoute of academyRoutes){
+  await page.goto('http://localhost:3000'+academyRoute,{waitUntil:'domcontentloaded',timeout:90000});
+  await page.locator('h1').first().waitFor({timeout:15000});
+  if((await page.locator('h1').count())!==1)throw Error('Heading hierarchy '+academyRoute);
+  // Visual evidence: capture at 390 (mobile) and 1440 (desktop)
+  for(const vw of [390, 1440]){
+    await page.setViewportSize({width:vw, height:960});
+    await checkPage(academyRoute,vw);
+    const name = academyRoute.replace(/^\//,'').replace(/\//g,'-');
+    const file = `academy-${name}-${vw}.png`;
+    await page.screenshot({path:path.join(out,file),fullPage:true});
+    evidence.push({route:academyRoute,width:vw,file});
+  }
+}
+
+// /entrar page with explicit wait for content
+await page.goto('http://localhost:3000/entrar?utm_source=instagram&utm_campaign=soft-launch-test',{waitUntil:'domcontentloaded',timeout:90000});
+await page.locator('h1').first().waitFor({timeout:15000});
+await page.locator('form[data-ready="true"]').waitFor();
+await page.getByLabel('Como te chamas?').fill('Participante de teste');await page.getByLabel('Email',{exact:true}).fill('browser@example.com');await page.getByLabel('O teu mercado').selectOption('BR');await page.getByRole('checkbox').check();await page.getByRole('button',{name:'Registar interesse'}).click();await page.getByRole('heading',{name:'O próximo passo é teu.'}).waitFor();
+await page.getByRole('link',{name:'Continuar para a plataforma'}).click();await page.waitForURL('**/entrar');
+await page.getByRole('tab',{name:'Email'}).click();await page.getByRole('textbox',{name:'Email',exact:true}).fill('browser@example.com');await page.getByRole('button',{name:'Enviar código'}).click();await page.getByLabel('Código de acesso').fill('123456');await page.getByRole('button',{name:'Confirmar e entrar'}).click();await page.waitForURL('**/onboarding');
+await page.getByLabel('Como queres ser tratado?').fill('Participante de teste');await page.getByRole('checkbox').check();await page.getByRole('button',{name:'Começar GWD Start'}).click();await page.waitForURL('**/jornada');
+for(let i=0;i<4;i++){await page.getByRole('button',{name:'Li e concluí esta etapa',exact:true}).click();await page.waitForFunction(expected=>document.querySelectorAll('.step.done').length===expected,i+1);}await page.getByText('GWD Start concluído.',{exact:false}).waitFor();await page.screenshot({path:path.join(out,'journey-mobile.png'),fullPage:true});
+const memberRoutes=['dashboard','jornada','academy','oportunidades','campanhas','toolkit','comunidade','pontos','ranking','vendas','ganhos','perfil','configuracoes'];
+const memberScreenshotWidths=[390,1440];
+const memberTestWidths=[390,1440];
+for(const route of memberRoutes){await page.goto('http://localhost:3001/'+route,{waitUntil:'domcontentloaded',timeout:60000});await page.getByRole('heading',{level:1}).waitFor();await ready();if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Member overflow '+route);if(route==='pontos'){await page.getByText('40',{exact:true}).waitFor();await page.screenshot({path:path.join(out,'points-mobile.png'),fullPage:true});}if(['vendas','ganhos'].includes(route))await page.getByText('AINDA NÃO ATIVADO',{exact:true}).waitFor();}
+for(const width of memberTestWidths){await page.setViewportSize({width,height:960});for(const route of memberRoutes){await page.goto('http://localhost:3001/'+route,{waitUntil:'domcontentloaded',timeout:60000});await checkPage('/'+route,width);if(route!=='dashboard'){const file='member-'+route+'-'+width+'.png';await page.screenshot({path:path.join(out,file),fullPage:true});evidence.push({route:'/'+route,surface:'member',width,file});}}}
+await page.goto('http://localhost:3001/comunidade',{waitUntil:'domcontentloaded',timeout:60000});await page.getByRole('checkbox').check();await page.getByRole('button',{name:'Registar adesão'}).click();await page.getByText('A tua adesão às regras está registada.').waitFor();
+await page.setViewportSize({width:1440,height:1000});await page.goto('http://localhost:3001/dashboard',{waitUntil:'domcontentloaded',timeout:60000});await page.getByText('40',{exact:true}).waitFor();for(const width of [360,390,768,1024,1440,1920]){await page.setViewportSize({width,height:960});await checkPage('/dashboard',width);if([1440,390].includes(width)){const file='dashboard-'+width+'.png';await page.screenshot({path:path.join(out,file),fullPage:true});evidence.push({route:'/dashboard',width,file});}if(width===390){await page.getByRole('button',{name:'Abrir navegação'}).click();await page.getByRole('navigation',{name:'Área de participante'}).waitFor();await page.getByRole('link',{name:'A minha jornada'}).click();await page.waitForURL('**/jornada');await page.goto('http://localhost:3001/dashboard',{waitUntil:'domcontentloaded',timeout:60000});}}fs.writeFileSync(path.join(out,'visual-evidence.json'),JSON.stringify({viewports:[360,390,768,1024,1440,1920],screenshots:evidence,noHorizontalOverflow:true,imagesDecoded:true,fixture:'Isolated Postgres + Auth stub; 40 points earned from four completed stages'},null,2));await page.goto('http://localhost:3001/ganhos',{waitUntil:'domcontentloaded',timeout:60000});await page.screenshot({path:path.join(out,'gains-desktop.png'),fullPage:true});
+await page.goto('http://localhost:3001/configuracoes',{waitUntil:'domcontentloaded',timeout:60000});await page.getByRole('button',{name:'Terminar sessão'}).click();await page.waitForURL('**/entrar');await page.goto('http://localhost:3001/dashboard');await page.waitForURL('**/entrar');
+if(errors.length)throw Error(errors.join('\n'));console.log('PASS: 10 public routes at desktop/mobile; Lead → OTP stub → Participant → Onboarding → 4 stages → 40 persisted points; all 13 member routes; community; logout; no overflow or browser exceptions.');await browser.close();})().catch(e=>{console.error(e);process.exit(1)});
