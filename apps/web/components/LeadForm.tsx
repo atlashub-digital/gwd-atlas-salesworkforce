@@ -1,14 +1,16 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 /** Lead registration (POST /api/leads → /v1/leads). Labels and button names are E2E contract (tests/browser/verify.cjs) — do not rename.
  * WhatsApp is visual-only and disabled: the lead contract has no phone field yet, so nothing is sent until the API supports it. */
 export default function LeadForm({appUrl}:{appUrl:string}){
+ const [ready,setReady]=useState(false);
+ useEffect(()=>setReady(true),[]);
  const [state,setState]=useState<"idle"|"loading"|"done"|"error">("idle"),[message,setMessage]=useState("");
  async function submit(event:React.FormEvent<HTMLFormElement>){event.preventDefault();setState("loading");setMessage("");const form=new FormData(event.currentTarget);const data=Object.fromEntries(form);const url=new URL(window.location.href);for(const key of ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"])data[key]=url.searchParams.get(key)??"";
  try{const res=await fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...data,consent:form.get("consent")==="on",source:url.searchParams.get("source")??"web"})});const result=await res.json();if(!res.ok)throw new Error(result.error??"Não foi possível concluir a inscrição.");setState("done");}
  catch(error){setState("error");setMessage(error instanceof Error?error.message:"Tenta novamente.");}}
  if(state==="done")return <section className="lead-done"><span className="eyebrow">Interesse registado</span><h2>O próximo passo é teu.</h2><p>Confirma o teu email para criar ou aceder à tua conta e começar o onboarding.</p><a className="button large" href={appUrl+"/entrar"}>Continuar para a plataforma ↗</a></section>;
- return <form className="lead-form" onSubmit={submit}>
+ return <form data-ready={ready} className="lead-form" onSubmit={submit}>
   <label className="field">Como te chamas?<input name="name" autoComplete="name" placeholder="Nome completo" required maxLength={120}/></label>
   <label className="field">Email<input type="email" name="email" autoComplete="email" inputMode="email" placeholder="nome@exemplo.com" required maxLength={254}/></label>
   <label className="field">O teu mercado<select name="market" required defaultValue=""><option value="" disabled>Seleciona o teu país</option><option value="BR">Brasil</option><option value="EU">Europa</option><option value="OTHER">Outro</option></select></label>
