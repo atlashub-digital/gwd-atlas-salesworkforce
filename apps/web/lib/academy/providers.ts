@@ -35,8 +35,45 @@ export interface DeliveryProvider {
 export const AtlasMediaProvider: DeliveryProvider = {
   kind: "ATLAS_MEDIA",
   capabilities: {resume: true, engagedTracking: true, video: true, reader: false, handoff: false},
-  getAssetUrl: async () => null, // TODO(POST /v1/academy): token curto do media gateway Atlas
-  getResumePosition: async () => null, // TODO(POST /v1/academy): last_position_seconds do servidor
+  /** Resolve URL de playback via Atlas Media Gateway (token curto, HLS/DASH). */
+  getAssetUrl: async (asset: EpisodeAsset): Promise<string | null> => {
+    const gatewayBase = process.env.ATLAS_MEDIA_GATEWAY_URL ?? "https://media.atlashub.io";
+    if (!gatewayBase) return null;
+    try {
+      const response = await fetch(
+        new URL(`/v1/assets/${encodeURIComponent(asset.assetId)}/playback-url`, gatewayBase),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: AbortSignal.timeout(5000),
+        }
+      );
+      if (!response.ok) return null;
+      const data = (await response.json()) as { playbackUrl?: string; expiresAt?: string };
+      return data.playbackUrl ?? null;
+    } catch {
+      return null;
+    }
+  },
+  /** Posição de retoma em segundos (null = sem posição guardada). */
+  getResumePosition: async (asset: EpisodeAsset): Promise<number | null> => {
+    const gatewayBase = process.env.ATLAS_MEDIA_GATEWAY_URL ?? "https://media.atlashub.io";
+    if (!gatewayBase) return null;
+    try {
+      const response = await fetch(
+        new URL(`/v1/assets/${encodeURIComponent(asset.assetId)}/resume-position`, gatewayBase),
+        {
+          method: "GET",
+          signal: AbortSignal.timeout(3000),
+        }
+      );
+      if (!response.ok) return null;
+      const data = (await response.json()) as { positionSeconds?: number };
+      return typeof data.positionSeconds === "number" ? data.positionSeconds : null;
+    } catch {
+      return null;
+    }
+  },
 };
 
 /** WebReader first-class (HYBRID.md): texto tipográfico com progresso de leitura. */

@@ -33,18 +33,57 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
   const [handoff, setHandoff] = useState<{token: string | null; note: string} | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const simRef = useRef<{position: number; engaged: number; timer: ReturnType<typeof setInterval> | null}>({position: 0, engaged: 0, timer: null});
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const lastEngagedRef = useRef<number>(0);
+
+  const handleTimeUpdate = useCallback(() => {
+    if (!videoRef.current) return;
+    const currentTime = videoRef.current.currentTime;
+    const sim = simRef.current;
+    sim.position = Math.min(currentTime, duration);
+    sim.engaged = Math.min(sim.engaged + (currentTime - (lastEngagedRef.current || currentTime)), duration);
+    lastEngagedRef.current = currentTime;
+    setProgress(prev => prev ? {...prev, last_position_seconds: sim.position, engaged_seconds: sim.engaged, progress_percent: duration > 0 ? Math.min(Math.round(sim.position / duration * 100), 99) : 0, status: "IN_PROGRESS"} : prev);
+  }, [duration]);
+
+  const handleEnded = useCallback(() => {
+    setPlaying(false);
+    setEnded(true);
+  }, []);
+
+  const handlePause = useCallback(() => {
+    setPlaying(false);
+  }, []);
+
+  const handlePlay = useCallback(() => {
+    setPlaying(true);
+  }, []);
 
   const videoAsset = episode.assets.find(a => a.kind === "video");
   const readerAsset = episode.assets.find(a => a.kind === "reader");
   const quizAsset = episode.assets.find(a => a.kind === "quiz");
   const resourceAsset = episode.assets.find(a => a.kind === "resource");
   const duration = videoAsset?.durationSeconds ?? episode.durationSeconds;
+  const [playbackUrl, setPlaybackUrl] = useState<string | null>(null);
+  const [loadingUrl, setLoadingUrl] = useState(false);
+
+  // Resolve real playback URL from provider (ATLAS_MEDIA gateway)
+  useEffect(() => {
+    if (videoAsset && (provider.capabilities.video || provider.capabilities.reader)) {
+      setLoadingUrl(true);
+      provider.getAssetUrl(videoAsset).then(url => {
+        setPlaybackUrl(url);
+        setLoadingUrl(false);
+      }).catch(() => setLoadingUrl(false));
+    }
+  }, [videoAsset, provider]);
 
   const load = useCallback(() => {getAllProgress().then(p => setProgress(p[episode.id] ?? null));}, [episode.id]);
   useEffect(() => {load();}, [load]);
 
-  /* Playback simulado do shell demo + heartbeat a cada 25s (GAMIFICATION.md recomenda 20–30s). */
+  /* Playback: real video element when playbackUrl exists; otherwise simulated shell + heartbeat. */
   useEffect(() => {
+    if (playbackUrl) return; // real <video> handles its own playback
     if (!playing) return;
     const tick = () => {
       const sim = simRef.current;
@@ -62,13 +101,18 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
     simRef.current.timer = setInterval(beat, 25000);
     beat();
     return () => {clearInterval(timer); clearInterval(simRef.current.timer!);};
-  }, [playing, duration, episode]);
+  }, [playing, duration, episode, playbackUrl]);
 
   const percent = progress?.progress_percent ?? 0;
   const readerPercent = readerAsset ? Math.round((readSections / (readerAsset.sections?.length ?? 1)) * 100) : 0;
 
   const start = () => {
-    setPlaying(true);
+    if (playbackUrl) {
+      videoRef.current?.play();
+      setPlaying(true);
+    } else {
+      setPlaying(true);
+    }
     setMessage(null);
   };
   const tryComplete = async (method: EpisodeProgress["completion_method"]) => {
@@ -120,12 +164,30 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
     <div>
       {mode === "WEBPLAYER" || (mode === "HYBRID" && tab === "video") ? (
         <div>
-          <div className="ac-player" role="region" aria-label="WebPlayer demo">
+          <div className="ac-player" role="region" aria-label={playbackUrl ? "WebPlayer" : "WebPlayer demo"}>
             <div className="ac-player-inner">
-              <span className="ac-player-badge">WebPlayer · {provider.kind} · demo</span>
-              {!playing && !ended && <button type="button" className="ac-play" aria-label="Reproduzir (demo)" onClick={start}>▶</button>}
-              {playing && <p className="small">A reproduzir (simulação demo)… {formatDuration(simRef.current.position)} / {formatDuration(duration)}</p>}
-              {ended && <p className="small">Fim da simulação. A conclusão segue a regra: ≥90% posição e ≥80% envolvimento.</p>}
+              <span className="ac-player-badge">{playbackUrl ? "WebPlayer · ATLAS_MEDIA" : "WebPlayer · demo"}</span>
+              {playbackUrl ? (
+                <video
+                  ref={videoRef}
+                  controls
+                  className="ac-video"
+                  poster={videoAsset?.metadata?.posterUrl as string | undefined}
+                  onTimeUpdate={handleTimeUpdate}
+                  onEnded={handleEnded}
+                  onPause={handlePause}
+                  onPlay={handlePlay}
+                >
+                  <source src={playbackUrl} type="application/vnd.apple.mpegurl" />
+                  <track kind="captions" src="" default />
+                </video>
+              ) : (
+                <>
+                  {!playing && !ended && <button type="button" className="ac-play" aria-label="Reproduzir (demo)" onClick={start}>▶</button>}
+                  {playing && <p className="small">A reproduzir (simulação demo)… {formatDuration(simRef.current.position)} / {formatDuration(duration)}</p>}
+                  {ended && <p className="small">Fim da simulação. A conclusão segue a regra: ≥90% posição e ≥80% envolvimento.</p>}
+                </>
+              )}
             </div>
             <div className="ac-player-hud">
               <div className="progress" role="progressbar" aria-label="Progresso do vídeo" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}><span style={{width:`${percent}%`}}/></div>
@@ -136,8 +198,17 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
             </div>
           </div>
           <div className="actions" style={{marginTop:"var(--space-4)",display:"flex",gap:"var(--space-3)",flexWrap:"wrap"}}>
-            {playing ? <button type="button" className="button secondary" onClick={() => setPlaying(false)}>Pausar</button> : !ended && <button type="button" className="button" onClick={start}>{progress?.last_position_seconds ? `Retomar em ${formatDuration(progress.last_position_seconds)}` : "Reproduzir"}</button>}
-            <button type="button" className="button secondary" onClick={() => tryComplete("SEEK_GUARDED")}>Marcar posição atual</button>
+            {playbackUrl ? (
+              <>
+                {playing ? <button type="button" className="button secondary" onClick={() => videoRef.current?.pause()}>Pausar</button> : <button type="button" className="button" onClick={() => videoRef.current?.play()}>Reproduzir</button>}
+                <button type="button" className="button secondary" onClick={() => tryComplete("SEEK_GUARDED")}>Marcar posição atual</button>
+              </>
+            ) : (
+              <>
+                {playing ? <button type="button" className="button secondary" onClick={() => setPlaying(false)}>Pausar</button> : !ended && <button type="button" className="button" onClick={start}>{progress?.last_position_seconds ? `Retomar em ${formatDuration(progress.last_position_seconds)}` : "Reproduzir"}</button>}
+                <button type="button" className="button secondary" onClick={() => tryComplete("SEEK_GUARDED")}>Marcar posição atual</button>
+              </>
+            )}
           </div>
           {message && <p className="small" role="status" style={{marginTop:"var(--space-3)"}}>{message}</p>}
         </div>
