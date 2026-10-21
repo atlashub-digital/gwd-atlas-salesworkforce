@@ -56,13 +56,18 @@ jobs:
             cat "$FIXTURE_LOG"
             exit 1
           fi
-          # Start web and app servers
+          # Start web and app servers AFTER fixture is ready
           pnpm --filter @gwd/web start > /tmp/gwd-web.log 2>&1 &
+          WEB_PID=$!
           pnpm --filter @gwd/app start > /tmp/gwd-app.log 2>&1 &
-          # Wait for all servers to be ready (60s max each)
-          for i in $(seq 1 60); do curl -sf http://localhost:3138/health >/dev/null && break; sleep 1; done
-          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3000/ >/dev/null && break; sleep 1; done
-          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3001/entrar >/dev/null && break; sleep 1; done
+          APP_PID=$!
+          # Wait for all servers to be ready (120s max each)
+          echo "Waiting for API (3138)..."
+          for i in $(seq 1 120); do curl -sf http://localhost:3138/health >/dev/null && break; sleep 1; done
+          echo "Waiting for Web (3000)..."
+          for i in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3000/ >/dev/null && break; sleep 1; done
+          echo "Waiting for App (3001)..."
+          for i in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3001/entrar >/dev/null && break; sleep 1; done
           node tests/browser/verify.cjs
       - name: Browser evidence
         if: always()
