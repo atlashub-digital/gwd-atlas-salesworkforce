@@ -1,9 +1,8 @@
-import {useId} from "react";
 import type {ReactNode,HTMLAttributes,AnchorHTMLAttributes} from "react";
 type Children={children:ReactNode;className?:string};
 const cx=(...names:(string|false|null|undefined)[])=>names.filter(Boolean).join(" ");
-/** Own SVG lockup: globe glyph + "GWD" in the blue→cyan brand gradient. */
-export function Brand({label="GoWorld.Digital",className}:{label?:string;className?:string}){const id="gwd"+useId().replace(/[^a-zA-Z0-9_-]/g,"");return <span className={cx("brand",className)}><svg className="brand-lockup" viewBox="0 0 136 40" role="img" aria-label={label}><defs><linearGradient id={id} x1="0" y1="0" x2="1" y2="0.35"><stop offset="0" style={{stopColor:"var(--gwd-blue-500)"}}/><stop offset="1" style={{stopColor:"var(--gwd-cyan-400)"}}/></linearGradient></defs><g fill="none" stroke={"url(#"+id+")"} strokeWidth="2.2" strokeLinecap="round"><circle cx="20" cy="20" r="16.5"/><ellipse cx="20" cy="20" rx="7.4" ry="16.5"/><path d="M4.6 14h30.8M4.6 26h30.8"/></g><circle cx="33.4" cy="9.2" r="3.4" style={{fill:"var(--gwd-cyan-400)"}}/><text x="46" y="29.5" className="brand-word" fill={"url(#"+id+")"}>GWD</text></svg></span>}
+/** Live vector wordmark matching the approved GWD / GoWorld.Digital lockup. */
+export function Brand({label="GoWorld.Digital",className}:{label?:string;className?:string}){return <span className={cx("brand",className)}><svg className="brand-lockup" viewBox="0 0 138 62" role="img" aria-label={label}><text x="0" y="42" style={{fontFamily:"var(--gwd-font-display)",fontWeight:900,fontSize:54,letterSpacing:-5}} fill="var(--gwd-white)">GW<tspan fill="var(--gwd-blue-500)">D</tspan></text><text x="2" y="58" style={{fontFamily:"var(--gwd-font-body)",fontWeight:600,fontSize:13,letterSpacing:-.4}} fill="var(--gwd-white)">GoWorld.<tspan fill="var(--gwd-cyan-400)">Digital</tspan></text></svg></span>}
 export const BrandLockup=Brand;
 export function Container({children,className=""}:Children){return <div className={"container "+className}>{children}</div>}
 export function Section({children,className="",tone,...props}:HTMLAttributes<HTMLElement>&{tone?:"default"|"raised"|"bare"}){return <section className={cx("section",tone&&tone!=="default"&&"section--"+tone,className)} {...props}>{children}</section>}

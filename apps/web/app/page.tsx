@@ -22,12 +22,12 @@ export default function Home(){return <SiteFrame bleed>
  {/* 1. Hero */}
  <section className="home-hero" aria-labelledby="hero-title">
   <Image className="home-editorial-image" src={media.teamGroup.src} alt={media.teamGroup.alt} fill preload sizes="100vw"/>
-  <GlobalNetwork/>
+  <div className="hero-cities" aria-hidden="true"><Image src={media.marketEuropa.src} alt="" fill sizes="55vw"/></div><GlobalNetwork/>
   <Container className="home-hero-grid">
    <div className="home-hero-copy">
     <span className="eyebrow">Comunidade global · Formação · Oportunidades</span>
     <h1 id="hero-title" className="display-xl">Começa no <span className="text-gradient">digital.</span></h1>
-    <p className="lead">Pessoas. Conteúdo. Novos caminhos. Aprende e conecta-te a uma comunidade global.</p>
+    <p className="lead">Pessoas. Conteúdo. Novos caminhos. Uma comunidade sem fronteiras.</p>
     <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
     <p className="home-hero-note">Participar não constitui vínculo de emprego nem garantia de rendimento.</p>
    </div>
