@@ -28,7 +28,7 @@ export default function Entrar(){return <SiteFrame bleed><section className="ent
    <LeadForm appUrl={appUrl}/>
   </div>
   <figure className="entrar-quote">
-   <blockquote><p>“A GWD ajudou-me a transformar o meu interesse em oportunidades reais de aprendizagem, criação e performance.”</p></blockquote>
+   <p>A Maia acompanha os teus primeiros passos na comunidade.</p>
    <figcaption><Image src={media.maia.src} alt="Maia Valente" width={44} height={44} sizes="44px" style={{objectFit:"cover",objectPosition:objectPosition(media.maia)}}/><span><strong>Maia</strong><small>Comunidade GWD · persona digital</small></span></figcaption>
   </figure>
  </div>

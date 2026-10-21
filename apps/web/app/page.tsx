@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {academy} from "@gwd/domain";
 import {Container,Section,SectionHeading,FeatureCard,Card,Status,buttonClass} from "@gwd/ui";
 import SiteFrame from "../components/SiteFrame";
@@ -20,23 +21,19 @@ const Arrow=()=><span className="arrow" aria-hidden="true">→</span>;
 export default function Home(){return <SiteFrame bleed>
  {/* 1. Hero */}
  <section className="home-hero" aria-labelledby="hero-title">
+  <Image className="home-editorial-image" src={media.teamGroup.src} alt={media.teamGroup.alt} fill preload sizes="100vw"/>
   <GlobalNetwork/>
   <Container className="home-hero-grid">
    <div className="home-hero-copy">
     <span className="eyebrow">Comunidade global · Formação · Oportunidades</span>
     <h1 id="hero-title" className="display-xl">Começa no <span className="text-gradient">digital.</span></h1>
-    <p className="lead">Pessoas. Conteúdo. Vendas. Uma comunidade global onde pessoas aprendem, encontram oportunidades, divulgam, vendem e crescem no mercado digital.</p>
+    <p className="lead">Pessoas. Conteúdo. Novos caminhos. Aprende e conecta-te a uma comunidade global.</p>
     <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
     <p className="home-hero-note">Participar não constitui vínculo de emprego nem garantia de rendimento.</p>
    </div>
-   <MediaPanel media={media.teamGroup} className="home-hero-media" scrim="left" glow preload sizes="(max-width:900px) 100vw, 60vw">
-    <figcaption>Diana · Tomás · Elisa · Maia — a equipa digital GWD</figcaption>
-   </MediaPanel>
   </Container>
+  <Container className="hero-benefits"><ValueStrip items={values}/></Container>
  </section>
-
- {/* 2. Value strip */}
- <Container><ValueStrip items={values}/></Container>
 
  {/* 3. O que é a GWD */}
  <Section tone="bare" className="reveal" aria-labelledby="o-que-e"><Container>
