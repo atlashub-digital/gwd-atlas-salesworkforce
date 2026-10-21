@@ -69,53 +69,34 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
 
   // Resolve real playback URL from provider (ATLAS_MEDIA gateway)
   useEffect(() => {
-    if (videoAsset && (provider.capabilities.video || provider.capabilities.reader)) {
+    if (locked) { setPlaybackUrl(null); return; }
+    if (videoAsset && provider.capabilities.video) {
       setLoadingUrl(true);
       provider.getAssetUrl(videoAsset).then(url => {
         setPlaybackUrl(url);
         setLoadingUrl(false);
       }).catch(() => setLoadingUrl(false));
     }
-  }, [videoAsset, provider]);
+  }, [locked, videoAsset, provider]);
 
   const load = useCallback(() => {getAllProgress().then(p => setProgress(p[episode.id] ?? null));}, [episode.id]);
   useEffect(() => {load();}, [load]);
 
-  /* Playback: real video element when playbackUrl exists; otherwise simulated shell + heartbeat. */
+  // No simulated clock: only an authorized video can produce playback heartbeats.
   useEffect(() => {
-    if (playbackUrl) return; // real <video> handles its own playback
-    if (!playing) return;
-    const tick = () => {
-      const sim = simRef.current;
-      sim.position = Math.min(sim.position + 5, duration); // 5s de "playback" por segundo real (demo acelerado)
-      sim.engaged = Math.min(sim.engaged + 5, duration);
-      setProgress(prev => prev ? {...prev, last_position_seconds: sim.position, engaged_seconds: sim.engaged, progress_percent: duration > 0 ? Math.min(Math.round(sim.position / duration * 100), 99) : 0, status: "IN_PROGRESS"} : prev);
-      if (sim.position >= duration) {setPlaying(false); setEnded(true);}
-    };
-    const beat = () => {
-      const sim = simRef.current;
-      // TODO(POST /v1/academy): POST /v1/academy/progress/heartbeat (mock: guarda só em localStorage)
-      sendHeartbeat({episode, lastPositionSeconds: sim.position, engagedSeconds: sim.engaged, durationSeconds: duration}).then(setProgress);
-    };
-    const timer = setInterval(tick, 1000);
-    simRef.current.timer = setInterval(beat, 25000);
-    beat();
-    return () => {clearInterval(timer); clearInterval(simRef.current.timer!);};
-  }, [playing, duration, episode, playbackUrl]);
+    if (locked || !playbackUrl || !playing) return;
+    const timer = setInterval(() => {
+      const current = simRef.current;
+      void sendHeartbeat({episode, lastPositionSeconds: current.position, engagedSeconds: current.engaged, durationSeconds: duration}).then(setProgress);
+    }, 25000);
+    return () => clearInterval(timer);
+  }, [locked, playbackUrl, playing, episode, duration]);
 
   const percent = progress?.progress_percent ?? 0;
   const readerPercent = readerAsset ? Math.round((readSections / (readerAsset.sections?.length ?? 1)) * 100) : 0;
 
-  const start = () => {
-    if (playbackUrl) {
-      videoRef.current?.play();
-      setPlaying(true);
-    } else {
-      setPlaying(true);
-    }
-    setMessage(null);
-  };
   const tryComplete = async (method: EpisodeProgress["completion_method"]) => {
+    if (locked || ((mode === "WEBPLAYER" || (mode === "HYBRID" && tab === "video")) && !playbackUrl)) return;
     if (method === "SEEK_GUARDED") {
       const p = await sendHeartbeat({episode, lastPositionSeconds: simRef.current.position, engagedSeconds: simRef.current.engaged, durationSeconds: duration});
       if (!completionRuleMet(p, ended)) {setMessage("Ainda não cumpre a regra de conclusão (≥90% posição e ≥80% envolvimento). Saltar para o fim não conclui."); setProgress(p); return;}
@@ -145,7 +126,7 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
     const h = await createTelegramHandoff(episode.id);
     setHandoff({token: h.token, note: h.note});
     // TELEGRAM_HANDOFF_OPENED não é conclusão e não dá XP (GAMIFICATION.md).
-    setMessage("TELEGRAM_HANDOFF_OPENED registado (demo). Abrir o Telegram não conclui o episódio.");
+    setMessage(h.note);
   };
 
   if (locked) {
@@ -164,9 +145,9 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
     <div>
       {mode === "WEBPLAYER" || (mode === "HYBRID" && tab === "video") ? (
         <div>
-          <div className="ac-player" role="region" aria-label={playbackUrl ? "WebPlayer" : "WebPlayer demo"}>
+          <div className="ac-player" role="region" aria-label="WebPlayer">
             <div className="ac-player-inner">
-              <span className="ac-player-badge">{playbackUrl ? "WebPlayer · ATLAS_MEDIA" : "WebPlayer · demo"}</span>
+              <span className="ac-player-badge">{playbackUrl ? "WebPlayer · ATLAS_MEDIA" : "AINDA NÃO ATIVADO"}</span>
               {playbackUrl ? (
                 <video
                   ref={videoRef}
@@ -178,13 +159,10 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
                   onPlay={handlePlay}
                 >
                   <source src={playbackUrl} type="application/vnd.apple.mpegurl" />
-                  <track kind="captions" src="" default />
                 </video>
               ) : (
                 <>
-                  {!playing && !ended && <button type="button" className="ac-play" aria-label="Reproduzir (demo)" onClick={start}>▶</button>}
-                  {playing && <p className="small">A reproduzir (simulação demo)… {formatDuration(simRef.current.position)} / {formatDuration(duration)}</p>}
-                  {ended && <p className="small">Fim da simulação. A conclusão segue a regra: ≥90% posição e ≥80% envolvimento.</p>}
+                  <p role="status">{loadingUrl ? "A verificar o acesso…" : "EM PREPARAÇÃO · Este vídeo ainda não está disponível para reprodução."}</p>
                 </>
               )}
             </div>
@@ -204,8 +182,7 @@ export default function EpisodeWorkspace({series, episode, locked}:{series:Serie
               </>
             ) : (
               <>
-                {playing ? <button type="button" className="button secondary" onClick={() => setPlaying(false)}>Pausar</button> : !ended && <button type="button" className="button" onClick={start}>{progress?.last_position_seconds ? `Retomar em ${formatDuration(progress.last_position_seconds)}` : "Reproduzir"}</button>}
-                <button type="button" className="button secondary" onClick={() => tryComplete("SEEK_GUARDED")}>Marcar posição atual</button>
+                <button type="button" className="button" disabled>AINDA NÃO ATIVADO</button>
               </>
             )}
           </div>
