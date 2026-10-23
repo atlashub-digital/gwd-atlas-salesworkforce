@@ -66,20 +66,36 @@ test("Academy media: isolated test episode visible only to preview accounts; pla
   assert.equal((await call("/v1/academy/episodes/teste-media-p01/playback",{})).status,403);
   let called=false;reply=()=>{called=true;return Response.json({});};
   assert.equal((await (await call("/v1/academy/episodes/boas-vindas-gwd/playback",{})).json()).code,"MEDIA_NOT_LINKED");assert.equal(called,false);
-  // P02 Telegram Native pilot: only well-formed t.me message links reach the browser; opening ≠ completing.
+  // P02 Telegram Native pilot (v2: 3 authorized messages): only well-formed t.me links reach the browser; opening ≠ completing.
+  const quiz=JSON.stringify([{id:"q1",prompt:"P1",options:["a","b","c"],correctIndex:1},{id:"q2",prompt:"P2",options:["a","b"],correctIndex:0}]);
   const p02=(await readFile(new URL("../../docs/rebuild/sql/pilot-p02-telegram.sql",import.meta.url),"utf8")).replace(/^rollback;.*$/m,"commit;")
-   .replaceAll("<MSG_URL_1>","https://t.me/c/4305862304/12").replaceAll("<MSG_URL_2>","https://evil.example/phish").replaceAll("<TITULO_1>","Aula 1").replaceAll("<TITULO_2>","Aula 2")
-   .replaceAll("<TEST_EMAIL_A>","Tester@Example.com").replaceAll("<TEST_EMAIL_B>","nobody@example.com");
+   .replace(/<QUIZ_\d>/g,quiz).replaceAll("<TEST_EMAIL_A>","Tester@Example.com").replaceAll("<TEST_EMAIL_B>","nobody@example.com");
   await db.exec(p02);await db.exec(p02);
+  assert.deepEqual((await db.query("select e.slug,a.asset_ref,e.published,(select count(*)::int from gwd.academy_quizzes q where q.episode_id=e.id) quizzes from gwd.academy_episodes e join gwd.academy_episode_assets a on a.episode_id=e.id where e.slug like 'teste-telegram-p02-%' order by e.slug")).rows,
+   [1,2,3].map(n=>({slug:"teste-telegram-p02-"+n,asset_ref:"https://t.me/c/4305862304/"+[326,334,328][n-1],published:false,quizzes:1})));
   const tg1=(await (await call("/v1/academy/episodes/teste-telegram-p02-1")).json()).episode;
   assert.equal(tg1.deliveryMode,"TELEGRAM");
-  assert.deepEqual(tg1.assets.filter((a:{kind:string})=>a.kind==="telegram").map((a:{url?:string})=>a.url),["https://t.me/c/4305862304/12"]);
-  const tg2=(await (await call("/v1/academy/episodes/teste-telegram-p02-2")).json()).episode;
-  assert.deepEqual(tg2.assets.filter((a:{kind:string})=>a.kind==="telegram").map((a:{url?:string;assetId:string})=>[a.url,a.assetId]),[[undefined,"telegram-unlinked"]]);
+  assert.deepEqual(tg1.assets.filter((a:{kind:string})=>a.kind==="telegram").map((a:{url?:string})=>a.url),["https://t.me/c/4305862304/326"]);
+  await db.exec("update gwd.academy_episode_assets set asset_ref='https://evil.example/phish' where asset_ref like '%/328'");
+  const tg3=(await (await call("/v1/academy/episodes/teste-telegram-p02-3")).json()).episode;
+  assert.deepEqual(tg3.assets.filter((a:{kind:string})=>a.kind==="telegram").map((a:{url?:string;assetId:string})=>[a.url,a.assetId]),[[undefined,"telegram-unlinked"]]);
   assert.equal((await call("/v1/academy/episodes/teste-telegram-p02-1",undefined,member)).status,404);
   assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status>=400,true);// no handoff, no quiz
   assert.equal((await call("/v1/academy/telegram-handoff-opened",{episode_id:tg1.id})).status,200);
   assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status>=400,true);// handoff alone never completes (QUIZ_VERIFIED)
   assert.equal((await (await call("/v1/gamification/summary")).json()).points,0);
+  // Defect before 2026-10-23-academy-preview-quiz.sql: the quiz of an unpublished episode is invisible → the episode can never complete.
+  assert.equal((await call("/v1/academy/quiz/teste-telegram-p02-1/submit",{answers:{q1:1,q2:0}})).status,400);
+  await db.exec(await readFile(new URL("../../packages/db/migrations/2026-10-23-academy-preview-quiz.sql",import.meta.url),"utf8"));
+  const shown=(await (await call("/v1/academy/episodes/teste-telegram-p02-1")).json()).episode.assets.find((a:{kind:string})=>a.kind==="quiz");
+  assert.equal(shown.quiz.length,2);assert.ok(!JSON.stringify(shown).includes("correctIndex"));// answers never leave the server
+  assert.equal(await tx(member,async c=>(await c.query("select 1 from gwd.academy_quizzes q join gwd.academy_episodes e on e.id=q.episode_id where e.slug like 'teste-telegram-p02-%'")).rows.length),0);
+  assert.equal((await (await call("/v1/academy/quiz/teste-telegram-p02-1/submit",{answers:{q1:0,q2:1}})).json()).passed,false);
+  assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status>=400,true);// failed quiz → still not complete
+  assert.equal((await (await call("/v1/academy/quiz/teste-telegram-p02-1/submit",{answers:{q1:1,q2:0}})).json()).passed,true);
+  assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status,200);// handoff + passed quiz → complete
+  const p2=(await (await call("/v1/academy/episodes/teste-telegram-p02-2")).json()).episode;
+  assert.equal((await (await call("/v1/academy/quiz/teste-telegram-p02-2/submit",{answers:{q1:1,q2:0}})).json()).passed,true);
+  assert.equal((await call("/v1/academy/progress/complete",{episode_id:p2.id})).status>=400,true);// quiz without handoff → not complete
  }finally{await db.close();}
 });

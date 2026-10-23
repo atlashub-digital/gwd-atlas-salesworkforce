@@ -56,3 +56,4 @@ Formato: data UTC · ambiente · teste · resultado · evidência. IDs de contas
 | 23/10 19:55 | produção, conta A, `free-journey.cjs hls` | `teste-media-p01` → 404 (episódio e playback) | **FAIL** | P01 v4 por aplicar |
 | 23/10 19:58 | Telegram P02 | 3 mensagens propostas são de curso de terceiros (revendedor) → não associadas | **FAIL (direitos)** | conteúdo GWD próprio ou licença escrita + quiz |
 | 23/10 19:58 | ARO | sem projeto `gwd` no `atlashub-finance`; adapter GWD mock, pagamentos OFF | BLOCKED | manifesto + chave de servidor |
+| 23/10 20:35 | integração (PGlite, RLS real) | P02 v2 (`/326`, `/334`, `/328`): quiz de episódio privado invisível → submit 400 (**defeito**); com `academy-preview-quiz.sql`: quiz visível só ao tester, sem respostas; quiz falhado não conclui; quiz sem handoff não conclui; handoff + quiz aprovado conclui | PASS | migração por aplicar (Helena) |
