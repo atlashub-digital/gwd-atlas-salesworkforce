@@ -51,3 +51,8 @@ Formato: data UTC · ambiente · teste · resultado · evidência. IDs de contas
 | 23/10 18:10 | produção API/worker | API `a0ee992` `/ready` 200, 0 erros em 6 h; worker `idle`, `commerce OFF` | PASS | — |
 | 23/10 18:12 | sessões de teste | ficheiros de sessão A/B apagados (`shred`) | — | — |
 | 23/10 18:18 | produção app (Vercel `gwd-app`) | `e67a978` (código `a0ee992`, UI Telegram) promovida por redeploy, autorizada pelo fundador; smoke sem sessão: `/entrar`, `/auth/confirm` 200; `/dashboard`, `/academy`, `/comunidade` → `/entrar`; proxy `me`, comunidade, série Academy 401; caminho fora da allowlist 404 | **PASS** | rollback `dpl_FknDNJQRtgBMST2Ria6ukyEskv37` |
+| 23/10 19:50 | gateway público media | `POST /token` público novo: sem credencial 401, credencial errada 401, sem CORS; 25 tentativas seguidas sem 429; `/binding` 404/405 | **PASS c/ risco** | sem rate limit |
+| 23/10 19:54 | produção, conta A | código entregue por Resend (`noreply@goworld.digital`), login PASS | PASS | rotação da chave não confirmada |
+| 23/10 19:55 | produção, conta A, `free-journey.cjs hls` | `teste-media-p01` → 404 (episódio e playback) | **FAIL** | P01 v4 por aplicar |
+| 23/10 19:58 | Telegram P02 | 3 mensagens propostas são de curso de terceiros (revendedor) → não associadas | **FAIL (direitos)** | conteúdo GWD próprio ou licença escrita + quiz |
+| 23/10 19:58 | ARO | sem projeto `gwd` no `atlashub-finance`; adapter GWD mock, pagamentos OFF | BLOCKED | manifesto + chave de servidor |

@@ -4,6 +4,7 @@
 //   node free-journey.cjs login <A|B> <link>          → opens the emailed link, stores the HttpOnly session in OUT/<A|B>.json
 //   node free-journey.cjs login-wait <A|B> <email>     → real /entrar UI: asks for the code, waits for OUT/code-<A|B>.txt
 //                                                     (the operator copies it from the real inbox), types it, keeps the session
+//   node free-journey.cjs hls [episode]               → test episode (preview grant): playback, CORS, tampered/no token, expiry, negatives
 //   node free-journey.cjs journey                     → onboarding, Academy, video, community (A) + negatives (B), screenshots
 // Needs PLAYWRIGHT_MODULE and OUT (output dir). Session files hold live cookies: keep OUT private and delete it afterwards.
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||"playwright");const fs=require("node:fs");
@@ -29,6 +30,23 @@ const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type
    const cookies=(await ctx.cookies()).filter(c=>c.name.startsWith("gwd-"));if(!cookies.length||cookies.some(c=>!c.httpOnly||!c.secure))throw Error("session cookie not HttpOnly+Secure");
    if(await p.evaluate(()=>document.cookie.includes("gwd-access")))throw Error("session readable from JS");
    await ctx.storageState({path:`${OUT}/${who}.json`});return p.url().replace(APP,"");});return;}
+ if(cmd==="hls"){const ep=args[0]||"teste-media-p01",a=await context(browser,"A"),pa=await a.newPage();let r;
+  await step(pa,"hls-episode-visible",async()=>{await pa.goto(APP+"/dashboard");const e=await api(pa,"academy/episodes/"+ep);if(e.status!==200)throw Error("episode "+e.status+" "+(e.body?.code||""));return e.body?.episode?.title||ep;});
+  await step(pa,"hls-playback",async()=>{await pa.goto(`${APP}/academy/series/gwd-start/episodes/${ep}`);r=await post(pa,`academy/episodes/${ep}/playback`,{});if(r.status!==200)throw Error("playback "+r.status+" "+(r.body?.code||""));
+   await pa.waitForFunction(()=>{const v=document.querySelector("video");return v&&v.readyState>=2;},null,{timeout:45000});await pa.evaluate(()=>{const v=document.querySelector("video");v.muted=true;return v.play();});
+   await pa.waitForFunction(()=>document.querySelector("video").currentTime>2,null,{timeout:45000});await pa.screenshot({path:`${OUT}/05-hls-390.png`,fullPage:true});return "manifest host "+new URL(r.body.manifest_url).host;});
+  if(r?.status===200){const m=r.body.manifest_url,t=new URL(m).searchParams.get("t")||"";
+   await step(pa,"hls-cors",async()=>{const ok=await fetch(m,{headers:{Origin:APP}}),bad=await fetch(m,{headers:{Origin:"https://evil.example"}});const ao=ok.headers.get("access-control-allow-origin"),bo=bad.headers.get("access-control-allow-origin");
+    if(ao!==APP)throw Error("app origin "+ao);if(bo&&bo!=="null")throw Error("foreign origin allowed "+bo);return `app → ${ao}; other → ${bo||"none"}`;});
+   await step(pa,"hls-tampered-403",async()=>{const u=new URL(m),mid=Math.floor(t.length/2);u.searchParams.set("t",t.slice(0,mid)+(t[mid]==="A"?"B":"A")+t.slice(mid+1));const s=(await fetch(u)).status;if(s<400)throw Error(String(s));return String(s);});
+   await step(pa,"hls-no-token-denied",async()=>{const u=new URL(m);u.searchParams.delete("t");const s=(await fetch(u)).status;if(s<400)throw Error(String(s));return String(s);});
+   await step(pa,"hls-other-draft-404",async()=>{const x=await post(pa,"academy/episodes/teste-telegram-p02-1/playback",{});if(x.status!==404)throw Error(String(x.status));return "404";});
+   await step(pa,"hls-premium-denied",async()=>{const x=await post(pa,"academy/episodes/stories-que-vendem/playback",{});if(x.status<400)throw Error(String(x.status));return x.status+" "+(x.body?.code||"");});
+   await step(pa,"hls-not-in-catalogue",async()=>{const s=await api(pa,"academy/series/gwd-start");if(JSON.stringify(s.body).includes(ep))throw Error("test episode listed");return "absent";});
+   const anon=await browser.newContext(),pn=await anon.newPage();await step(pn,"hls-anonymous-401",async()=>{await pn.goto(APP+"/entrar");const x=await post(pn,`academy/episodes/${ep}/playback`,{});if(x.status!==401)throw Error(String(x.status));return "401";});
+   if(process.env.HLS_EXPIRY!=="0")await step(pa,"hls-expired-403",async()=>{let exp;try{exp=JSON.parse(Buffer.from(t.split(".")[0],"base64url").toString()).exp;}catch{}const wait=Math.max(0,(exp?exp*1000-Date.now():305000))+5000;
+    console.log("waiting",Math.round(wait/1000),"s for token expiry");await new Promise(z=>setTimeout(z,wait));const s=(await fetch(m)).status;if(s<400)throw Error(String(s));return String(s)+" after "+Math.round(wait/1000)+" s";});}
+  return;}
  if(cmd!=="journey")throw Error("unknown command");
  const haveB=fs.existsSync(`${OUT}/B.json`);
  const a=await context(browser,"A"),pa=await a.newPage(),b=await context(browser,"B"),pb=await b.newPage();

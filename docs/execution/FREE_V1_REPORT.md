@@ -2,7 +2,22 @@
 
 Fonte única do estado da plataforma para a abertura Free. Evidências detalhadas: `E2E_EVIDENCE_LOG.md`.
 
-## 1. Resultado exigido
+## 0. Relatório final de homologação funcional (23/10/2026 20:00 UTC)
+| # | Item | Resultado | Evidência / causa |
+|---|---|---|---|
+| 1 | HLS na Academy | **FAIL (dependência por aplicar)** | 19:55, conta A real: `teste-media-p01` → 404 (episódio e playback). P01 v4 ainda não aplicado (ou sem concessão para a conta A). A cadeia token → HLS, adulteração 403 e expiração 403 continua PASS (fase 3–4). Teste pronto: `free-journey.cjs hls` (playback, CORS, adulteração, sem token, expiração, outro rascunho 404, premium negado, ausência no catálogo, anónimo 401) |
+| 2 | Telegram Native | **FAIL (direitos)** | As 3 mensagens (`/334`, `/328`, `/326`) são aulas de um curso de terceiros, adquiridas via revendedor (créditos `By @iAzazelOfc` nos ficheiros). Isso não é licença de utilização na GWD, por isso **não as associei** a episódios. Também não há quizzes validados. Mecânica (handoff, links validados, quiz obrigatório) PASS em testes |
+| 3 | SMTP novo | **PARCIAL** | código entregue por `noreply@goworld.digital` às 19:54 e login A PASS; a rotação da chave Resend não está confirmada na Issue #15 → não posso declarar "SMTP novo" |
+
+### Riscos residuais concretos
+1. **`POST https://media.atlashub.si/token` é agora público.** Protegido: 401 sem credencial e com credencial errada, sem CORS para browsers. **Sem limite de tentativas** (25 pedidos seguidos, todos 401, nenhum 429). Risco: força bruta do segredo S2S. Mitigação: rate limit no Caddy ou allowlist de IP (a API usa a rota privada e não precisa da pública).
+2. **`/binding`** não responde em nenhum caminho HTTPS testado (404/405). Não há rota para validar.
+3. **Conteúdo Telegram sem licença.** Usar estas aulas, mesmo num piloto privado, expõe a GWD a reclamação do titular. Para P02 é preciso uma mensagem com conteúdo próprio da GWD (ou com licença escrita) e 1 quiz validado.
+4. **ARO `gwd` não reconciliável.** Não existe `infra/projects/gwd/` no `atlashub-finance` (todas as branches e PRs). As chaves Atlas Media (`gwd.academy.series:gwd-start`) não seguem a convenção ARO (`<projeto>:<código>`). O adapter GWD continua mock com pagamentos OFF. Falta: manifesto `gwd` no repositório ARO + chave de servidor no env da API (Helena).
+5. A chave Resend exposta continua válida até a rotação ser confirmada.
+6. A leitura direta da DB e dos contentores de produção está bloqueada para o Claude Code. As confirmações de migrações dependem do registo da Helena na Issue.
+
+## 1. Resultado exigido (tranche anterior)
 | Item | Estado | Evidência |
 |---|---|---|
 | Autenticação e sessões | **PASS** | link (04:36) e código de 8 dígitos (A 07:04 e 18:07, B 18:07, com o limite de 50/h); cookies HttpOnly+Secure, ilegíveis por JS; sem tokens no URL; logout → 401 |
