@@ -16,6 +16,8 @@ const views=[{name:"1440",width:1440,height:900,target:targetDesktop},{name:"390
   page.on("requestfailed",r=>failed.push(r.url()));page.on("response",r=>r.status()>=400&&failed.push(r.status()+" "+r.url()));
   await page.addInitScript(()=>{window.__lcp=null;new PerformanceObserver(l=>{const e=l.getEntries().at(-1);window.__lcp={t:Math.round(e.startTime),el:e.element?(e.element.tagName+(e.element.className?"."+String(e.element.className).split(" ")[0]:"")):null};}).observe({type:"largest-contentful-paint",buffered:true});});
   await page.goto(url,{waitUntil:"networkidle",timeout:90000});
+  // LCP is read before scrolling: later sections becoming visible must not count as the page's LCP.
+  await page.waitForTimeout(500);const lcp=await page.evaluate(()=>window.__lcp);
   await page.evaluate(async()=>{for(let y=0;y<document.body.scrollHeight;y+=600){window.scrollTo(0,y);await new Promise(r=>setTimeout(r,60));}window.scrollTo(0,0);});
   await page.waitForTimeout(reduced?300:1200);
   const key=v.name+(reduced?"-reduced":"");
@@ -30,7 +32,8 @@ const views=[{name:"1440",width:1440,height:900,target:targetDesktop},{name:"390
    // Links leaving this origin towards localhost/vercel.app are leaks (internal links on a local server are fine).
    localLinks:[...document.querySelectorAll("a[href]")].map(a=>new URL(a.href)).filter(u=>u.origin!==location.origin&&/localhost|127\.0\.0\.1|vercel\.app/.test(u.hostname)).map(u=>u.href),
    runningAnimations:document.getAnimations().filter(a=>a.playState==="running").length,
-   lcp:window.__lcp}));
+   infiniteAnimations:document.getAnimations().filter(a=>a.playState==="running"&&a.effect.getComputedTiming().iterations===Infinity).length}));
+  report.views[key].lcp=lcp;
   Object.assign(report.views[key],{consoleErrors:errors,failedRequests:failed.filter(u=>!/_vercel\/insights|favicon/.test(u))});
   if(v.target&&!reduced&&fs.existsSync(v.target)){
    // Side-by-side: target (scaled to the viewport width) next to the first screen of the implementation.
@@ -46,7 +49,7 @@ const views=[{name:"1440",width:1440,height:900,target:targetDesktop},{name:"390
  await browser.close();
  fs.writeFileSync(`${out}-report.json`,JSON.stringify(report,null,1));
  const bad=Object.entries(report.views).filter(([,r])=>r.overflowX||r.brokenImages.length||r.consoleErrors.length||r.localLinks.length);
- console.log(JSON.stringify(Object.fromEntries(Object.entries(report.views).map(([k,r])=>[k,{overflowX:r.overflowX,broken:r.brokenImages.length,errors:r.consoleErrors.length,noAlt:r.imagesWithoutAlt,unnamed:r.buttonsWithoutName,anims:r.runningAnimations,lcp:r.lcp}]))));
+ console.log(JSON.stringify(Object.fromEntries(Object.entries(report.views).map(([k,r])=>[k,{overflowX:r.overflowX,broken:r.brokenImages.length,errors:r.consoleErrors.length,noAlt:r.imagesWithoutAlt,unnamed:r.buttonsWithoutName,anims:r.runningAnimations,loops:r.infiniteAnimations,lcp:r.lcp}]))));
  console.log(bad.length?"GOLDEN-SHOT: ISSUES in "+bad.map(([k])=>k).join(", "):"GOLDEN-SHOT: OK");
  process.exit(bad.length?1:0);
 })().catch(e=>{console.error(e);process.exit(1);});

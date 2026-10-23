@@ -61,6 +61,10 @@
  --content-width:1280px;
  --ease-out:cubic-bezier(.2,.7,.2,1);
  --duration-hover:.24s;
+ /* Motion System V1 (.claude/skills/gwd-visual-excellence/references/motion-system.md) */
+ --gwd-dur-instant:90ms;--gwd-dur-fast:160ms;--gwd-dur-base:240ms;--gwd-dur-slow:420ms;--gwd-dur-scene:900ms;
+ --gwd-ease-out:cubic-bezier(.22,1,.36,1);--gwd-ease-in-out:cubic-bezier(.65,0,.35,1);--gwd-ease-spring:cubic-bezier(.34,1.56,.64,1);
+ --gwd-stagger:60ms;--gwd-distance-sm:8px;--gwd-distance-md:24px;
 
  font-family:var(--gwd-font-body);background:var(--bg);color:var(--ink);
 }

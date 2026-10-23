@@ -10,7 +10,7 @@ import TeamStrip from "../components/TeamStrip";
 import ValueStrip from "../components/ValueStrip";
 import GlobalNetwork from "../components/GlobalNetwork";
 import Icon from "../components/Icon";
-import {media} from "../lib/media";
+import {media,objectPosition} from "../lib/media";
 import {appEntryUrl} from "../lib/site";
 import {values,pillars,paths,steps,opportunities,team} from "../lib/home";
 
@@ -19,9 +19,13 @@ const Arrow=()=><span className="arrow" aria-hidden="true">→</span>;
 
 export default function Home(){return <SiteFrame bleed>
  {/* 1. Hero — target 01/02 homepage */}
- <section className="home-hero" aria-labelledby="hero-title">
-  <div className="home-hero-photo"><Image src={media.communityGlobal.src} alt={media.communityGlobal.alt} fill preload sizes="(max-width:759px) 100vw, 62vw"/></div>
-  <GlobalNetwork/>
+ <section className="home-hero" aria-labelledby="hero-title" data-parallax>
+  {/* Layer 1 — globe and network (meaning: connection). Layer 2 — canonical people. Layer 3 — cities they can reach. */}
+  <div className="home-hero-globe"><GlobalNetwork live/></div>
+  <div className="home-hero-cities" aria-hidden="true">
+   {[media.heroCityBarcelona,media.heroCityRio,media.heroCitySantorini].map((m,i)=><figure key={m.id} className={"home-hero-city home-hero-city--"+(i+1)}><Image src={m.src} alt="" fill sizes="(max-width:1179px) 40vw, 18vw" style={{objectPosition:objectPosition(m)}}/></figure>)}
+  </div>
+  <div className="home-hero-people"><Image src={media.heroTrio.src} alt={media.heroTrio.alt} fill preload sizes="(max-width:759px) 100vw, 46vw" style={{objectPosition:objectPosition(media.heroTrio)}}/></div>
   <Container className="home-hero-grid">
    <div className="home-hero-copy">
     <span className="eyebrow">Comunidade global · Formação · Oportunidades</span>
