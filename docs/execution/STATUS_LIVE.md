@@ -6,8 +6,8 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15 · HEAD de
 | Gate | Estado | Nota |
 |---|---|---|
 | A — Auditoria/CI | **PASS** (com achados) | `AS_IS_VERIFIED.md`; ADR LearnHouse = KEEP Academy |
-| B — Runtime | **PARTIAL** | API em produção = release imutável `f61d4ce` (blue/green, 23/10 01:00 UTC); worker ainda na workspace (idle, sem impacto); email OTP BLOCKED (SMTP) |
-| C — Comunidade | **PARTIAL** | feed nativo V1 implementado e testado (integração + browser); falta aplicar migração em produção; convites Discord pendentes da missão Helena |
+| B — Runtime | **PARTIAL** | API `f61d4ce` e app `dc12e69` em produção; primeiro login Free real PASS (link de email); SMTP próprio pendente (o interno tem limite horário); worker por SHA preparado |
+| C — Comunidade | **PARTIAL** | feed V1 em produção (migração aplicada, app `f61d4ce`+); teste autenticado real em curso; convites Discord pendentes da missão Helena |
 | D — Academy/media | **PARTIAL** | Academy real em produção; G4 media real FAIL (rota pública/tenant `gwd`); YouTube autorizado por fazer; Telegram Native handoff OK; MTProto BLOCKED_POLICY |
 | E — Novidades/ARO | NOT STARTED | ARO real no mesmo host; adapter GWD mock; sem financeiro live |
 | F — Mentoria/equipas | NOT STARTED | capacidades MENTOR/TEAM_LEAD existem no schema; espaços por capacidade já suportados no feed |
@@ -16,9 +16,9 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15 · HEAD de
 | Serviço | Versão viva | Candidata | Rollback |
 |---|---|---|---|
 | web `gwd` | `aa084be` (`dpl_58bswS2KHJ2t8JY1H1aNsuSW81ma`) | — | `dpl_ECtpAr9rAWUhVmZTzxESEGntzRse` |
-| app `gwd-app` | `aa084be` (`dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js`) | `f61d4ce` (após API) | `dpl_HwvzubH12CshMkaHHoTesAS8kQaR` |
+| app `gwd-app` | **`dc12e69`** (`dpl_FknDNJQRtgBMST2Ria6ukyEskv37`) | — | `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
 | API | **`f61d4ce`** (contentor `gwd-api-f61d4ce`, desde 23/10 01:00 UTC) | — | repor o backup do site Caddy (guardado no host) + `caddy reload` → contentor antigo `gwd-api` (workspace `6b0066a`) continua a correr sem tráfego |
-| DB GWD | schema até `2026-10-20-academy-v1*` | `2026-10-23-community-v1.sql` | bloco ROLLBACK no ficheiro |
+| DB GWD | **+ `2026-10-23-community-v1.sql`** (Helena, H01, com backup) | — | bloco ROLLBACK no ficheiro + backup lógico |
 
 ## Pedidos à Helena (ações sem acesso do executor)
 1. ~~Deploy da API `f61d4ce`~~ — FEITO pelo Claude Code com GO do fundador (23/10). Pedido residual: após 48 h estáveis, `docker stop gwd-api` (contentor antigo) e decidir se o `gwd-worker` também passa a release por SHA.
