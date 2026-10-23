@@ -97,7 +97,7 @@ async function assetsForEpisodes(c: PoolClient, episodeIds: string[]): Promise<M
   if (!episodeIds.length) return assets;
   const rows = (await c.query(
     `select episode_id, kind, provider, asset_ref, metadata from gwd.academy_episode_assets
-      where episode_id = any($1::uuid[]) order by episode_id, position`,
+      where episode_id = any($1::uuid[]) and superseded_at is null order by episode_id, position`,
     [episodeIds],
   )).rows as Array<{episode_id: string; kind: string; provider: string; asset_ref: string; metadata: Json}>;
   for (const row of rows) {
