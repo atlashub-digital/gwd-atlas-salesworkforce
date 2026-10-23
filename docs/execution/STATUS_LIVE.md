@@ -6,7 +6,7 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 | Serviço | Versão ativa | Rollback |
 |---|---|---|
 | web `goworld.digital` (Vercel `gwd`) | `aa084be` (`dpl_58bswS2KHJ2t8JY1H1aNsuSW81ma`) | `dpl_ECtpAr9rAWUhVmZTzxESEGntzRse` |
-| app `app.goworld.digital` (Vercel `gwd-app`) | **`dc12e69`** (`dpl_FknDNJQRtgBMST2Ria6ukyEskv37`); candidata `e67a978` (`dpl_2GKYZCPqZfkx7d2bn1eg9KbFq2ZT`, código da app = `a0ee992`, UI Telegram) READY; promoção a aguardar autorização explícita | `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
+| app `app.goworld.digital` (Vercel `gwd-app`) | **`e67a978`** (`dpl_EV3DtX6S5nCVSpqN46bRibjnr3Co`, código da app = `a0ee992`, UI Telegram; autorizado pelo fundador 23/10 18:17) | `dc12e69` `dpl_FknDNJQRtgBMST2Ria6ukyEskv37` → `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
 | API `api.goworld.digital` | **`a0ee992`** (contentor `gwd-api-a0ee992`; QUIZ_VERIFIED fail-closed, links Telegram validados, concessões de pré-visualização por episódio) | site Caddy anterior → `gwd-api-4c7c5a2` → `gwd-api-987851f` → `gwd-api-f61d4ce` |
 | Worker | **`4c7c5a2`** (contentor `gwd-worker-4c7c5a2`, release por SHA, `commerce OFF`) | `docker start gwd-worker` (antigo, parado com `restart=no`) |
 | DB GWD (Supabase dedicado) | schema até `2026-10-23-community-v1.sql` (H01). `2026-10-23-community-v1-fix-claim.sql` **aplicada** (Helena, 15:20). **Pendente (Helena, com backup):** `2026-10-23-academy-preview.sql` rev. 2 + `pilot-p01-assets.sql` v4 | ROLLBACK em cada ficheiro + backup |
@@ -24,7 +24,6 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 
 ## Pedidos atuais (só operações privilegiadas / decisões)
 1. **Helena** — `2026-10-23-academy-preview.sql` rev. 2 + `pilot-p01-assets.sql` v4 (backup, COMMIT controlado, emails de teste fora do Git). Depois: HLS no browser real (Claude Code).
-2. **Fundador** — autorizar a promoção da app `e67a978` para produção (rollback `dpl_FknDNJQRtgBMST2Ria6ukyEskv37`).
 3. **Equipa do canal** — URLs de 2–3 mensagens de `t.me/c/4305862304`, direitos, quiz e uma conta de teste no canal (`TELEGRAM_NATIVE_PILOT.md`).
 4. **Helena** — rotação da chave Resend (nova validada antes de revogar a antiga).
 5. **Conteúdo** — GWD Start real (`GWD_START_PRODUCTION_PLAN.md`).

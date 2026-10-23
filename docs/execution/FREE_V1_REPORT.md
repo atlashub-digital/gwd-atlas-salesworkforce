@@ -10,7 +10,7 @@ Fonte única do estado da plataforma para a abertura Free. Evidências detalhada
 | Worker e API estáveis | **PASS** | API `a0ee992` `/ready` 200, 0 erros em 6 h; worker `4c7c5a2` `idle`, `commerce OFF` |
 | HLS no episódio técnico | **A AGUARDAR Helena** | cadeia S2S → token → HLS, adulteração 403, expiração 403 já PASS (fase 3–4). Falta: `2026-10-23-academy-preview.sql` rev. 2 e `pilot-p01-assets.sql` v4 aplicados (com backup) → playback no browser real |
 | Telegram Native | **BLOQUEIO EXTERNO** | código pronto e testado (fase 5). Faltam os URLs `https://t.me/c/4305862304/<id>` de 2–3 mensagens: não aparecem em nenhuma fonte autorizada acessível (Drive, Gmail, Issue/PR). O canal é privado; sem conta membro não é possível obtê-los sem MTProto, o que fica excluído por política |
-| App com UI Telegram | **A AGUARDAR autorização** | deployment `e67a978` (código da app = `a0ee992`) READY; a promoção para produção requer autorização explícita do fundador nesta sessão |
+| App com UI Telegram | **PASS** | `e67a978` (código da app = `a0ee992`) em produção às 18:18 (`dpl_EV3DtX6S5nCVSpqN46bRibjnr3Co`); smoke sem sessão: `/entrar` e `/auth/confirm` 200, rotas de membro → `/entrar`, proxy `me`/comunidade/Academy 401, caminho fora da allowlist 404. Rollback `dpl_FknDNJQRtgBMST2Ria6ukyEskv37` |
 
 ## 2. Comunidade A+B — passo a passo (produção, 18:07–18:09 UTC)
 | Passo | Resultado |
@@ -37,7 +37,7 @@ Sessões de teste apagadas com `shred` depois do teste.
 |---|---|---|---|
 | 1 | Aplicar `academy-preview.sql` rev. 2 + `pilot-p01-assets.sql` v4 (backup, COMMIT controlado, emails das contas de teste fora do Git) | Helena | tabela e 2 políticas presentes; episódio `teste-media-p01` não publicado |
 | 2 | HLS no browser real (A), token adulterado/expirado, negativas (outro rascunho, não-tester → 404) | Claude Code | PASS registado |
-| 3 | Promover a app (`e67a978`) | Claude Code, com autorização | smoke `app.goworld.digital` |
+| 3 | ~~Promover a app (`e67a978`)~~ | Claude Code | **feito 18:18** |
 | 4 | Telegram P02: 2–3 URLs de mensagens + direitos + quiz; uma conta de teste no canal | equipa do canal | handoff, membro/não membro, quiz conclui |
 | 5 | Rotação da chave Resend (nova validada antes de revogar a antiga) | Helena | email de código entregue com a chave nova |
 | 6 | Conteúdo real do GWD Start (substitui o catálogo demo) | conteúdo | `GWD_START_PRODUCTION_PLAN.md` fases 2–6 |
