@@ -5,6 +5,7 @@
 //   node free-journey.cjs login-wait <A|B> <email>     → real /entrar UI: asks for the code, waits for OUT/code-<A|B>.txt
 //                                                     (the operator copies it from the real inbox), types it, keeps the session
 //   node free-journey.cjs hls [episode]               → test episode (preview grant): playback, CORS, tampered/no token, expiry, negatives
+//   WHO=A|B node free-journey.cjs telegram [episodes…]  → P02: link to the message, new window + Academy kept, completion only after handoff + passed quiz (answers in OUT/quiz-answers.json)
 //   node free-journey.cjs journey                     → onboarding, Academy, video, community (A) + negatives (B), screenshots
 // Needs PLAYWRIGHT_MODULE and OUT (output dir). Session files hold live cookies: keep OUT private and delete it afterwards.
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||"playwright");const fs=require("node:fs");
@@ -46,6 +47,26 @@ const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type
    const anon=await browser.newContext(),pn=await anon.newPage();await step(pn,"hls-anonymous-401",async()=>{await pn.goto(APP+"/entrar");const x=await post(pn,`academy/episodes/${ep}/playback`,{});if(x.status!==401)throw Error(String(x.status));return "401";});
    if(process.env.HLS_EXPIRY!=="0")await step(pa,"hls-expired-403",async()=>{let exp;try{exp=JSON.parse(Buffer.from(t.split(".")[0],"base64url").toString()).exp;}catch{}const wait=Math.max(0,(exp?exp*1000-Date.now():305000))+5000;
     console.log("waiting",Math.round(wait/1000),"s for token expiry");await new Promise(z=>setTimeout(z,wait));const s=(await fetch(m)).status;if(s<400)throw Error(String(s));return String(s)+" after "+Math.round(wait/1000)+" s";});}
+  return;}
+ if(cmd==="telegram"){// P02: OUT/quiz-answers.json = {"teste-telegram-p02-1":{"q1":0,...},...} (kept out of Git); WHO = A|B
+  const who=process.env.WHO||"A",answers=JSON.parse(fs.readFileSync(`${OUT}/quiz-answers.json`,"utf8")),ctx=await context(browser,who),p=await ctx.newPage();
+  for(const ep of args.length?args:Object.keys(answers)){const url=`${APP}/academy/series/gwd-start/episodes/${ep}`;let id="";
+   await step(p,`tg-${who}-${ep}-link`,async()=>{await p.goto(url);const a=p.getByRole("link",{name:/Abrir a aula no Telegram/});await a.waitFor({timeout:30000});const href=await a.getAttribute("href");
+    if(!/^https:\/\/t\.me\/c\/\d+\/\d+$/.test(href))throw Error("href "+href);if(await a.getAttribute("target")!=="_blank")throw Error("not a new window");id=(await api(p,"academy/episodes/"+ep)).body.episode.id;return href;});
+   await step(p,`tg-${who}-${ep}-not-complete-before`,async()=>{const r=await post(p,"academy/progress/complete",{episode_id:id});if(r.status<400)throw Error("completed without handoff/quiz");return r.status+" "+(r.body?.code||"");});
+   await step(p,`tg-${who}-${ep}-open-and-return`,async()=>{const [tab]=await Promise.all([ctx.waitForEvent("page"),p.getByRole("link",{name:/Abrir a aula no Telegram/}).click()]);
+    await tab.waitForLoadState("domcontentloaded").catch(()=>{});const opened=tab.url();await tab.close();await p.getByText(/Registámos que abriste o Telegram/).waitFor({timeout:20000});
+    if(!p.url().startsWith(url))throw Error("Academy tab moved: "+p.url());await p.screenshot({path:`${OUT}/tg-${who}-${ep}.png`,fullPage:true});return "telegram tab "+new URL(opened).host+"; Academy kept";});
+   await step(p,`tg-${who}-${ep}-handoff-only-not-complete`,async()=>{const r=await post(p,"academy/progress/complete",{episode_id:id});if(r.status<400)throw Error("handoff alone completed");return String(r.status);});
+   const right=answers[ep],wrong=Object.fromEntries(Object.entries(right).map(([k,v])=>[k,v===0?1:0]));
+   await step(p,`tg-${who}-${ep}-wrong-quiz`,async()=>{const r=await post(p,`academy/quiz/${ep}/submit`,{answers:wrong});if(r.status!==200||r.body.passed)throw Error(JSON.stringify(r.body));
+    const c=await post(p,"academy/progress/complete",{episode_id:id});if(c.status<400)throw Error("completed after failed quiz");return "score "+r.body.score+"; complete "+c.status;});
+   await step(p,`tg-${who}-${ep}-quiz-ui-pass-complete`,async()=>{await p.reload();await p.getByRole("heading",{name:"Verificação"}).waitFor({timeout:30000});await p.waitForLoadState("networkidle");
+    const sets=p.locator(".ac-quiz fieldset");const qids=Object.keys(right);for(let i=0;i<qids.length;i++)await sets.nth(i).getByRole("radio").nth(right[qids[i]]).check();
+    await p.getByRole("button",{name:"Submeter respostas"}).click();await p.getByText(/Aprovado\./).waitFor({timeout:20000});
+    await p.getByRole("button",{name:"Marcar como visto"}).click();await p.getByText("Episódio concluído.").waitFor({timeout:20000});
+    const prog=await api(p,"academy/progress?series=gwd-start");const it=prog.body.items.find(i=>i.episodeSlug===ep);if(it?.status!=="COMPLETED")throw Error("progress "+JSON.stringify(it));
+    await p.screenshot({path:`${OUT}/tg-${who}-${ep}-done.png`,fullPage:true});return "COMPLETED";});}
   return;}
  if(cmd!=="journey")throw Error("unknown command");
  const haveB=fs.existsSync(`${OUT}/B.json`);
