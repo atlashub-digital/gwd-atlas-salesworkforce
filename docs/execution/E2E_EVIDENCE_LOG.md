@@ -46,3 +46,7 @@ Formato: data UTC · ambiente · teste · resultado · evidência. IDs de contas
 | 23/10 08:05 | testes (unit + integração PGlite + browser) | QUIZ_VERIFIED concluía só com o handoff Telegram num episódio sem quiz → **corrigido** (fail closed); concessões por episódio: outro rascunho invisível ao mesmo tester (API e RLS direta); links Telegram: só `t.me` bem formados chegam ao browser | PASS | `a0ee992` |
 | 23/10 08:10 | produção API | `a0ee992` por blue/green; `/ready` 200; catálogo sem episódios de teste | PASS | rollback `gwd-api-4c7c5a2` |
 | 23/10 08:15 | produção app | promoção da UI Telegram `a0ee992` | **PENDENTE** | as chamadas ao Vercel falham nesta sessão (hook do cliente); a app atual é compatível com a API nova |
+| 23/10 18:07 | produção, contas reais A e B (códigos de 8 dígitos via Resend; B conta nova) | login por código A e B; HttpOnly+Secure; sem 429 (limite 50/h) | **PASS** | — |
+| 23/10 18:08 | produção, comunidade A+B (`free-journey.cjs journey`) | regras A/B; publicação de A persiste após reload; B vê e responde (201); B remove A → 403; A denuncia a própria → 400; B denuncia A → 200; espaço de capacidade → 403 e não listado; A remove a própria; logout → 401 | **PASS** | correção `fix-claim` aplicada pela Helena |
+| 23/10 18:10 | produção API/worker | API `a0ee992` `/ready` 200, 0 erros em 6 h; worker `idle`, `commerce OFF` | PASS | — |
+| 23/10 18:12 | sessões de teste | ficheiros de sessão A/B apagados (`shred`) | — | — |
