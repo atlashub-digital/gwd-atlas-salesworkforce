@@ -10,13 +10,13 @@ Princípio: cada serviço corre de um **SHA imutável**, com health verificado a
 Ordem: API compatível **primeiro**, frontends depois (a app nunca chama rotas que a API publicada não tenha).
 
 ## 2. API e worker (VPS atlaslab, Docker + Caddy)
-Release dir: `/opt/gwd/releases/<sha>` (só leitura para o contentor). Env: `/opt/gwd/env/api.env` (root 600; mesmas chaves do contentor atual: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, opcionais `ATLAS_MEDIA_*`, `COMMUNITY_*_URL`). Valores nunca em Git nem em logs.
+Release dir: `/opt/gwd/releases/<sha>` (só leitura para o contentor). Env: ficheiro root-only 600 no host (fora de Git; mesmas chaves do contentor atual: `DATABASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, opcionais `ATLAS_MEDIA_*`, `COMMUNITY_*_URL`). Valores nunca em Git nem em logs.
 
 ```bash
 SHA=<commit>; R=/opt/gwd/releases/$SHA
 git -C /root/work/gwd archive $SHA | (mkdir -p $R && tar -x -C $R)
 docker run --rm -v $R:/repo -w /repo node:22-slim sh -c "corepack enable && pnpm install --frozen-lockfile"
-docker run -d --name gwd-api-$SHA --restart unless-stopped --network edge --env-file /opt/gwd/env/api.env \
+docker run -d --name gwd-api-$SHA --restart unless-stopped --network edge --env-file <env-file-600> \
   -v $R:/repo:ro -w /repo/apps/api node:22-slim sh -c "exec ./node_modules/.bin/tsx src/server.ts"
 docker exec gwd-api-$SHA node -e "fetch('http://localhost:8080/ready').then(r=>process.exit(r.ok?0:1))"   # tem de passar
 ```
@@ -24,7 +24,7 @@ Corte (blue/green): em `/opt/platform/caddy/sites/api-goworld.caddy` trocar `rev
 **Rollback:** repor a linha anterior no site Caddy + `caddy reload` (o contentor antigo continua a correr até à validação; só depois `docker stop`).
 Worker: mesmo padrão (`gwd-worker-<sha>`, sem Caddy).
 
-## 3. Migrações de DB (GWD Supabase `hqjljiriqdurgiffczkp`)
+## 3. Migrações de DB (GWD Supabase GWD)
 Só migrações **aditivas**, revistas, com backup imediatamente antes:
 1. Backup lógico do schema `gwd` (`pg_dump -n gwd`) ou PITR snapshot do Supabase — guardar ID/ficheiro.
 2. Aplicar o ficheiro em `packages/db/migrations/` numa transação (os ficheiros já têm `begin/commit`).
