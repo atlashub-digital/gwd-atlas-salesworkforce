@@ -1,10 +1,14 @@
 import { createServer } from "node:http";
+import { createHash } from "node:crypto";
 import { createHandler } from "./handler";
 import { closeDatabase } from "@gwd/db";
 const handle=createHandler();
 const buckets=new Map<string,{count:number;until:number}>();
 const server=createServer(async(req,res)=>{
- const ip=req.socket.remoteAddress??"unknown",now=Date.now();
+ // Behind Caddy every request shares one socket address: key the limit on the bearer token (hashed) when present,
+ // else on the first X-Forwarded-For hop Caddy sets, so members do not share one bucket.
+ const auth=req.headers.authorization,fwd=String(req.headers["x-forwarded-for"]??"").split(",")[0].trim();
+ const ip=auth?"t:"+createHash("sha256").update(auth).digest("hex").slice(0,32):fwd||req.socket.remoteAddress||"unknown",now=Date.now();
  if(buckets.size>10000){for(const [key,value] of buckets)if(value.until<now)buckets.delete(key);if(buckets.size>10000){res.writeHead(503).end();return;}}
  let bucket=buckets.get(ip);if(!bucket||bucket.until<now){bucket={count:0,until:now+60000};buckets.set(ip,bucket);}
  if(++bucket.count>120){res.writeHead(429,{"Retry-After":"60"}).end();return;}

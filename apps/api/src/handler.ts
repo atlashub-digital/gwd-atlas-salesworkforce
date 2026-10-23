@@ -2,6 +2,7 @@ import { flags } from "@gwd/config";
 import { InputError, leadInput, object, profileInput, text, uuid } from "@gwd/contracts";
 import { academy, starterSteps, validStep } from "@gwd/domain";
 import { AcademyError, academyRoute, publicAcademyRoute } from "./academy";
+import { communityRoute } from "./community";
 import { transaction } from "@gwd/db";
 import type { PoolClient } from "pg";
 type Tx = typeof transaction;
@@ -79,6 +80,10 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken) {
     await c.query("insert into gwd.community_memberships(participant_id) values($1) on conflict do nothing",[user.id]);await audit(c,user.id,"community.joined");
     return json({joined:true});
    }
+   // Until 2026-10-23-community-v1.sql is applied the feed tables do not exist (42P01/42883): say so instead of a generic 503.
+   const communityResponse=await communityRoute({request,route,method,c,userId:user.id,json,audit:action=>audit(c,user.id,action)})
+    .catch(error=>{if(["42P01","42883"].includes((error as {code?:string}).code??""))return json({error:"O feed da comunidade está em ativação.",code:"COMMUNITY_FEED_PENDING"},503);throw error;});
+   if(communityResponse)return communityResponse;
    if(route==="/v1/gamification/summary"&&method==="GET") {
     const events=(await c.query("select event_key,points,created_at from gwd.points_events where participant_id=$1 order by created_at",[user.id])).rows;
     return json({points:events.reduce((sum,r)=>sum+Number(r.points),0),events});
