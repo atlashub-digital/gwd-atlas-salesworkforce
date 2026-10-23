@@ -1,4 +1,4 @@
-# STATUS LIVE — GWD delivery lane (atualizado 23/10/2026 05:30 UTC)
+# STATUS LIVE — GWD delivery lane (atualizado 23/10/2026 07:40 UTC)
 
 Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (visual) isolado até homologação da Diana.
 
@@ -7,27 +7,26 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 |---|---|---|
 | web `goworld.digital` (Vercel `gwd`) | `aa084be` (`dpl_58bswS2KHJ2t8JY1H1aNsuSW81ma`) | `dpl_ECtpAr9rAWUhVmZTzxESEGntzRse` |
 | app `app.goworld.digital` (Vercel `gwd-app`) | **`dc12e69`** (`dpl_FknDNJQRtgBMST2Ria6ukyEskv37`) | `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
-| API `api.goworld.digital` | **`987851f`** (contentor `gwd-api-987851f`, release imutável, env com `ATLAS_MEDIA_*`) | site Caddy anterior (backup no host) → `gwd-api-f61d4ce` (a correr, sem tráfego); depois `gwd-api` (workspace, sem tráfego) |
-| Worker | workspace `6b0066a` (idle, `commerce OFF`) | release `f61d4ce` preparada e validada (`booted`) — troca sem efeito funcional |
-| DB GWD (Supabase dedicado) | schema até `2026-10-23-community-v1.sql` (H01, com backup lógico) | bloco ROLLBACK da migração + backup |
+| API `api.goworld.digital` | **`4c7c5a2`** (contentor `gwd-api-4c7c5a2`, release imutável, env com `ATLAS_MEDIA_*`, catalog pela rede privada) | site Caddy anterior → `gwd-api-987851f` → `gwd-api-f61d4ce` (a correr, sem tráfego) |
+| Worker | **`4c7c5a2`** (contentor `gwd-worker-4c7c5a2`, release por SHA, `commerce OFF`) | `docker start gwd-worker` (antigo, parado com `restart=no`) |
+| DB GWD (Supabase dedicado) | schema até `2026-10-23-community-v1.sql` (H01). **Pendentes (Helena, com backup):** `2026-10-23-community-v1-fix-claim.sql` (defeito de produção) e `2026-10-23-academy-preview.sql` | ROLLBACK em cada ficheiro + backup |
 | Atlas Media | gateway HTTPS `media.atlashub.si` (H01), tenant `gwd`, política FREE `gwd-start` | — |
 
 ## Gates
 | Gate | Estado | Evidência / bloqueio |
 |---|---|---|
 | A — Auditoria | **PASS** | `AS_IS_VERIFIED.md`, ADR LearnHouse (KEEP Academy) |
-| B — Runtime | **PARTIAL** | API e app por SHA com rollback. Primeiro login Free real **PASS** (email verdadeiro → link → sessão HttpOnly → dashboard → Academy). SMTP próprio em curso (Helena/Resend); o interno tem limite horário e não deve voltar a ser usado |
-| C — Comunidade | **PARTIAL** | Migração e app em produção. RLS e negativas PASS em integração (PGlite). **Teste autenticado real BLOCKED**: sem nova sessão até o SMTP próprio |
-| D — Media/Academy | **PARTIAL** | Validado no host de media: S2S → token → master/variante/init/segmento 200 + CORS; negativas (sem S2S 401, token adulterado 403, outro asset 403, sem token 401). **BLOCKED** API → catalog (UFW) e ligação episódio → asset (GO do SQL piloto v2). YouTube BLOCKED (conteúdo). Telegram nativo: handoff PASS; binding EP04 BLOCKED (rota). MTProto: BLOCKED_POLICY |
-| E — Novidades/ARO | NOT STARTED | ARO não tem projeto `gwd` (o premium é negado com 502 `aro_unavailable` em vez de 403) |
-| F — Mentoria/equipas | NOT STARTED | capacidades e espaços por capacidade já suportados no feed |
+| B — Runtime/Auth | **PASS** (com 1 residual) | Resend `goworld.digital` ativo; login real por link (04:36) e por código (07:04) PASS; HttpOnly+Secure, sem tokens no URL, logout invalida. Residual: limite de envio de emails do projeto (429 numa 2.ª conta) |
+| C — Comunidade | **FAIL → correção pronta** | Em produção o feed falha (`42501`, função sem USAGE em `auth`). Correção testada em Postgres 17 real, a aplicar pela Helena. Depois: correr de novo `free-journey.cjs` com A e B |
+| D — Media/Academy | **PARTIAL** | API → catalog privado PASS (401/S2S/token); HLS real, adulteração e expiração PASS. Falta: migração de pré-visualização + piloto v3 (GO Diana) → playback no browser real. Conteúdo do curso: BLOCKED (`CONTENT_CONTRACT_GWD_START.md`) |
+| E — Novidades/ARO | NOT STARTED | ARO sem projeto `gwd` |
+| F — Mentoria/equipas | NOT STARTED | espaços por capacidade já suportados |
 
-## Pedidos atuais à Helena (só operações privilegiadas)
-1. **UFW na VPS de media** — permitir só a API GWD, pela rede privada, até ao catalog:
-   `ufw allow from 10.200.200.12 to 10.200.200.11 port 8121 proto tcp comment 'gwd-api -> media catalog (private)'`
-   - Sem exposição pública; o catalog continua a exigir `x-atlas-media-s2s`.
-   - Teste: a partir do `gwd-api-987851f`, `POST http://10.200.200.11:8121/token` sem header → 401.
-   - Rollback: `ufw delete allow from 10.200.200.12 to 10.200.200.11 port 8121 proto tcp`.
-2. **SQL piloto v2** (`docs/rebuild/sql/pilot-p01-assets.sql`), após GO da Diana: com backup, trocar `rollback;` por `commit;`. É idempotente, só altera dados e tem rollback no fim do ficheiro.
-3. **Resend** (em curso): nova API key (a anterior deve ser substituída), domínio `goworld.digital` verificado e templates Signup + Magic Link com `{{ .Token }}` (código) e, para o link, `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email` (a app já trata os dois).
-4. Após 48 h estáveis: `docker stop gwd-api gwd-api-f61d4ce`.
+## Pedidos atuais (só operações privilegiadas / decisões)
+1. **Helena — migração de correção** `packages/db/migrations/2026-10-23-community-v1-fix-claim.sql` (com backup). Aditiva: `create or replace` da mesma função, com os mesmos grants. Teste: o feed abre para um membro com as regras aceites. Rollback: reaplicar o bloco da função de `2026-10-23-community-v1.sql`.
+2. **Helena — migração** `2026-10-23-academy-preview.sql` (com backup): lista de participantes de teste e RLS de pré-visualização. Rollback no ficheiro.
+3. **Diana — GO** do piloto P01 v3 (`docs/rebuild/sql/pilot-p01-assets.sql`): episódio de teste **não publicado** com o clip de 10–12 s; os episódios do curso não mudam. Depois: Helena aplica-o com backup, com os emails das contas de teste (fora do Git).
+4. **Helena — Supabase Auth → Rate limits:** subir o limite de envio de emails (a 2.ª conta de teste recebeu 429).
+5. **Helena — rotação da chave Resend** partilhada em chat (já registada por ela).
+6. **Diana/Elisa — conteúdo do curso**, conforme `docs/execution/CONTENT_CONTRACT_GWD_START.md`.
+7. Após 48 h estáveis: `docker stop gwd-api gwd-api-f61d4ce`; mais tarde, `gwd-api-987851f`.
