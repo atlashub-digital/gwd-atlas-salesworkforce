@@ -19,7 +19,7 @@ const handle=createHandler(tx);
 const api=createServer(async(req,res)=>{const parts:Buffer[]=[];for await(const chunk of req)parts.push(Buffer.from(chunk));const data=Buffer.concat(parts);const response=await handle(new Request("http://test"+req.url,{method:req.method,headers:req.headers as Record<string,string>,...(data.length?{body:new Uint8Array(data)}:{})}));res.writeHead(response.status,Object.fromEntries(response.headers));res.end(await response.text());});
 const auth=createServer(async(req,res)=>{const parts:Buffer[]=[];for await(const chunk of req)parts.push(Buffer.from(chunk));const body=JSON.parse(Buffer.concat(parts).toString()||"{}");res.setHeader("Content-Type","application/json");
 if(req.url==="/auth/v1/user"&&req.headers.authorization==="Bearer browser-test-access"){res.end(JSON.stringify({id,email:"browser@example.com",email_confirmed_at:"2026-10-18T00:00:00Z"}));return;}
-if(req.url==="/auth/v1/otp"){res.end("{}");return;}
+if(req.url?.startsWith("/auth/v1/otp")){res.end("{}");return;}
 if(req.url==="/auth/v1/verify"&&body.token==="123456"){res.end(JSON.stringify({access_token:"browser-test-access",refresh_token:"browser-test-refresh",expires_in:3600}));return;}
 if(req.url==="/auth/v1/logout"){res.end("{}");return;}
 res.writeHead(401);res.end("{}");});
