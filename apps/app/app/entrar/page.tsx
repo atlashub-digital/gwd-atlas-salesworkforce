@@ -12,7 +12,11 @@ async function auth(body:Record<string,unknown>){
 const Status=({error}:{error:string})=><div role="status" aria-live="polite">{error&&<p className="notice error">{error}</p>}</div>;
 export default function SignIn(){
  const [channel,setChannel]=useState<Channel>("whatsapp"),[googleError,setGoogleError]=useState(false),tabs=useRef<(HTMLButtonElement|null)[]>([]);
- useEffect(()=>{if(new URLSearchParams(window.location.search).get("erro")==="google"){setChannel("google");setGoogleError(true);}},[]);
+ useEffect(()=>{
+  // Supabase links that return to the Site URL (/ → /dashboard → /entrar keep the fragment) carry the session here.
+  if(/(^|&)(access_token|error_description)=/.test(window.location.hash.slice(1))){window.location.replace("/auth/confirm"+window.location.hash);return;}
+  if(new URLSearchParams(window.location.search).get("erro")==="google"){setChannel("google");setGoogleError(true);}
+ },[]);
  function onTabKey(event:React.KeyboardEvent,index:number){
   const next={ArrowRight:index+1,ArrowLeft:index-1,Home:0,End:channels.length-1}[event.key];if(next===undefined)return;
   event.preventDefault();const target=(next+channels.length)%channels.length;setChannel(channels[target].id);tabs.current[target]?.focus();
