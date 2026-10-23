@@ -133,6 +133,7 @@
 .feed-post time{color:var(--muted);font-size:12px}
 .feed-body{margin:8px 0 6px;font-size:14px;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
 .feed-post .feed-actions{justify-content:flex-start;gap:4px}
+.ac-telegram-help{margin:var(--space-4) 0 0;padding-left:1.1em;text-align:left;font-size:.85rem;color:var(--muted);display:grid;gap:6px}
 .feed-reply{margin:12px 0 0 18px;padding:12px 14px;border-left:2px solid var(--gwd-cyan-400);border-radius:0 12px 12px 0}
 .feed-report select{color:var(--ink);background:var(--bg);border:1px solid var(--gwd-control-border);border-radius:var(--radius-small);padding:8px 10px;font-size:13px}
 .empty-inline{display:grid;gap:8px;justify-items:start}

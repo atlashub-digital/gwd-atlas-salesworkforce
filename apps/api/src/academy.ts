@@ -43,20 +43,20 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
-/* Unpublished episodes (e.g. media test clips) open only for participants listed in gwd.academy_preview_participants
-   (operator-managed; RLS enforces it too). They are never listed by catalogue/series responses and never count
-   towards series completion. */
-async function previewAllowed(c: PoolClient): Promise<boolean> {
-  // to_regclass never raises: before 2026-10-23-academy-preview.sql is applied this is simply false (no aborted tx).
-  if (!(await c.query<{ok: boolean}>(`select to_regclass('gwd.academy_preview_participants') is not null as ok`)).rows[0]?.ok) return false;
+/* Unpublished episodes (technical pilots) open only through an operator-created grant for THIS participant and THIS
+   episode (gwd.academy_preview_grants; RLS enforces the same rule). Never listed, never counted for completion. */
+async function previewGrantFor(c: PoolClient, ref: string): Promise<boolean> {
+  // to_regclass never raises: before 2026-10-23-academy-preview.sql is applied there are no grants (no aborted tx).
+  if (!(await c.query<{ok: boolean}>(`select to_regclass('gwd.academy_preview_grants') is not null as ok`)).rows[0]?.ok) return false;
+  const where = isUuid(ref) ? "e.id = $1" : "e.slug = $1";
   return (await c.query<{ok: boolean}>(
-    `select exists (select 1 from gwd.academy_preview_participants
-      where participant_id = nullif(current_setting('request.jwt.claim.sub', true), '')::uuid) as ok`)).rows[0]?.ok ?? false;
+    `select exists (select 1 from gwd.academy_preview_grants g join gwd.academy_episodes e on e.id = g.episode_id
+      where ${where} and g.participant_id = nullif(current_setting('request.jwt.claim.sub', true), '')::uuid) as ok`, [ref])).rows[0]?.ok ?? false;
 }
 
 async function episodeByRef(c: PoolClient, ref: string): Promise<EpisodeRow | undefined> {
   const where = isUuid(ref) ? "e.id = $1" : "e.slug = $1";
-  const preview = await previewAllowed(c);
+  const preview = await previewGrantFor(c, ref);
   const result = await c.query<EpisodeRow & {series_id: string; series_slug: string; series_title: string; season_number: number}>(
     `select e.*, sn.position as season_number, s.id as series_id, s.slug as series_slug, s.title as series_title,
             s.entitlement_ref as series_entitlement_ref
@@ -104,6 +104,9 @@ function codeOf(season: number, position: number): string {
 
 type SeriesRow = {id: string; slug: string; title: string; description: string; featured: boolean; access_tier: string; entitlement_ref: string | null};
 
+/** Private channel message (t.me/c/<channel>/<message>) or public channel message (t.me/<username>/<message>). */
+export const telegramMessageUrl = /^https:\/\/t\.me\/(c\/\d{5,16}|[A-Za-z][A-Za-z0-9_]{4,31})\/\d{1,10}$/;
+
 async function assetsForEpisodes(c: PoolClient, episodeIds: string[]): Promise<Map<string, Json[]>> {
   const assets = new Map<string, Json[]>();
   if (!episodeIds.length) return assets;
@@ -116,6 +119,10 @@ async function assetsForEpisodes(c: PoolClient, episodeIds: string[]): Promise<M
     const list = assets.get(row.episode_id) ?? [];
     const meta = row.metadata ?? {};
     const asset: Json = {kind: row.kind.toLowerCase(), assetId: row.asset_ref};
+    // Telegram Native: only a well-formed t.me message link is ever sent to the browser (no arbitrary URLs).
+    if (row.provider === "TELEGRAM" && row.kind === "TELEGRAM") {
+      if (telegramMessageUrl.test(row.asset_ref)) asset.url = row.asset_ref; else asset.assetId = "telegram-unlinked";
+    }
     if (meta.durationSeconds !== undefined) asset.durationSeconds = meta.durationSeconds;
     if (meta.title !== undefined) asset.title = meta.title;
     if (meta.sections !== undefined) asset.sections = meta.sections;
@@ -450,7 +457,8 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     if (heartbeated.status === "COMPLETED") return json({progress: progressJson(heartbeated, episode), completed: true, xp: [], seriesCompleted: false});
 
     const policy = await activePolicy(c, episode.policy_key);
-    const needsQuiz = (await episodeHasQuiz(c, episode.id)) || Boolean(policy.rules.require_quiz);
+    // QUIZ_VERIFIED policies always need a passed quiz; without a quiz the episode can never complete (fail closed).
+    const needsQuiz = (await episodeHasQuiz(c, episode.id)) || Boolean(policy.rules.require_quiz) || policy.rules.completion_method === "QUIZ_VERIFIED";
     const satisfied = policySatisfied(episode.policy_key, policy.rules, {
       positionSeconds: heartbeated.last_position_seconds,
       durationSeconds: episode.duration_seconds ?? 0,

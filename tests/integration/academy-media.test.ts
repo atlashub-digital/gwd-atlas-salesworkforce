@@ -37,7 +37,16 @@ test("Academy media: isolated test episode visible only to preview accounts; pla
   assert.equal((await call("/v1/academy/episodes/teste-media-p01/playback",{},member)).status,404);
   assert.equal(await tx(member,async c=>(await c.query("select 1 from gwd.academy_episodes where slug='teste-media-p01'")).rows.length),0);
   assert.equal(await tx(member,async c=>(await c.query("select 1 from gwd.academy_episode_assets where asset_ref='01K5D8HGF18YCW2KO6VW'")).rows.length),0);
-  await assert.rejects(tx(member,c=>c.query("insert into gwd.academy_preview_participants(participant_id) values($1)",[member])),/permission denied/);
+  await assert.rejects(tx(member,c=>c.query("insert into gwd.academy_preview_grants(participant_id,episode_id) select $1,id from gwd.academy_episodes limit 1",[member])),/permission denied/);
+  // A grant opens ONE episode: another unpublished draft (with its asset) stays invisible to the same tester.
+  await db.exec(`insert into gwd.academy_episodes(season_id,slug,position,title,episode_type,access_tier,policy_key,delivery_mode,published)
+    select season_id,'outro-rascunho',950,'Rascunho','VIDEO','FREE','VIDEO_STANDARD_V1','WEBPLAYER',false from gwd.academy_episodes where slug='teste-media-p01';
+    insert into gwd.academy_episode_assets(episode_id,kind,provider,asset_ref,position) select id,'VIDEO','ATLAS_MEDIA','01K5DB09D1XJY0H2O3HU',1 from gwd.academy_episodes where slug='outro-rascunho';`);
+  assert.equal((await call("/v1/academy/episodes/outro-rascunho")).status,404);
+  assert.equal((await call("/v1/academy/episodes/outro-rascunho/playback",{})).status,404);
+  assert.equal(await tx(tester,async c=>(await c.query("select 1 from gwd.academy_episodes where slug='outro-rascunho'")).rows.length),0);
+  assert.equal(await tx(tester,async c=>(await c.query("select 1 from gwd.academy_episode_assets where asset_ref='01K5DB09D1XJY0H2O3HU'")).rows.length),0);
+  assert.equal(await tx(tester,async c=>(await c.query("select 1 from gwd.academy_episodes where slug='teste-media-p01'")).rows.length),1);
   const detail=await (await call("/v1/academy/episodes/teste-media-p01")).json();
   assert.deepEqual(detail.episode.assets.filter((a:{kind:string})=>a.kind==="video").map((a:{assetId:string})=>a.assetId),["01K5D8HGF18YCW2KO6VW"]);
   // Playback: not configured → fail closed; configured → S2S header + exact catalog request.
@@ -57,5 +66,20 @@ test("Academy media: isolated test episode visible only to preview accounts; pla
   assert.equal((await call("/v1/academy/episodes/teste-media-p01/playback",{})).status,403);
   let called=false;reply=()=>{called=true;return Response.json({});};
   assert.equal((await (await call("/v1/academy/episodes/boas-vindas-gwd/playback",{})).json()).code,"MEDIA_NOT_LINKED");assert.equal(called,false);
+  // P02 Telegram Native pilot: only well-formed t.me message links reach the browser; opening ≠ completing.
+  const p02=(await readFile(new URL("../../docs/rebuild/sql/pilot-p02-telegram.sql",import.meta.url),"utf8")).replace(/^rollback;.*$/m,"commit;")
+   .replaceAll("<MSG_URL_1>","https://t.me/c/4305862304/12").replaceAll("<MSG_URL_2>","https://evil.example/phish").replaceAll("<TITULO_1>","Aula 1").replaceAll("<TITULO_2>","Aula 2")
+   .replaceAll("<TEST_EMAIL_A>","Tester@Example.com").replaceAll("<TEST_EMAIL_B>","nobody@example.com");
+  await db.exec(p02);await db.exec(p02);
+  const tg1=(await (await call("/v1/academy/episodes/teste-telegram-p02-1")).json()).episode;
+  assert.equal(tg1.deliveryMode,"TELEGRAM");
+  assert.deepEqual(tg1.assets.filter((a:{kind:string})=>a.kind==="telegram").map((a:{url?:string})=>a.url),["https://t.me/c/4305862304/12"]);
+  const tg2=(await (await call("/v1/academy/episodes/teste-telegram-p02-2")).json()).episode;
+  assert.deepEqual(tg2.assets.filter((a:{kind:string})=>a.kind==="telegram").map((a:{url?:string;assetId:string})=>[a.url,a.assetId]),[[undefined,"telegram-unlinked"]]);
+  assert.equal((await call("/v1/academy/episodes/teste-telegram-p02-1",undefined,member)).status,404);
+  assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status>=400,true);// no handoff, no quiz
+  assert.equal((await call("/v1/academy/telegram-handoff-opened",{episode_id:tg1.id})).status,200);
+  assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status>=400,true);// handoff alone never completes (QUIZ_VERIFIED)
+  assert.equal((await (await call("/v1/gamification/summary")).json()).points,0);
  }finally{await db.close();}
 });
