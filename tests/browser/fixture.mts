@@ -9,7 +9,8 @@ const db=new PGlite();
 await db.exec("create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;");
 await db.exec(await readFile("packages/db/schema.sql","utf8"));
 // Academy Streaming V1 tables + demo catalogue seed, into this throwaway PGlite only.
-for(const f of ["2026-10-20-academy-v1.sql","2026-10-23-community-v1.sql"])await db.exec(await readFile("packages/db/migrations/"+f,"utf8"));
+for(const f of ["2026-10-20-academy-v1.sql","2026-10-23-community-v1.sql","2026-10-23-community-v1-fix-claim.sql"])await db.exec(await readFile("packages/db/migrations/"+f,"utf8"));
+await db.exec("revoke usage on schema auth from gwd_api");// production parity
 for(const statement of seedStatements())await db.exec(statement);
 const id="00000000-0000-4000-8000-000000000099";
 await db.query("insert into auth.users values($1)",[id]);

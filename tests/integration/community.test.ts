@@ -5,6 +5,9 @@ test("Community V1: rules gate, posts/replies, capability spaces, remove, report
  await db.exec("create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;");
  await db.exec(await readFile(new URL("../../packages/db/schema.sql",import.meta.url),"utf8"));
  await db.exec(await readFile(new URL("../../packages/db/migrations/2026-10-23-community-v1.sql",import.meta.url),"utf8"));
+ // Production parity: the runtime role has no USAGE on schema auth (SQL function bodies are re-parsed per call).
+ await db.exec("revoke usage on schema auth from gwd_api");
+ if(!process.env.SKIP_CLAIM_FIX)await db.exec(await readFile(new URL("../../packages/db/migrations/2026-10-23-community-v1-fix-claim.sql",import.meta.url),"utf8"));
  const ids=["01","02","03","04","05"].map(n=>`00000000-0000-4000-8000-0000000000${n}`),[a,b,c3,d,e]=ids;
  for(const id of ids)await db.query("insert into auth.users values($1)",[id]);
  const tx:typeof transaction=async(userId,run)=>{await db.exec("begin;set local role gwd_api;");try{await db.query("select set_config('request.jwt.claim.sub',$1,true)",[userId??""]);const result=await run(db as unknown as PoolClient);await db.exec("commit");return result;}catch(err){await db.exec("rollback");throw err;}};

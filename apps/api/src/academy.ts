@@ -43,16 +43,28 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
+/* Unpublished episodes (e.g. media test clips) open only for participants listed in gwd.academy_preview_participants
+   (operator-managed; RLS enforces it too). They are never listed by catalogue/series responses and never count
+   towards series completion. */
+async function previewAllowed(c: PoolClient): Promise<boolean> {
+  // to_regclass never raises: before 2026-10-23-academy-preview.sql is applied this is simply false (no aborted tx).
+  if (!(await c.query<{ok: boolean}>(`select to_regclass('gwd.academy_preview_participants') is not null as ok`)).rows[0]?.ok) return false;
+  return (await c.query<{ok: boolean}>(
+    `select exists (select 1 from gwd.academy_preview_participants
+      where participant_id = nullif(current_setting('request.jwt.claim.sub', true), '')::uuid) as ok`)).rows[0]?.ok ?? false;
+}
+
 async function episodeByRef(c: PoolClient, ref: string): Promise<EpisodeRow | undefined> {
   const where = isUuid(ref) ? "e.id = $1" : "e.slug = $1";
+  const preview = await previewAllowed(c);
   const result = await c.query<EpisodeRow & {series_id: string; series_slug: string; series_title: string; season_number: number}>(
     `select e.*, sn.position as season_number, s.id as series_id, s.slug as series_slug, s.title as series_title,
             s.entitlement_ref as series_entitlement_ref
        from gwd.academy_episodes e
        join gwd.academy_seasons sn on sn.id = e.season_id
        join gwd.academy_series s on s.id = sn.series_id
-      where s.status = 'PUBLISHED' and e.published and ${where} limit 1`,
-    [ref],
+      where s.status = 'PUBLISHED' and (e.published or $2::boolean) and ${where} limit 1`,
+    [ref, preview],
   );
   return result.rows[0];
 }
