@@ -1,4 +1,4 @@
-# STATUS LIVE — GWD delivery lane (atualizado 23/10/2026 07:40 UTC)
+# STATUS LIVE — GWD delivery lane (atualizado 23/10/2026 08:20 UTC)
 
 Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (visual) isolado até homologação da Diana.
 
@@ -6,8 +6,8 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 | Serviço | Versão ativa | Rollback |
 |---|---|---|
 | web `goworld.digital` (Vercel `gwd`) | `aa084be` (`dpl_58bswS2KHJ2t8JY1H1aNsuSW81ma`) | `dpl_ECtpAr9rAWUhVmZTzxESEGntzRse` |
-| app `app.goworld.digital` (Vercel `gwd-app`) | **`dc12e69`** (`dpl_FknDNJQRtgBMST2Ria6ukyEskv37`) | `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
-| API `api.goworld.digital` | **`4c7c5a2`** (contentor `gwd-api-4c7c5a2`, release imutável, env com `ATLAS_MEDIA_*`, catalog pela rede privada) | site Caddy anterior → `gwd-api-987851f` → `gwd-api-f61d4ce` (a correr, sem tráfego) |
+| app `app.goworld.digital` (Vercel `gwd-app`) | **`dc12e69`** (`dpl_FknDNJQRtgBMST2Ria6ukyEskv37`); candidata `a0ee992` (UI Telegram) com E2E PASS, promoção pendente (acesso ao Vercel indisponível nesta sessão) | `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
+| API `api.goworld.digital` | **`a0ee992`** (contentor `gwd-api-a0ee992`; QUIZ_VERIFIED fail-closed, links Telegram validados, concessões de pré-visualização por episódio) | site Caddy anterior → `gwd-api-4c7c5a2` → `gwd-api-987851f` → `gwd-api-f61d4ce` |
 | Worker | **`4c7c5a2`** (contentor `gwd-worker-4c7c5a2`, release por SHA, `commerce OFF`) | `docker start gwd-worker` (antigo, parado com `restart=no`) |
 | DB GWD (Supabase dedicado) | schema até `2026-10-23-community-v1.sql` (H01). **Pendentes (Helena, com backup):** `2026-10-23-community-v1-fix-claim.sql` (defeito de produção) e `2026-10-23-academy-preview.sql` | ROLLBACK em cada ficheiro + backup |
 | Atlas Media | gateway HTTPS `media.atlashub.si` (H01), tenant `gwd`, política FREE `gwd-start` | — |
@@ -24,9 +24,10 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 
 ## Pedidos atuais (só operações privilegiadas / decisões)
 1. **Helena — migração de correção** `packages/db/migrations/2026-10-23-community-v1-fix-claim.sql` (com backup). Aditiva: `create or replace` da mesma função, com os mesmos grants. Teste: o feed abre para um membro com as regras aceites. Rollback: reaplicar o bloco da função de `2026-10-23-community-v1.sql`.
-2. **Helena — migração** `2026-10-23-academy-preview.sql` (com backup): lista de participantes de teste e RLS de pré-visualização. Rollback no ficheiro.
-3. **Diana — GO** do piloto P01 v3 (`docs/rebuild/sql/pilot-p01-assets.sql`): episódio de teste **não publicado** com o clip de 10–12 s; os episódios do curso não mudam. Depois: Helena aplica-o com backup, com os emails das contas de teste (fora do Git).
+2. **Helena — migração** `2026-10-23-academy-preview.sql` **rev. 2** (com backup): concessões por participante × episódio e RLS de pré-visualização restrita. Rollback no ficheiro.
+3. **Diana — GO** do piloto P01 v4 (`docs/rebuild/sql/pilot-p01-assets.sql`): episódio de teste **não publicado** com o clip de 10–12 s; os episódios do curso não mudam. Depois: Helena aplica-o com backup, com os emails das contas de teste (fora do Git).
 4. **Helena — Supabase Auth → Rate limits:** subir o limite de envio de emails (a 2.ª conta de teste recebeu 429).
 5. **Helena — rotação da chave Resend** partilhada em chat (já registada por ela).
-6. **Diana/Elisa — conteúdo do curso**, conforme `docs/execution/CONTENT_CONTRACT_GWD_START.md`.
+6. **Diana/Elisa — conteúdo do curso**, conforme `docs/execution/CONTENT_CONTRACT_GWD_START.md`; plano em `GWD_START_PRODUCTION_PLAN.md`.
+8. **Diana/equipa — piloto Telegram P02:** URLs das mensagens, direitos, quiz e acesso ao canal para uma conta de teste (`TELEGRAM_NATIVE_PILOT.md`).
 7. Após 48 h estáveis: `docker stop gwd-api gwd-api-f61d4ce`; mais tarde, `gwd-api-987851f`.

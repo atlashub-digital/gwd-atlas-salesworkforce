@@ -43,3 +43,6 @@ Formato: data UTC · ambiente · teste · resultado · evidência. IDs de contas
 | 23/10 07:35 | produção API | `4c7c5a2` por blue/green (pré-visualização com guarda `to_regclass`); catálogo sem o episódio de teste; catalog privado 401 sem S2S | PASS | rollback → `gwd-api-987851f` |
 | 23/10 07:36 | produção worker | `gwd-worker-4c7c5a2` (release por SHA) `booted`, `commerce OFF`; antigo parado (`restart=no`) | PASS | rollback: `docker start gwd-worker` |
 | 23/10 07:36 | sessões de teste | ficheiros de sessão apagados (`shred`); sessão A já invalidada pelo logout | — | — |
+| 23/10 08:05 | testes (unit + integração PGlite + browser) | QUIZ_VERIFIED concluía só com o handoff Telegram num episódio sem quiz → **corrigido** (fail closed); concessões por episódio: outro rascunho invisível ao mesmo tester (API e RLS direta); links Telegram: só `t.me` bem formados chegam ao browser | PASS | `a0ee992` |
+| 23/10 08:10 | produção API | `a0ee992` por blue/green; `/ready` 200; catálogo sem episódios de teste | PASS | rollback `gwd-api-4c7c5a2` |
+| 23/10 08:15 | produção app | promoção da UI Telegram `a0ee992` | **PENDENTE** | as chamadas ao Vercel falham nesta sessão (hook do cliente); a app atual é compatível com a API nova |
