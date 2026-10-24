@@ -94,6 +94,12 @@ test("Academy media: isolated test episode visible only to preview accounts; pla
   assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status>=400,true);// failed quiz → still not complete
   assert.equal((await (await call("/v1/academy/quiz/teste-telegram-p02-1/submit",{answers:{q1:1,q2:0}})).json()).passed,true);
   assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id})).status,200);// handoff + passed quiz → complete
+  // A second participant on the same Telegram episode must be able to complete too (event keys are per participant).
+  await db.query("insert into gwd.academy_preview_grants(participant_id,episode_id,note) values ($1,$2,'second tester')",[member,tg1.id]);
+  assert.equal((await call("/v1/academy/telegram-handoff-opened",{episode_id:tg1.id},member)).status,200);
+  assert.equal((await (await call("/v1/academy/quiz/teste-telegram-p02-1/submit",{answers:{q1:1,q2:0}},member)).json()).passed,true);
+  assert.equal((await call("/v1/academy/progress/complete",{episode_id:tg1.id},member)).status,200);
+  assert.deepEqual((await db.query("select count(distinct participant_id)::int n from gwd.academy_learning_events where episode_id=$1 and event_type='TELEGRAM_HANDOFF_OPENED'",[tg1.id])).rows,[{n:2}]);
   const p2=(await (await call("/v1/academy/episodes/teste-telegram-p02-2")).json()).episode;
   assert.equal((await (await call("/v1/academy/quiz/teste-telegram-p02-2/submit",{answers:{q1:1,q2:0}})).json()).passed,true);
   assert.equal((await call("/v1/academy/progress/complete",{episode_id:p2.id})).status>=400,true);// quiz without handoff → not complete

@@ -298,7 +298,7 @@ async function upsertHeartbeat(c: PoolClient, participantId: string, episode: Ep
   await c.query(
     `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key)
      values ($1,$2,$3,'EPISODE_STARTED',$4) on conflict (event_key) do nothing`,
-    [participantId, episode.id, episode.series_id, `academy:episode:${episode.id}:started`],
+    [participantId, episode.id, episode.series_id, learningKey(participantId, `academy:episode:${episode.id}:started`)],
   );
   await c.query(
     `insert into gwd.academy_enrollments(participant_id,series_id) values ($1,$2) on conflict do nothing`,
@@ -368,6 +368,10 @@ async function seriesCompletionState(c: PoolClient, participantId: string, serie
   )).rows[0];
   return {total: row.total, completed: row.completed};
 }
+
+/* academy_learning_events.event_key is globally unique: scope it by participant, otherwise the first participant's
+   event (e.g. the Telegram handoff) silently swallows everyone else's and they can never complete the episode. */
+const learningKey = (participantId: string, key: string): string => `${key}:by:${participantId}`;
 
 async function grantXp(c: PoolClient, participantId: string, eventKey: string, points: number): Promise<boolean> {
   const result = await c.query(
@@ -481,7 +485,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     await c.query(
       `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key,payload)
        values ($1,$2,$3,'EPISODE_COMPLETED',$4,$5) on conflict (event_key) do nothing`,
-      [userId, episode.id, episode.series_id, `academy:episode:${episode.id}:completed`, JSON.stringify({policy_key: episode.policy_key, policy_version: policy.version})],
+      [userId, episode.id, episode.series_id, learningKey(userId, `academy:episode:${episode.id}:completed`), JSON.stringify({policy_key: episode.policy_key, policy_version: policy.version})],
     );
     const xp: string[] = [];
     if (await grantXp(c, userId, `academy:episode:${episode.id}:completed`, XP_EPISODE_COMPLETED)) xp.push(`academy:episode:${episode.id}:completed`);
@@ -492,7 +496,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
       await c.query(
         `insert into gwd.academy_learning_events(participant_id,series_id,event_type,event_key)
          values ($1,$2,'SERIES_COMPLETED',$3) on conflict (event_key) do nothing`,
-        [userId, episode.series_id, `academy:series:${episode.series_id}:completed`],
+        [userId, episode.series_id, learningKey(userId, `academy:series:${episode.series_id}:completed`)],
       );
       if (await grantXp(c, userId, `academy:series:${episode.series_id}:completed`, XP_SERIES_COMPLETED)) xp.push(`academy:series:${episode.series_id}:completed`);
     }
@@ -506,7 +510,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     await c.query(
       `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key)
        values ($1,$2,$3,'TELEGRAM_HANDOFF_OPENED',$4) on conflict (event_key) do nothing`,
-      [userId, episode.id, episode.series_id, `academy:episode:${episode.id}:handoff:opened`],
+      [userId, episode.id, episode.series_id, learningKey(userId, `academy:episode:${episode.id}:handoff:opened`)],
     );
     return json({recorded: true}); // sem XP (doc §2.8)
   }
@@ -590,7 +594,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
       await c.query(
         `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key)
          values ($1,$2,$3,'QUIZ_PASSED',$4) on conflict (event_key) do nothing`,
-        [userId, episode.id, episode.series_id, `academy:quiz:${quiz.id}:v${quiz.version}:passed`],
+        [userId, episode.id, episode.series_id, learningKey(userId, `academy:quiz:${quiz.id}:v${quiz.version}:passed`)],
       );
       await grantXp(c, userId, `academy:quiz:${quiz.id}:v${quiz.version}:passed`, XP_QUIZ_PASSED);
     }

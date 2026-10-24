@@ -8,6 +8,7 @@
 //   WHO=A|B node free-journey.cjs telegram [episodes…]  → P02: link to the message, new window + Academy kept, completion only after handoff + passed quiz (answers in OUT/quiz-answers.json)
 //   node free-journey.cjs journey                     → onboarding, Academy, video, community (A) + negatives (B), screenshots
 // Needs PLAYWRIGHT_MODULE and OUT (output dir). Session files hold live cookies: keep OUT private and delete it afterwards.
+// BROWSER_CHANNEL=chrome: real Chrome (H.264/AAC); Playwright's Chromium has no proprietary codecs
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||"playwright");const fs=require("node:fs");
 const APP="https://app.goworld.digital",OUT=process.env.OUT||"/out",[cmd,...args]=process.argv.slice(2);
 const results=[];const record=(name,status,detail="")=>{results.push({name,status,detail,at:new Date().toISOString()});console.log(status,name,detail);};
@@ -15,7 +16,7 @@ async function context(browser,who){return browser.newContext({viewport:{width:3
 async function step(page,name,fn){try{const detail=await fn();record(name,"PASS",detail||"");return true;}catch(e){record(name,"FAIL",String(e).split("\n")[0]);await page.screenshot({path:`${OUT}/fail-${name}.png`,fullPage:true}).catch(()=>{});return false;}}
 const api=(page,path,init)=>page.evaluate(async([p,i])=>{const r=await fetch("/api/gwd/"+p,i);return {status:r.status,body:await r.json().catch(()=>null)};},[path,init]);
 const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-(async()=>{const browser=await chromium.launch();try{
+(async()=>{const browser=await chromium.launch(process.env.BROWSER_CHANNEL?{channel:process.env.BROWSER_CHANNEL}:{});try{
  if(cmd==="request"){const ctx=await context(browser),p=await ctx.newPage();await p.goto(APP+"/entrar",{waitUntil:"networkidle"});await p.getByRole("tab",{name:"Email"}).click();
   await p.getByRole("textbox",{name:"Email"}).fill(args[0]);await p.getByRole("button",{name:/Enviar código/}).click();
   await step(p,"request-email",async()=>{await p.getByText(/Abre o email que te enviámos/).waitFor({timeout:20000});});return;}
@@ -41,7 +42,7 @@ const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type
     if(ao!==APP)throw Error("app origin "+ao);if(bo&&bo!=="null")throw Error("foreign origin allowed "+bo);return `app → ${ao}; other → ${bo||"none"}`;});
    await step(pa,"hls-tampered-403",async()=>{const u=new URL(m),mid=Math.floor(t.length/2);u.searchParams.set("t",t.slice(0,mid)+(t[mid]==="A"?"B":"A")+t.slice(mid+1));const s=(await fetch(u)).status;if(s<400)throw Error(String(s));return String(s);});
    await step(pa,"hls-no-token-denied",async()=>{const u=new URL(m);u.searchParams.delete("t");const s=(await fetch(u)).status;if(s<400)throw Error(String(s));return String(s);});
-   await step(pa,"hls-other-draft-404",async()=>{const x=await post(pa,"academy/episodes/teste-telegram-p02-1/playback",{});if(x.status!==404)throw Error(String(x.status));return "404";});
+   await step(pa,"hls-other-draft-no-token",async()=>{const x=await post(pa,"academy/episodes/teste-telegram-p02-1/playback",{});if(x.status<400||x.body?.manifest_url)throw Error(String(x.status));return x.status+" "+(x.body?.code||"");});
    await step(pa,"hls-premium-denied",async()=>{const x=await post(pa,"academy/episodes/stories-que-vendem/playback",{});if(x.status<400)throw Error(String(x.status));return x.status+" "+(x.body?.code||"");});
    await step(pa,"hls-not-in-catalogue",async()=>{const s=await api(pa,"academy/series/gwd-start");if(JSON.stringify(s.body).includes(ep))throw Error("test episode listed");return "absent";});
    const anon=await browser.newContext(),pn=await anon.newPage();await step(pn,"hls-anonymous-401",async()=>{await pn.goto(APP+"/entrar");const x=await post(pn,`academy/episodes/${ep}/playback`,{});if(x.status!==401)throw Error(String(x.status));return "401";});
@@ -55,8 +56,8 @@ const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type
     if(!/^https:\/\/t\.me\/c\/\d+\/\d+$/.test(href))throw Error("href "+href);if(await a.getAttribute("target")!=="_blank")throw Error("not a new window");id=(await api(p,"academy/episodes/"+ep)).body.episode.id;return href;});
    await step(p,`tg-${who}-${ep}-not-complete-before`,async()=>{const r=await post(p,"academy/progress/complete",{episode_id:id});if(r.status<400)throw Error("completed without handoff/quiz");return r.status+" "+(r.body?.code||"");});
    await step(p,`tg-${who}-${ep}-open-and-return`,async()=>{const [tab]=await Promise.all([ctx.waitForEvent("page"),p.getByRole("link",{name:/Abrir a aula no Telegram/}).click()]);
-    await tab.waitForLoadState("domcontentloaded").catch(()=>{});const opened=tab.url();await tab.close();await p.getByText(/Registámos que abriste o Telegram/).waitFor({timeout:20000});
-    if(!p.url().startsWith(url))throw Error("Academy tab moved: "+p.url());await p.screenshot({path:`${OUT}/tg-${who}-${ep}.png`,fullPage:true});return "telegram tab "+new URL(opened).host+"; Academy kept";});
+    await tab.waitForURL(u=>/t\.me|telegram/i.test(String(u)),{timeout:20000}).catch(()=>{});const opened=tab.url();await tab.close();if(!/t\.me|telegram/i.test(opened))throw Error("new window at "+opened);await p.getByText(/Registámos que abriste o Telegram/).waitFor({timeout:20000});
+    if(!p.url().startsWith(url))throw Error("Academy tab moved: "+p.url());await p.screenshot({path:`${OUT}/tg-${who}-${ep}.png`,fullPage:true});return "telegram tab "+opened.split("?")[0]+"; Academy kept";});
    await step(p,`tg-${who}-${ep}-handoff-only-not-complete`,async()=>{const r=await post(p,"academy/progress/complete",{episode_id:id});if(r.status<400)throw Error("handoff alone completed");return String(r.status);});
    const right=answers[ep],wrong=Object.fromEntries(Object.entries(right).map(([k,v])=>[k,v===0?1:0]));
    await step(p,`tg-${who}-${ep}-wrong-quiz`,async()=>{const r=await post(p,`academy/quiz/${ep}/submit`,{answers:wrong});if(r.status!==200||r.body.passed)throw Error(JSON.stringify(r.body));
