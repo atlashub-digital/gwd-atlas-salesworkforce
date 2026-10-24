@@ -3,7 +3,8 @@ import {useEffect,useRef,useState} from "react";import {Brand} from "@gwd/ui";
 /* Multichannel sign-in (ADR-0005): WhatsApp+senha (primary) · Google · Email (fallback).
  * Email labels/buttons are E2E contract (tests/browser/verify.cjs) — do not rename. Inactive tab panels are not rendered. */
 type Channel="whatsapp"|"google"|"email";
-const channels:readonly {id:Channel;label:string}[]=[{id:"whatsapp",label:"WhatsApp"},{id:"google",label:"Google"},{id:"email",label:"Email"}];
+/** Email is the channel proven end-to-end in production; Google and WhatsApp stay marked beta until their real E2E passes. */
+const channels:readonly {id:Channel;label:string}[]=[{id:"email",label:"Email"},{id:"google",label:"Google · beta"},{id:"whatsapp",label:"WhatsApp · beta"}];
 const dialCodes=[["+55","Brasil +55"],["+351","Portugal +351"],["+34","Espanha +34"],["+33","França +33"],["+41","Suíça +41"],["+352","Luxemburgo +352"],["+44","Reino Unido +44"],["+49","Alemanha +49"],["+39","Itália +39"],["+244","Angola +244"],["+238","Cabo Verde +238"],["+258","Moçambique +258"],["+1","EUA/Canadá +1"]] as const;
 async function auth(body:Record<string,unknown>){
  const response=await fetch("/api/auth",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
@@ -11,7 +12,7 @@ async function auth(body:Record<string,unknown>){
 }
 const Status=({error}:{error:string})=><div role="status" aria-live="polite">{error&&<p className="notice error">{error}</p>}</div>;
 export default function SignIn(){
- const [channel,setChannel]=useState<Channel>("whatsapp"),[googleError,setGoogleError]=useState(false),tabs=useRef<(HTMLButtonElement|null)[]>([]);
+ const [channel,setChannel]=useState<Channel>("email"),[googleError,setGoogleError]=useState(false),tabs=useRef<(HTMLButtonElement|null)[]>([]);
  useEffect(()=>{
   // Supabase links that return to the Site URL (/ → /dashboard → /entrar keep the fragment) carry the session here.
   if(/(^|&)(access_token|error_description)=/.test(window.location.hash.slice(1))){window.location.replace("/auth/confirm"+window.location.hash);return;}
@@ -74,6 +75,8 @@ function GoogleSignIn({failed}:{failed:boolean}){
 /** Email OTP fallback — unchanged flow and labels (E2E + CI auth stub). */
 function EmailSignIn(){
  const [email,setEmail]=useState(""),[code,setCode]=useState(""),[sent,setSent]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ // Arriving from the lead form (?email=…&sent=1): the sign-in email was already sent — go straight to the code.
+ useEffect(()=>{const q=new URLSearchParams(window.location.search),e=q.get("email")??"";if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){setEmail(e.slice(0,254));if(q.get("sent")==="1")setSent(true);}},[]);
  async function submit(event:React.FormEvent<HTMLFormElement>){event.preventDefault();setBusy(true);setError("");
  try{await auth({action:sent?"verify":"request",email,code});if(sent)window.location.assign("/dashboard");else setSent(true);}catch(e){setError(e instanceof Error?e.message:"Tenta novamente.");}finally{setBusy(false);}}
  return <><p>{sent?"Abre o email que te enviámos: usa o link de acesso ou, se o email trouxer um código, introdu-lo aqui.":"Recebe um código por email para criar ou aceder à tua conta."}</p><form className="form" onSubmit={submit}><label className="field">Email<input type="email" required autoComplete="email" maxLength={254} value={email} readOnly={sent} onChange={e=>setEmail(e.target.value)}/></label>{sent&&<label className="field">Código de acesso<input required inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6,10}" value={code} onChange={e=>setCode(e.target.value)}/></label>}<button className="button" disabled={busy}>{busy?"A aguardar…":sent?"Confirmar e entrar ↗":"Enviar código ↗"}</button>{sent&&<button className="button secondary" type="button" onClick={()=>{setSent(false);setCode("");setError("");}}>Usar outro email ou pedir novo código</button>}<Status error={error}/></form></>;

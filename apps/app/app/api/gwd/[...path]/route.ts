@@ -1,7 +1,7 @@
 import {cookies} from "next/headers";
 import {authFetch,clearSession,sameOrigin,saveSession} from "../../../../lib/session";
 const allowed=new Set(["me","journeys","journeys/gwd-start/progress","academy","opportunities","community","gamification/summary","feature-flags",
- "academy/series","academy/progress","academy/progress/heartbeat","academy/progress/complete","academy/progress/summary","academy/telegram-handoff-opened"]);
+ "academy/series","academy/progress","ops/funnel","academy/progress/heartbeat","academy/progress/complete","academy/progress/summary","academy/telegram-handoff-opened"]);
 /** Academy Streaming resources addressed by slug/id; anything else stays blocked. */
 const academyPattern=/^academy\/(series\/[a-z0-9-]+|episodes\/[a-z0-9-]+(\/playback)?|quiz\/[a-z0-9-]+\/submit)$/;
 /** Community V1: spaces, a space's posts, and remove/report on one post. */
@@ -21,6 +21,7 @@ async function proxy(request:Request,{params}:{params:Promise<{path:string[]}>})
   const body=request.method==="GET"?undefined:await request.text();
   if(body&&body.length>16384)return Response.json({error:"Pedido demasiado grande."},{status:413});
   const target=new URL("/v1/"+route,base);const series=new URL(request.url).searchParams.get("series");if(route==="academy/progress"&&series)target.searchParams.set("series",series);
+  const days=new URL(request.url).searchParams.get("days");if(route==="ops/funnel"&&days&&/^\d{1,3}$/.test(days))target.searchParams.set("days",days);
   const response=await fetch(target,{method:request.method,headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body,cache:"no-store",signal:AbortSignal.timeout(12000)});
   if(response.status===401)await clearSession();
   return new Response(await response.text(),{status:response.status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});

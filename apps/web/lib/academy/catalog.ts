@@ -144,6 +144,7 @@ export const demoSeries: Series[] = [
   },
 ];
 
+const published = new Set(series.map(s => s.slug));
 export const categories: string[] = [...new Set(series.map(s => s.category))];
 
 /* ---------- API-first (GWD_API_URL, server components) com fallback ao estático ---------- */
@@ -216,11 +217,13 @@ function mapApiSeries(raw: Record<string, unknown>): Series | null {
 export async function loadAllSeries(): Promise<{series: Series[]; source: CatalogSource}> {
   const data = await apiGetJson("/v1/academy/series");
   const items = data && Array.isArray(data.items) ? data.items : null;
-  const mapped = items ? items.map(s => mapApiSeries(s as Record<string, unknown>)).filter((s): s is Series => s !== null) : [];
+  // Public web shows only the versioned catalogue (demo fixtures never leak, whatever the DB state).
+  const mapped = items ? items.map(s => mapApiSeries(s as Record<string, unknown>)).filter((s): s is Series => s !== null && published.has(s.slug)) : [];
   return mapped.length ? {series: mapped, source: "api"} : {series, source: "static"};
 }
 
 export async function loadSeries(slug: string): Promise<{series: Series; source: CatalogSource} | null> {
+  if (!published.has(slug)) return null;
   const data = await apiGetJson(`/v1/academy/series/${encodeURIComponent(slug)}`);
   const raw = data && data.series ? mapApiSeries(data.series as Record<string, unknown>) : null;
   if (raw) return {series: raw, source: "api"};

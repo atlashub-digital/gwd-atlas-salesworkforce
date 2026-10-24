@@ -360,3 +360,7 @@
  .ac-reader{grid-template-columns:1fr}
  .ac-episode-actions .button{flex:1}
 }
+.ops-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+.ops-kpi{display:grid;gap:4px}.ops-kpi strong{font-size:1.8rem}
+.ops-table{display:grid;gap:2px;font-size:14px}.ops-row{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ops-row span:first-child{overflow-wrap:anywhere}.ops-head{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
