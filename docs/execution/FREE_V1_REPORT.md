@@ -6,7 +6,7 @@ Referência de execução: [PR #16](https://github.com/atlashub-digital/gwd-atla
 ## 1. Versões em produção
 | Serviço | Versão | Rollback |
 |---|---|---|
-| web `goworld.digital` (Vercel `gwd`) | `c73502e` — Hero Cinematográfico V1 (`dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh`) | `dpl_4FpJc9oEAAZAYKo1ctjxG6yfxKHm` |
+| web `goworld.digital` (Vercel `gwd`) | `1cef61d` — Hero Cinematográfico V1, aprovado (`dpl_AuC4mrc5hx3n1ueuFpTFTmBTnqad`) | `dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh` |
 | app `app.goworld.digital` (Vercel `gwd-app`) | `4c071b6` (`dpl_ELYtRQixoZxsf87AaGFPGH5K86qk`) | `dpl_8jZthMSez7mtiQs9FhVZkHdtGzn1` |
 | API `api.goworld.digital` | `4c071b6` (contentor `gwd-api-4c071b6`, release por SHA) | site Caddy → `gwd-api-89bb8e2` → `gwd-api-16178c7` |
 | Worker | `4c7c5a2` (`commerce OFF`) | `docker start gwd-worker` |

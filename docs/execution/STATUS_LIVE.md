@@ -5,7 +5,7 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 ## Serviços em produção
 | Serviço | Versão ativa | Rollback |
 |---|---|---|
-| web `goworld.digital` (Vercel `gwd`) | **`c73502e`** — Hero Cinematográfico V1 aprovado pelo fundador (`dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh`) | `89bb8e2` `dpl_4FpJc9oEAAZAYKo1ctjxG6yfxKHm` → `aa084be` `dpl_58bswS2KHJ2t8JY1H1aNsuSW81ma` |
+| web `goworld.digital` (Vercel `gwd`) | **`1cef61d`** — Hero Cinematográfico V1, aprovado visualmente pelo fundador; título e CTA final alinhados (`dpl_AuC4mrc5hx3n1ueuFpTFTmBTnqad`) | `c73502e` `dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh` → `89bb8e2` `dpl_4FpJc9oEAAZAYKo1ctjxG6yfxKHm` |
 | app `app.goworld.digital` (Vercel `gwd-app`) | **`e67a978`** (`dpl_EV3DtX6S5nCVSpqN46bRibjnr3Co`, código da app = `a0ee992`, UI Telegram; autorizado pelo fundador 23/10 18:17) | `dc12e69` `dpl_FknDNJQRtgBMST2Ria6ukyEskv37` → `4595473` `dpl_9s5GrE4GVy37y7hUhjnmF7owu71P` → `f61d4ce` `dpl_AXsPAjNjdXyV7DkHX8E1nxtcG1fa` → `aa084be` `dpl_Gsg1YJ3tUE8XPyScfx81QNb4C1js` |
 | API `api.goworld.digital` | **`16178c7`** (contentor `gwd-api-16178c7`; chaves de eventos por participante) | site Caddy anterior → `gwd-api-a0ee992` → `gwd-api-4c7c5a2` |
 | Worker | **`4c7c5a2`** (contentor `gwd-worker-4c7c5a2`, release por SHA, `commerce OFF`) | `docker start gwd-worker` (antigo, parado com `restart=no`) |
