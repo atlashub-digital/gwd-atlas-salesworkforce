@@ -19,4 +19,3 @@ export function TierChip({tier}:{tier:AccessTier}){return <span className={"ac-c
 const modeLabel:Record<DeliveryMode,string>={WEBPLAYER:"Vídeo",WEBREADER:"Leitura",HYBRID:"Híbrido",TELEGRAM:"Telegram",EXTERNAL:"Externo"};
 export function ModeChip({mode}:{mode:DeliveryMode}){return <span className="ac-chip ac-chip--mode">{modeLabel[mode]}</span>;}
 
-export function DemoBadge(){return <span className="ac-demo-note">◈ Demo catalog V1</span>;}

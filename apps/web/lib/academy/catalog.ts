@@ -1,11 +1,11 @@
-/* GWD Academy Streaming V1 — catálogo mock HONESTO ("Demo catalog V1").
-   3 séries demo com episódios que cobrem VIDEO/READER/HYBRID/QUIZ/TELEGRAM/EXTERNAL
-   e tiers FREE/MEMBER/PREMIUM/CERTIFIED. Nenhuma media real: posters são gradientes
-   CSS com iniciais (nunca fotos fake de pessoas) e providers devolvem null. */
+/* GWD Academy — catálogo versionado.
+   `series`: catálogo publicado (GWD Start definitivo, ./gwd-start.ts).
+   `demoSeries`: 2 séries demo (VIDEO/HYBRID/TELEGRAM/EXTERNAL, tiers MEMBER/PREMIUM/CERTIFIED) usadas só como
+   fixtures de teste; nunca publicadas em produção (o seed marca-as DRAFT). Nenhuma media real nas demo. */
 
 import type {AccessTier, Episode, EpisodeAsset, Season, Series} from "./types";
+import {gwdStartEpisodes} from "./gwd-start";
 
-export const DEMO_CATALOG_LABEL = "Demo catalog V1";
 
 type EpisodeSeed = {
   slug: string;
@@ -76,20 +76,6 @@ function build(seriesId: string, season: number, firstNumber: number, seeds: Epi
   }));
 }
 
-/* ---------- GWD Start (FREE) — 2 temporadas, 6 episódios ---------- */
-const gwdStartEpisodes: Episode[] = [
-  ...build("gwd-start", 1, 1, [
-    {slug: "boas-vindas-gwd", title: "Boas-vindas à GWD", summary: "Como funciona a Academy, o que esperar de cada série e como o progresso é registado.", type: "VIDEO", mode: "WEBPLAYER", provider: "ATLAS_MEDIA", tier: "FREE", seconds: 420},
-    {slug: "o-teu-ponto-de-partida", title: "O teu ponto de partida no digital", summary: "Reconhece as tuas competências e escolhe um primeiro objetivo realista.", type: "READER", mode: "WEBREADER", provider: "GWD_READER", tier: "FREE", seconds: 600, resources: [{title: "Folha de objetivos (demo)", description: "Modelo simples para definir o teu primeiro objetivo."}]},
-    {slug: "tres-caminhos", title: "Três caminhos, responsabilidades diferentes", summary: "Distingue Social Media, afiliação e revenda autorizada antes de escolher.", type: "HYBRID", mode: "HYBRID", provider: "ATLAS_MEDIA", tier: "FREE", seconds: 540, hybridPolicy: "ANY"},
-    {slug: "verificacao-fundamentos", title: "Verificação de fundamentos", summary: "Quiz curto para confirmar que dominas a base antes de avançar.", type: "QUIZ", mode: "WEBREADER", provider: "GWD_READER", tier: "FREE", seconds: 300, withQuiz: true},
-  ]),
-  ...build("gwd-start", 2, 5, [
-    {slug: "etica-e-confianca", title: "Conteúdo que merece confiança", summary: "Comunica com transparência e respeita pessoas e direitos.", type: "READER", mode: "WEBREADER", provider: "GWD_READER", tier: "MEMBER", seconds: 540},
-    {slug: "rotina-de-aprendizagem", title: "Construir uma rotina de aprendizagem", summary: "Consistência simples: o que fazer todos os dias para avançar sem despender horas.", type: "HYBRID", mode: "HYBRID", provider: "ATLAS_MEDIA", tier: "MEMBER", seconds: 480, hybridPolicy: "ANY"},
-  ]),
-];
-
 /* ---------- Conecta que Converte (MEMBER) — 5 episódios ---------- */
 const conectaEpisodes: Episode[] = build("conecta-que-converte", 1, 1, [
   {slug: "mensagem-clara", title: "Uma mensagem clara vende mais", summary: "Define o que dizes, a quem dizes e por que razão te ouvem.", type: "VIDEO", mode: "WEBPLAYER", provider: "ATLAS_MEDIA", tier: "FREE", seconds: 480},
@@ -113,12 +99,13 @@ const instagramEpisodes: Episode[] = build("domina-instagram", 1, 1, [
 
 export const series: Series[] = [
   {
-    id: "demo-series-gwd-start",
+    id: "series-gwd-start",
     slug: "gwd-start",
     title: "GWD Start",
     subtitle: "Fundamentos para começar no digital",
-    description: "A série de entrada da Academy: como funciona a plataforma, reconhecer competências, escolher um caminho e construir rotina de aprendizagem.",
+    description: "A série de entrada da Academy: o que é a GWD, como conta o teu progresso, o teu ponto de partida, os três caminhos, ética e rotina. Gratuita e em leitura.",
     category: "fundamentos",
+    featured: true,
     posterInitials: "GS",
     posterGradient: "linear-gradient(140deg,#0060f0 0%,#00e5ff 100%)",
     seasons: [
@@ -127,6 +114,10 @@ export const series: Series[] = [
     ],
     episodes: gwdStartEpisodes,
   },
+];
+
+/** Test fixtures only (never published in production). */
+export const demoSeries: Series[] = [
   {
     id: "demo-series-conecta",
     slug: "conecta-que-converte",
@@ -146,7 +137,6 @@ export const series: Series[] = [
     subtitle: "Posição, conteúdo e conversão",
     description: "Série premium de social media: posicionamento, planeamento em lotes, stories com estrutura e reels com alcance orgânico. Biblioteca longa entregue no Telegram.",
     category: "social-media",
-    featured: true,
     posterInitials: "DI",
     posterGradient: "linear-gradient(140deg,#0a315c 0%,#00c8f0 100%)",
     seasons: [{number: 1, title: "Domina o Instagram", episodeIds: instagramEpisodes.map(e => e.id)}],
@@ -154,7 +144,8 @@ export const series: Series[] = [
   },
 ];
 
-export const categories = ["fundamentos", "social-media", "vendas"] as const;
+const published = new Set(series.map(s => s.slug));
+export const categories: string[] = [...new Set(series.map(s => s.category))];
 
 /* ---------- API-first (GWD_API_URL, server components) com fallback ao estático ---------- */
 /* A DB (via API) é a fonte de verdade para published/tiers/policies/assets; o catálogo
@@ -226,11 +217,13 @@ function mapApiSeries(raw: Record<string, unknown>): Series | null {
 export async function loadAllSeries(): Promise<{series: Series[]; source: CatalogSource}> {
   const data = await apiGetJson("/v1/academy/series");
   const items = data && Array.isArray(data.items) ? data.items : null;
-  const mapped = items ? items.map(s => mapApiSeries(s as Record<string, unknown>)).filter((s): s is Series => s !== null) : [];
+  // Public web shows only the versioned catalogue (demo fixtures never leak, whatever the DB state).
+  const mapped = items ? items.map(s => mapApiSeries(s as Record<string, unknown>)).filter((s): s is Series => s !== null && published.has(s.slug)) : [];
   return mapped.length ? {series: mapped, source: "api"} : {series, source: "static"};
 }
 
 export async function loadSeries(slug: string): Promise<{series: Series; source: CatalogSource} | null> {
+  if (!published.has(slug)) return null;
   const data = await apiGetJson(`/v1/academy/series/${encodeURIComponent(slug)}`);
   const raw = data && data.series ? mapApiSeries(data.series as Record<string, unknown>) : null;
   if (raw) return {series: raw, source: "api"};

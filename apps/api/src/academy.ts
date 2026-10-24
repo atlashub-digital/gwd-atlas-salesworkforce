@@ -43,16 +43,28 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
+/* Unpublished episodes (technical pilots) open only through an operator-created grant for THIS participant and THIS
+   episode (gwd.academy_preview_grants; RLS enforces the same rule). Never listed, never counted for completion. */
+async function previewGrantFor(c: PoolClient, ref: string): Promise<boolean> {
+  // to_regclass never raises: before 2026-10-23-academy-preview.sql is applied there are no grants (no aborted tx).
+  if (!(await c.query<{ok: boolean}>(`select to_regclass('gwd.academy_preview_grants') is not null as ok`)).rows[0]?.ok) return false;
+  const where = isUuid(ref) ? "e.id = $1" : "e.slug = $1";
+  return (await c.query<{ok: boolean}>(
+    `select exists (select 1 from gwd.academy_preview_grants g join gwd.academy_episodes e on e.id = g.episode_id
+      where ${where} and g.participant_id = nullif(current_setting('request.jwt.claim.sub', true), '')::uuid) as ok`, [ref])).rows[0]?.ok ?? false;
+}
+
 async function episodeByRef(c: PoolClient, ref: string): Promise<EpisodeRow | undefined> {
   const where = isUuid(ref) ? "e.id = $1" : "e.slug = $1";
+  const preview = await previewGrantFor(c, ref);
   const result = await c.query<EpisodeRow & {series_id: string; series_slug: string; series_title: string; season_number: number}>(
     `select e.*, sn.position as season_number, s.id as series_id, s.slug as series_slug, s.title as series_title,
             s.entitlement_ref as series_entitlement_ref
        from gwd.academy_episodes e
        join gwd.academy_seasons sn on sn.id = e.season_id
        join gwd.academy_series s on s.id = sn.series_id
-      where s.status = 'PUBLISHED' and e.published and ${where} limit 1`,
-    [ref],
+      where s.status = 'PUBLISHED' and (e.published or $2::boolean) and ${where} limit 1`,
+    [ref, preview],
   );
   return result.rows[0];
 }
@@ -92,18 +104,25 @@ function codeOf(season: number, position: number): string {
 
 type SeriesRow = {id: string; slug: string; title: string; description: string; featured: boolean; access_tier: string; entitlement_ref: string | null};
 
+/** Private channel message (t.me/c/<channel>/<message>) or public channel message (t.me/<username>/<message>). */
+export const telegramMessageUrl = /^https:\/\/t\.me\/(c\/\d{5,16}|[A-Za-z][A-Za-z0-9_]{4,31})\/\d{1,10}$/;
+
 async function assetsForEpisodes(c: PoolClient, episodeIds: string[]): Promise<Map<string, Json[]>> {
   const assets = new Map<string, Json[]>();
   if (!episodeIds.length) return assets;
   const rows = (await c.query(
     `select episode_id, kind, provider, asset_ref, metadata from gwd.academy_episode_assets
-      where episode_id = any($1::uuid[]) order by episode_id, position`,
+      where episode_id = any($1::uuid[]) and superseded_at is null order by episode_id, position`,
     [episodeIds],
   )).rows as Array<{episode_id: string; kind: string; provider: string; asset_ref: string; metadata: Json}>;
   for (const row of rows) {
     const list = assets.get(row.episode_id) ?? [];
     const meta = row.metadata ?? {};
     const asset: Json = {kind: row.kind.toLowerCase(), assetId: row.asset_ref};
+    // Telegram Native: only a well-formed t.me message link is ever sent to the browser (no arbitrary URLs).
+    if (row.provider === "TELEGRAM" && row.kind === "TELEGRAM") {
+      if (telegramMessageUrl.test(row.asset_ref)) asset.url = row.asset_ref; else asset.assetId = "telegram-unlinked";
+    }
     if (meta.durationSeconds !== undefined) asset.durationSeconds = meta.durationSeconds;
     if (meta.title !== undefined) asset.title = meta.title;
     if (meta.sections !== undefined) asset.sections = meta.sections;
@@ -279,7 +298,7 @@ async function upsertHeartbeat(c: PoolClient, participantId: string, episode: Ep
   await c.query(
     `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key)
      values ($1,$2,$3,'EPISODE_STARTED',$4) on conflict (event_key) do nothing`,
-    [participantId, episode.id, episode.series_id, `academy:episode:${episode.id}:started`],
+    [participantId, episode.id, episode.series_id, learningKey(participantId, `academy:episode:${episode.id}:started`)],
   );
   await c.query(
     `insert into gwd.academy_enrollments(participant_id,series_id) values ($1,$2) on conflict do nothing`,
@@ -349,6 +368,10 @@ async function seriesCompletionState(c: PoolClient, participantId: string, serie
   )).rows[0];
   return {total: row.total, completed: row.completed};
 }
+
+/* academy_learning_events.event_key is globally unique: scope it by participant, otherwise the first participant's
+   event (e.g. the Telegram handoff) silently swallows everyone else's and they can never complete the episode. */
+const learningKey = (participantId: string, key: string): string => `${key}:by:${participantId}`;
 
 async function grantXp(c: PoolClient, participantId: string, eventKey: string, points: number): Promise<boolean> {
   const result = await c.query(
@@ -438,7 +461,8 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     if (heartbeated.status === "COMPLETED") return json({progress: progressJson(heartbeated, episode), completed: true, xp: [], seriesCompleted: false});
 
     const policy = await activePolicy(c, episode.policy_key);
-    const needsQuiz = (await episodeHasQuiz(c, episode.id)) || Boolean(policy.rules.require_quiz);
+    // QUIZ_VERIFIED policies always need a passed quiz; without a quiz the episode can never complete (fail closed).
+    const needsQuiz = (await episodeHasQuiz(c, episode.id)) || Boolean(policy.rules.require_quiz) || policy.rules.completion_method === "QUIZ_VERIFIED";
     const satisfied = policySatisfied(episode.policy_key, policy.rules, {
       positionSeconds: heartbeated.last_position_seconds,
       durationSeconds: episode.duration_seconds ?? 0,
@@ -461,7 +485,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     await c.query(
       `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key,payload)
        values ($1,$2,$3,'EPISODE_COMPLETED',$4,$5) on conflict (event_key) do nothing`,
-      [userId, episode.id, episode.series_id, `academy:episode:${episode.id}:completed`, JSON.stringify({policy_key: episode.policy_key, policy_version: policy.version})],
+      [userId, episode.id, episode.series_id, learningKey(userId, `academy:episode:${episode.id}:completed`), JSON.stringify({policy_key: episode.policy_key, policy_version: policy.version})],
     );
     const xp: string[] = [];
     if (await grantXp(c, userId, `academy:episode:${episode.id}:completed`, XP_EPISODE_COMPLETED)) xp.push(`academy:episode:${episode.id}:completed`);
@@ -472,7 +496,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
       await c.query(
         `insert into gwd.academy_learning_events(participant_id,series_id,event_type,event_key)
          values ($1,$2,'SERIES_COMPLETED',$3) on conflict (event_key) do nothing`,
-        [userId, episode.series_id, `academy:series:${episode.series_id}:completed`],
+        [userId, episode.series_id, learningKey(userId, `academy:series:${episode.series_id}:completed`)],
       );
       if (await grantXp(c, userId, `academy:series:${episode.series_id}:completed`, XP_SERIES_COMPLETED)) xp.push(`academy:series:${episode.series_id}:completed`);
     }
@@ -486,7 +510,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
     await c.query(
       `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key)
        values ($1,$2,$3,'TELEGRAM_HANDOFF_OPENED',$4) on conflict (event_key) do nothing`,
-      [userId, episode.id, episode.series_id, `academy:episode:${episode.id}:handoff:opened`],
+      [userId, episode.id, episode.series_id, learningKey(userId, `academy:episode:${episode.id}:handoff:opened`)],
     );
     return json({recorded: true}); // sem XP (doc §2.8)
   }
@@ -570,7 +594,7 @@ export async function academyRoute(ctx: {request: Request; route: string; method
       await c.query(
         `insert into gwd.academy_learning_events(participant_id,episode_id,series_id,event_type,event_key)
          values ($1,$2,$3,'QUIZ_PASSED',$4) on conflict (event_key) do nothing`,
-        [userId, episode.id, episode.series_id, `academy:quiz:${quiz.id}:v${quiz.version}:passed`],
+        [userId, episode.id, episode.series_id, learningKey(userId, `academy:quiz:${quiz.id}:v${quiz.version}:passed`)],
       );
       await grantXp(c, userId, `academy:quiz:${quiz.id}:v${quiz.version}:passed`, XP_QUIZ_PASSED);
     }

@@ -56,9 +56,25 @@ export async function POST(request:Request){
    if(!response.ok){const data=await response.json().catch(()=>({}));return fail(data.error_code==="weak_password"||response.status===422?"Essa senha é demasiado fraca. Usa uma combinação mais longa de letras, números e símbolos.":"Não foi possível guardar a senha. Tenta novamente.");}
    return Response.json({ok:true});
   }
+  if(body.action==="link-session"){
+   // Email link return (/auth/confirm). token_hash = custom templates; access/refresh tokens = default GoTrue link.
+   // Tokens from the browser are only trusted after Supabase itself confirms them (GET /user).
+   if(typeof body.token_hash==="string"&&/^[A-Za-z0-9_-]{16,128}$/.test(body.token_hash)&&["email","signup","magiclink"].includes(body.type)){
+    const response=await authFetch("verify",{token_hash:body.token_hash,type:body.type});
+    const data=await response.json();
+    if(!response.ok||!data.access_token)return fail("O link expirou ou já foi usado. Pede um novo código.");
+    await saveSession(data);return Response.json({ok:true});
+   }
+   const access=body.access_token,refresh=body.refresh_token,expires=Number(body.expires_in);
+   if(typeof access!=="string"||access.length>4096||typeof refresh!=="string"||refresh.length>512||!Number.isFinite(expires))return fail("Link inválido.");
+   const user=await authFetch("user",undefined,{method:"GET",token:access});
+   if(!user.ok)return fail("O link expirou ou já foi usado. Pede um novo código.");
+   await saveSession({access_token:access,refresh_token:refresh,expires_in:Math.min(Math.max(expires,60),3600)});return Response.json({ok:true});
+  }
   if(!email(body.email))return fail("Indica um email válido.");
   if(body.action==="request"){
-   const response=await authFetch("otp",{email:body.email,create_user:true});
+   // The email may carry a 6-digit code ({{ .Token }} templates) or only a link; the link returns to /auth/confirm.
+   const response=await authFetch("otp?redirect_to="+encodeURIComponent(new URL("/auth/confirm",request.url).toString()),{email:body.email,create_user:true});
    if(!response.ok)return fail("Não foi possível enviar o código. Aguarda antes de tentar novamente.",response.status===429?429:400);
    return Response.json({sent:true});
   }
