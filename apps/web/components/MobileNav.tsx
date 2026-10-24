@@ -13,7 +13,7 @@ export default function MobileNav({appEntryUrl}:{appEntryUrl:string}){
   <button type="button" className="mobile-nav-toggle" aria-expanded={open} aria-controls={panelId} onClick={()=>setOpen(!open)}><Icon name={open?"close":"menu"}/><span className="sr-only">{open?"Fechar menu":"Abrir menu"}</span></button>
   <div id={panelId} className="mobile-nav-panel" hidden={!open}>
    <nav aria-label="Navegação móvel"><ul>{primaryNav.map(item=><li key={item.href}><Link href={item.href} onClick={close}>{item.label}<Icon name="arrow"/></Link></li>)}</ul></nav>
-   <div className="mobile-nav-actions"><a className={buttonClass("secondary")} href={appEntryUrl}>Entrar</a><Link className={buttonClass()} href="/entrar" onClick={close}>Quero fazer parte <span className="arrow" aria-hidden="true">→</span></Link></div>
+   <div className="mobile-nav-actions"><a className={buttonClass("secondary")} href={appEntryUrl}>Entrar</a><Link className={buttonClass()} href="/entrar" onClick={close}>Entrar na Comunidade <span className="arrow" aria-hidden="true">→</span></Link></div>
   </div>
  </div>;
 }

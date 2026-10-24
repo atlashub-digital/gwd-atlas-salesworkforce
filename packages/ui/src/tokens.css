@@ -9,6 +9,8 @@
  --gwd-blue-600:#0060f0;--gwd-blue-500:#0a84ff;
  --gwd-cyan-500:#00c8f0;--gwd-cyan-400:#00e5ff;
  --gwd-success:#22c55e;--gwd-warning:#ffc107;--gwd-danger:#ff5d70;
+ /* Third-party marks (official brand colours, only inside their own logo) */
+ --gwd-brand-telegram:#26a5e4;--gwd-brand-discord:#5865f2;--gwd-brand-whatsapp:#25d366;
  --gwd-white:#f8fafc;--gwd-text-primary:#f4f8ff;--gwd-text-secondary:#b8c7dc;
  --gwd-border:rgba(108,188,255,.24);--gwd-border-strong:rgba(108,188,255,.42);--gwd-control-border:rgba(108,188,255,.55);
  /* Light surface (conversion cards). Ink/action ≥ 4.5:1 and control border ≥ 3:1 on paper. */

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {academy} from "@gwd/domain";
 import {Container,Section,SectionHeading,FeatureCard,Card,Status,buttonClass} from "@gwd/ui";
 import SiteFrame from "../components/SiteFrame";
@@ -7,48 +6,30 @@ import MediaPanel from "../components/MediaPanel";
 import MarketPanel from "../components/MarketPanel";
 import PathCard from "../components/PathCard";
 import TeamStrip from "../components/TeamStrip";
-import ValueStrip from "../components/ValueStrip";
 import GlobalNetwork from "../components/GlobalNetwork";
+import HeroCinematic from "../components/hero/HeroCinematic";
 import Icon from "../components/Icon";
-import {media,objectPosition} from "../lib/media";
+import {media} from "../lib/media";
 import {appEntryUrl} from "../lib/site";
-import {values,pillars,paths,steps,opportunities,team} from "../lib/home";
+import {pillars,paths,steps,opportunities,team} from "../lib/home";
 
 const academyPreview=academy.map(m=>({...m,summary:m.body.split(". ")[0]+"."}));
 const Arrow=()=><span className="arrow" aria-hidden="true">→</span>;
 
 export default function Home(){return <SiteFrame bleed>
- {/* 1. Hero — target 01/02 homepage */}
- <section className="home-hero" aria-labelledby="hero-title" data-parallax>
-  {/* Layer 1 — globe and network (meaning: connection). Layer 2 — canonical people. Layer 3 — cities they can reach. */}
-  <div className="home-hero-globe"><GlobalNetwork live/></div>
-  <div className="home-hero-cities" aria-hidden="true">
-   {[media.heroCityBarcelona,media.heroCityRio,media.heroCitySantorini].map((m,i)=><figure key={m.id} className={"home-hero-city home-hero-city--"+(i+1)}><Image src={m.src} alt="" fill sizes="(max-width:1179px) 40vw, 18vw" style={{objectPosition:objectPosition(m)}}/></figure>)}
-  </div>
-  <div className="home-hero-people"><Image src={media.heroTrio.src} alt={media.heroTrio.alt} fill preload sizes="(max-width:759px) 100vw, 46vw" style={{objectPosition:objectPosition(media.heroTrio)}}/></div>
-  <Container className="home-hero-grid">
-   <div className="home-hero-copy">
-    <span className="eyebrow">Comunidade global · Formação · Oportunidades</span>
-    <h1 id="hero-title">Começa no <span className="text-accent">digital.</span></h1>
-    <p className="lead">Pessoas reais. Conteúdo. Vendas. Oportunidades sem fronteiras.</p>
-    <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
-    <p className="home-hero-note">Participar não constitui vínculo de emprego nem garantia de rendimento.</p>
-   </div>
-  </Container>
-  <p className="home-hero-script" aria-hidden="true">O teu talento pode chegar a qualquer lugar do mundo.</p>
-  <Container className="hero-benefits"><ValueStrip items={values}/></Container>
- </section>
+ {/* 1. Hero Cinematográfico V1 — scene 1 (Comunidade Global) */}
+ <HeroCinematic/>
+
+ {/* 2. Escolhe o teu caminho — scene 2 (the hero thread lands here) */}
+ <Section className="reveal paths-scene" aria-labelledby="caminhos"><Container>
+  <SectionHeading id="caminhos" align="split" eyebrow="Escolhe o teu caminho" title="Há mais de uma forma de começar." lead="Três percursos com responsabilidades diferentes. Conhece-os, aprende os fundamentos e escolhe por onde queres avançar."/>
+  <div className="path-grid">{paths.map(p=><PathCard key={p.index} {...p}/>)}</div>
+ </Container></Section>
 
  {/* 3. O que é a GWD */}
  <Section tone="bare" className="reveal" aria-labelledby="o-que-e"><Container>
   <SectionHeading id="o-que-e" align="split" eyebrow="O que é a GWD" title="Uma comunidade para começar, aprender e avançar no digital." lead="A GoWorld.Digital junta pessoas, conteúdo e vendas num só percurso. Primeiro aprendes e participas; os percursos comerciais chegam depois, com regras claras."/>
   <div className="pillar-grid">{pillars.map(p=><FeatureCard key={p.eyebrow} icon={<Icon name={p.icon}/>} eyebrow={p.eyebrow} title={p.title} body={p.body}/>)}</div>
- </Container></Section>
-
- {/* 4. Escolhe o teu caminho */}
- <Section className="reveal" aria-labelledby="caminhos"><Container>
-  <SectionHeading id="caminhos" align="split" eyebrow="Escolhe o teu caminho" title="Há mais de uma forma de começar." lead="Três percursos com responsabilidades diferentes. Conhece-os, aprende os fundamentos e escolhe por onde queres avançar."/>
-  <div className="path-grid">{paths.map(p=><PathCard key={p.index} {...p}/>)}</div>
  </Container></Section>
 
  {/* 5. Europa + Brasil */}
