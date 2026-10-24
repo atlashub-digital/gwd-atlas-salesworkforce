@@ -9,7 +9,7 @@ test("Academy media: isolated test episode visible only to preview accounts; pla
  await db.exec(await readFile(new URL("../../packages/db/schema.sql",import.meta.url),"utf8"));
  await db.exec(await readFile(new URL("../../packages/db/migrations/2026-10-20-academy-v1.sql",import.meta.url),"utf8"));
  await db.exec("revoke usage on schema auth from gwd_api");// production parity
- for(const statement of seedStatements())await db.exec(statement);
+ for(const statement of seedStatements({includeDemo:true}))await db.exec(statement);
  const tester="00000000-0000-4000-8000-000000000001",member="00000000-0000-4000-8000-000000000002";
  await db.exec("alter table auth.users add column email text");
  await db.query("insert into auth.users values($1,'tester@example.com'),($2,'member@example.com')",[tester,member]);
@@ -27,8 +27,8 @@ test("Academy media: isolated test episode visible only to preview accounts; pla
   await db.exec(pilot);await db.exec(pilot);// applying twice must not duplicate rows nor publish the test episode
   const rows=(await db.query<{published:boolean;n:number}>("select e.published,(select count(*)::int from gwd.academy_episode_assets a where a.episode_id=e.id) n from gwd.academy_episodes e where e.slug='teste-media-p01'")).rows;
   assert.deepEqual(rows,[{published:false,n:1}]);
-  // Real course episodes untouched: still the demo video, so they never call the catalog.
-  assert.deepEqual((await db.query("select asset_ref from gwd.academy_episode_assets a join gwd.academy_episodes e on e.id=a.episode_id where e.slug='boas-vindas-gwd' and a.kind='VIDEO'")).rows,[{asset_ref:"demo-video-boas-vindas-gwd"}]);
+  // Real course episodes untouched: GWD Start is a Reader course (no video), so it never calls the media catalog.
+  assert.deepEqual((await db.query("select a.kind from gwd.academy_episode_assets a join gwd.academy_episodes e on e.id=a.episode_id where e.slug='boas-vindas-gwd'")).rows,[{kind:"READER"}]);
   // Never listed, for anyone.
   const {series}=await (await call("/v1/academy/series/gwd-start")).json();
   assert.ok(!series.episodes.some((e:{slug:string})=>e.slug==="teste-media-p01"));

@@ -323,7 +323,8 @@
 .ac-reader nav button{width:100%;text-align:left;border:0;background:transparent;color:var(--muted);padding:8px 10px;border-radius:8px;font-size:13px}
 .ac-reader nav button[aria-current]{background:var(--gwd-surface-800);color:var(--ink)}
 .ac-reader article h2{font-size:1.3rem;margin:8px 0}
-.ac-reader article p{font-size:16px;line-height:1.85}
+.ac-reader article .ac-reader-list{list-style:decimal;padding-left:22px;display:grid;gap:6px;margin:0 0 14px;max-width:68ch;font-size:16px;line-height:1.7}
+.ac-reader article p{font-size:16px;line-height:1.85;margin:0 0 14px;max-width:68ch}
 .ac-resources{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .ac-resources li{display:grid;gap:4px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;font-size:14px}
 .ac-resources span{color:var(--muted)}

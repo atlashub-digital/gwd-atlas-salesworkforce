@@ -30,7 +30,7 @@ export default function EpisodeView({seriesSlug,episodeSlug}:{seriesSlug:string;
       {telegram?.url?<><a className="button" href={telegram.url} target="_blank" rel="noopener noreferrer" onClick={()=>void handoff()}>Abrir a aula no Telegram ↗</a>
        <ul className="ac-telegram-help"><li>Abre com a conta Telegram que pertence ao canal de formação GWD.</li><li>Se o Telegram indicar que o canal é privado ou não encontrar a mensagem, ainda não tens acesso: o acesso é concedido pela equipa GWD e não é automático.</li><li>A aula abre noutra janela; esta página continua aqui para regressares e concluíres.</li></ul></>
       :<button className="button" disabled={busy} onClick={()=>void handoff()}>Continuar no Telegram</button>}</div>
-     :<div className="ac-player ac-player--reader-hint"><strong>{e.title}</strong><p>{reader?"Episódio em formato de leitura — abre o separador Ler.":"Consulta os recursos deste episódio."}</p></div>}
+     :reader?null:<div className="ac-player ac-player--reader-hint"><strong>{e.title}</strong><p>Consulta os recursos deste episódio.</p></div>}
     <header className="ac-episode-head"><div className="ac-meta-row"><ModeChip mode={e.deliveryMode}/><TierChip tier={e.accessTier}/><span>{duration(e.durationSeconds)}</span>{progress.status==="IN_PROGRESS"&&<span className="ac-state">Em curso · {progress.progress_percent}%</span>}{done&&<span className="ac-state ac-state--done">Concluído</span>}</div><h1>{e.code} · {e.title}</h1><p>{e.summary}</p></header>
     {entitlement.active&&<><div className="ac-tabs" role="tablist" aria-label="Formato do episódio">{tabs.map(([k,l])=><button key={k} role="tab" aria-selected={tab===k} onClick={()=>setTab(k)}>{l}</button>)}</div>
     <div className="ac-tab-panel">
@@ -54,7 +54,12 @@ function Reader({episodeId,asset,onProgress}:{episodeId:string;asset:Asset;onPro
  useEffect(()=>{const t=window.setInterval(()=>{if(document.visibilityState==="visible")reading.current+=1},1000);return()=>window.clearInterval(t)},[]);
  useEffect(()=>{const send=()=>api("academy/progress/heartbeat",{episode_id:episodeId,reading_s:reading.current,reader_section:section+1}).then(r=>onProgress(r.progress)).catch(()=>{});const t=window.setInterval(send,25000);return()=>{window.clearInterval(t);void send()}},[episodeId,section,onProgress]);
  return <div className="ac-reader"><nav aria-label="Índice da leitura"><ol>{sections.map((s,i)=><li key={s.heading}><button type="button" aria-current={i===section?"step":undefined} onClick={()=>setSection(i)}>{s.heading}</button></li>)}</ol></nav>
-  <article><span className="eyebrow">Secção {section+1} de {sections.length}</span><h2>{sections[section]?.heading}</h2><p>{sections[section]?.body}</p>{section<sections.length-1&&<button className="button secondary small" onClick={()=>setSection(section+1)}>Secção seguinte →</button>}</article></div>;
+  <article><span className="eyebrow">Secção {section+1} de {sections.length}</span><h2>{sections[section]?.heading}</h2><ReaderBody text={sections[section]?.body??""}/>{section<sections.length-1&&<button className="button secondary small" onClick={()=>setSection(section+1)}>Secção seguinte →</button>}</article></div>;
+}
+
+/** Plain-text reader body: blank line = paragraph; a block of "1. …" lines = ordered list. No HTML from content. */
+function ReaderBody({text}:{text:string}){
+ return <>{text.split(/\n{2,}/).map((block,i)=>{const lines=block.split("\n");return lines.every(l=>/^\d+\.\s/.test(l))?<ol key={i} className="ac-reader-list">{lines.map(l=><li key={l}>{l.replace(/^\d+\.\s/,"")}</li>)}</ol>:<p key={i}>{block}</p>;})}</>;
 }
 
 function Quiz({episodeId,questions}:{episodeId:string;questions:{id:string;prompt:string;options:string[]}[]}){
