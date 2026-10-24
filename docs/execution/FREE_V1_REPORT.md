@@ -2,20 +2,25 @@
 
 Fonte única do estado da plataforma para a abertura Free. Evidências detalhadas: `E2E_EVIDENCE_LOG.md`.
 
-## 0. Relatório final de homologação funcional (23/10/2026 20:40 UTC)
-| # | Item | Resultado | Evidência / causa |
+## 0. Relatório final de homologação funcional (24/10/2026 00:30 UTC)
+| # | Item | Resultado | Evidência |
 |---|---|---|---|
-| 1 | HLS na Academy | **FAIL (dependência por aplicar)** | 19:55, conta A real: `teste-media-p01` → 404 (episódio e playback). P01 v4 ainda não aplicado (ou sem concessão para a conta A). A cadeia token → HLS, adulteração 403 e expiração 403 continua PASS (fase 3–4). Teste pronto: `free-journey.cjs hls` (playback, CORS, adulteração, sem token, expiração, outro rascunho 404, premium negado, ausência no catálogo, anónimo 401) |
-| 2 | Telegram Native | **EM CURSO** | Direitos confirmados pela direção (licença dos criadores, só para o piloto). `pilot-p02-telegram.sql` v2 liga `/326`, `/334` e `/328` a 3 episódios privados. **Defeito encontrado e corrigido:** a RLS dos quizzes só lia episódios publicados, por isso nenhum episódio privado podia concluir → `2026-10-23-academy-preview-quiz.sql` (testado: 400 antes, conclusão só com handoff + quiz aprovado depois, respostas nunca expostas, não-tester sem acesso). Falta: o texto das aulas para escrever os quizzes, e a aplicação pela Helena |
-| 3 | SMTP | **PASS** | entrega real do código por `noreply@goworld.digital` às 19:54 e login A PASS. A rotação da chave exposta é uma medida de segurança separada, pendente (Helena, pelo cofre, validar antes de revogar) |
+| 1 | HLS na Academy | **PASS** | produção, conta A real, Google Chrome 156: `teste-media-p01` reproduz (`currentTime` > 2 s); CORS só `app.goworld.digital`; adulterado 403, sem token 401, expirado (310 s) 403; rascunho Telegram sem token (409); premium 403; ausente do catálogo; anónimo 401 |
+| 2 | Telegram Native (lado GWD) | **PASS** | contas A e B, 3 episódios (`/326`, `/334`, `/328`): link `t.me/c/…` em nova janela e Academy mantida; sem handoff, só handoff ou quiz falhado → 422; quiz aprovado sem handoff → 422; handoff + quiz aprovado → COMPLETED (A e B, 3/3) |
+| 3 | SMTP | **PASS** | entrega real de códigos (19:54, 23:30, 00:02) e logins A/B PASS |
 
-### Riscos residuais concretos
-1. **`POST https://media.atlashub.si/token` é agora público.** Protegido: 401 sem credencial e com credencial errada, sem CORS para browsers. **Sem limite de tentativas** (25 pedidos seguidos, todos 401, nenhum 429). Risco: força bruta do segredo S2S. Mitigação: rate limit no Caddy ou allowlist de IP (a API usa a rota privada e não precisa da pública).
-2. **`/binding`** não responde em nenhum caminho HTTPS testado (404/405). Não há rota para validar.
-3. **Âmbito da licença Telegram:** só o piloto (episódios privados, contas de teste). Publicar estas aulas exige um novo âmbito registado.
-4. **ARO `gwd` não reconciliável.** Não existe `infra/projects/gwd/` no `atlashub-finance` (todas as branches e PRs). As chaves Atlas Media (`gwd.academy.series:gwd-start`) não seguem a convenção ARO (`<projeto>:<código>`). O adapter GWD continua mock com pagamentos OFF. Falta: manifesto `gwd` no repositório ARO + chave de servidor no env da API (Helena).
-5. A chave Resend exposta continua válida até a rotação ser confirmada.
-6. A leitura direta da DB e dos contentores de produção está bloqueada para o Claude Code. As confirmações de migrações dependem do registo da Helena na Issue.
+### Defeitos reais encontrados e corrigidos nesta fase
+- **Quizzes de episódios privados invisíveis** (RLS só para publicados) → `2026-10-23-academy-preview-quiz.sql` (aplicada pela Helena).
+- **Chaves de eventos de aprendizagem sem participante:** só o 1.º participante de cada episódio Telegram podia concluir (o handoff dos outros era descartado). Corrigido em `16178c7`, API publicada por blue/green (rollback `gwd-api-a0ee992`); verificado em produção com a conta B.
+- **Concessões P01 nas contas erradas** (dados) → corrigidas pela Helena.
+
+### Riscos e pendentes residuais
+1. **Membro / não membro do canal (dentro do Telegram):** nenhuma conta E2E é membro. A confirmação "o membro vê o vídeo, o não membro vê canal privado" é manual: um membro do canal abre os 3 links e uma conta não membro abre 1. O lado GWD não depende disto.
+2. **`POST https://media.atlashub.si/token` público sem limite de tentativas** (protegido por S2S; a API usa a rota privada). Recomendado: rate limit ou allowlist de IP no Caddy da media.
+3. **Rotação da chave Resend exposta:** pendente (Helena, pelo cofre; validar antes de revogar).
+4. **ARO `gwd`:** sem manifesto no `atlashub-finance`; adapter mock, pagamentos OFF.
+5. **Testes de vídeo automáticos** exigem Chrome real (imagem local `gwd-pw-chrome:1`): os browsers do Playwright não têm H.264/AAC.
+6. Âmbito da licença Telegram: só o piloto (episódios privados, contas de teste).
 
 ## 1. Resultado exigido (tranche anterior)
 | Item | Estado | Evidência |
