@@ -5,7 +5,7 @@ import {allSeries, loadSeries} from "../../../../lib/academy/catalog";
 import {formatDuration} from "../../../../lib/academy/progress";
 import SiteFrame from "../../../../components/SiteFrame";
 import SeriesSeasons from "../../components/SeriesSeasons";
-import {DemoBadge, Poster, TierChip} from "../../components/bits";
+import {Poster, TierChip} from "../../components/bits";
 import "../../academy.css";
 
 export function generateStaticParams(){return allSeries().map(s => ({slug: s.slug}));}
@@ -18,7 +18,8 @@ export default async function SeriesPage({params}:{params:Promise<{slug:string}>
   const s = loaded.series;
   const freeCount = s.episodes.filter(e => e.accessTier === "FREE").length;
   const duration = s.episodes.reduce((a, e) => a + e.durationSeconds, 0);
-  const lockedCount = s.episodes.filter(e => e.accessTier !== "FREE").length; // participante demo FREE
+  const lockedCount = s.episodes.filter(e => e.accessTier !== "FREE").length;
+  const paidCount = s.episodes.filter(e => e.accessTier === "PREMIUM" || e.accessTier === "CERTIFIED").length;
   return (
     <SiteFrame>
       <section className="ac-series-head" aria-labelledby="ac-series-title">
@@ -33,7 +34,7 @@ export default async function SeriesPage({params}:{params:Promise<{slug:string}>
             <span className="ac-chip ac-chip--mode">{s.seasons.length} temporada{s.seasons.length > 1 ? "s" : ""}</span>
             <span className="ac-chip ac-chip--mode">{formatDuration(duration)}</span>
           </div>
-          <p className="small muted">{freeCount} episódios abertos · {lockedCount} exigem acesso de membro ou Premium · <DemoBadge/></p>
+          <p className="small muted">{freeCount} episódios abertos · {lockedCount} {paidCount ? "exigem acesso de membro ou Premium" : "pedem uma conta GWD gratuita"}</p>
           <p className="small"><Link className="link" href="/academy">← Voltar à Academy</Link></p>
         </div>
       </section>

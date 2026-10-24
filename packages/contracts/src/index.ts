@@ -15,7 +15,9 @@ export function leadInput(value:unknown) {
  if(v.consent!==true) throw new InputError("É necessário aceitar o tratamento dos dados para inscrição.");
  const utm:Record<string,string>={};
  for(const key of ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"]) if(typeof v[key]==="string") utm[key]=(v[key] as string).slice(0,200);
- return {name:text(v.name),email,market:market(v.market),interest:interest(v.interest),source:typeof v.source==="string"?v.source.slice(0,200):"web",utm};
+ const landingPath=typeof v.landing_path==="string"&&/^\/[^\s]{0,199}$/.test(v.landing_path)?v.landing_path:null;
+ const referrerHost=typeof v.referrer_host==="string"&&/^[a-z0-9.-]{1,200}$/i.test(v.referrer_host)?v.referrer_host.toLowerCase():null;
+ return {name:text(v.name),email,market:market(v.market),interest:interest(v.interest),source:typeof v.source==="string"?v.source.slice(0,200):"web",utm,newsletter:v.newsletter===true,landingPath,referrerHost};
 }
 export function profileInput(value:unknown) {const v=object(value);return {name:text(v.name),market:market(v.market),interest:interest(v.interest),complete:v.complete===true};}
 export function uuid(value:string) {if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value))throw new InputError("Identidade inválida.");return value;}
