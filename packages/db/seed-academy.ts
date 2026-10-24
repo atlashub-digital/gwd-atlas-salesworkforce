@@ -16,8 +16,10 @@ import type {Episode, EpisodeAsset, Series} from "../../apps/web/lib/academy/typ
 const TIER_RANK = {FREE: 0, MEMBER: 1, PREMIUM: 2, CERTIFIED: 3} as const;
 
 /* uuid v5 determinístico (mesmo slug → mesmo id, seed re-runnable) */
-const catalogNs = catalogModule as unknown as {series?: Series[]; default?: {series?: Series[]}};
+const catalogNs = catalogModule as unknown as {series?: Series[]; demoSeries?: Series[]; default?: {series?: Series[]; demoSeries?: Series[]}};
 const staticSeries: Series[] = catalogNs.series ?? catalogNs.default?.series ?? [];
+/* Demo series: test fixtures only. Production seed un-publishes them (status DRAFT); tests publish them. */
+const demoSeries: Series[] = catalogNs.demoSeries ?? catalogNs.default?.demoSeries ?? [];
 if (!staticSeries.length) throw new Error("catálogo estático não carregado (interop CJS/ESM)");
 const NS_UUID = "6f1a0e6a-4b1d-5c2a-9d3e-7f2b8c1a4d5e";
 function uuidv5(name: string): string {
@@ -84,9 +86,9 @@ function esc(value: string): string {
   return value.replace(/'/g, "''");
 }
 
-export function seedStatements(): string[] {
+export function seedStatements(options: {includeDemo?: boolean} = {}): string[] {
   const statements: string[] = ["begin;"];
-  for (const s of staticSeries) {
+  for (const s of options.includeDemo ? [...staticSeries, ...demoSeries] : staticSeries) {
     const seriesId = uuidv5(`series:${s.slug}`);
     const topTier = s.episodes.reduce((max, e) => (TIER_RANK[e.accessTier] > TIER_RANK[max] ? e.accessTier : max), "FREE" as (typeof staticSeries)[number]["episodes"][number]["accessTier"]);
     statements.push(`insert into gwd.academy_series(id,slug,title,description,owner,status,access_tier,entitlement_ref,featured)
@@ -99,6 +101,9 @@ on conflict (slug) do update set title=excluded.title, description=excluded.desc
       const seasonEpisodes = s.episodes.filter(e => e.seasonNumber === season.number);
       for (const ep of seasonEpisodes) statements.push(...episodeStatements(ep, seasonId, seriesId, s.slug));
     }
+  }
+  if (!options.includeDemo && demoSeries.length) {
+    statements.push(`update gwd.academy_series set status='DRAFT', featured=false, updated_at=now() where slug in (${demoSeries.map(d => `'${d.slug}'`).join(",")});`);
   }
   statements.push("commit;");
   return statements;

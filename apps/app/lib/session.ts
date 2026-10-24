@@ -14,6 +14,6 @@ export function authConfig(){
 /** Supabase Auth (GoTrue) call with the publishable key only; `token` is the participant's own access token when acting on their account. */
 export async function authFetch(path:string,body:unknown,{method="POST",token}:{method?:string;token?:string}={}){
  const {base,key}=authConfig();
- return fetch(new URL("/auth/v1/"+path,base),{method,headers:{"Content-Type":"application/json",apikey:key,...(token?{Authorization:"Bearer "+token}:{})},body:JSON.stringify(body),signal:AbortSignal.timeout(10000)});
+ return fetch(new URL("/auth/v1/"+path,base),{method,headers:{"Content-Type":"application/json",apikey:key,...(token?{Authorization:"Bearer "+token}:{})},...(method==="GET"?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(10000)});
 }
 export function sameOrigin(request:Request){return request.headers.get("origin")===new URL(request.url).origin;}

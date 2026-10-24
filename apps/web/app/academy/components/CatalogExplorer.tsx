@@ -3,7 +3,7 @@
    where they are server-authoritative — this page never stores or shows simulated progress. */
 import {useState} from "react";
 import Link from "next/link";
-import {categories, DEMO_CATALOG_LABEL, series} from "../../../lib/academy/catalog";
+import {categories, series} from "../../../lib/academy/catalog";
 import {formatDuration} from "../../../lib/academy/progress";
 import {Poster, TierChip} from "./bits";
 
@@ -27,7 +27,6 @@ export default function CatalogExplorer({appAcademyUrl}:{appAcademyUrl:string}){
             <span className="eyebrow">Catálogo</span>
             <h2 id="ac-catalog-title">Séries da Academy</h2>
           </div>
-          <span className="ac-demo-note">{DEMO_CATALOG_LABEL}</span>
         </div>
         <div className="ac-filters" role="group" aria-label="Filtrar por categoria">
           {(["todas", ...categories] as string[]).map(c => (

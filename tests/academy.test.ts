@@ -32,3 +32,10 @@ test("academy: hybrid ANY/QUIZ e telegram exigem as suas condições", () => {
   assert.equal(policySatisfied("TELEGRAM_SELF_ATTESTED_V1", {require_handoff: true, completion_method: "SELF_ATTESTED"}, state({handoff: false})), false);
   assert.equal(policySatisfied("TELEGRAM_SELF_ATTESTED_V1", {require_handoff: true, completion_method: "SELF_ATTESTED"}, state({})), true);
 });
+
+test("academy: QUIZ_VERIFIED telegram policy never completes on handoff alone", () => {
+  const rules = {require_handoff: true, completion_method: "QUIZ_VERIFIED"};
+  assert.equal(policySatisfied("TELEGRAM_QUIZ_VERIFIED_V1", rules, state({quizPassed: false})), false);
+  assert.equal(policySatisfied("TELEGRAM_QUIZ_VERIFIED_V1", rules, state({handoff: false, quizPassed: true})), false);
+  assert.equal(policySatisfied("TELEGRAM_QUIZ_VERIFIED_V1", rules, state({quizPassed: true})), true);
+});

@@ -30,6 +30,8 @@ test("persisted Lead → Auth identity → Participant → Onboarding → Journe
  assert.equal((await call("/v1/community",{acceptRules:false})).status,400);
  assert.equal((await call("/v1/community",{acceptRules:true})).status,200);
  assert.equal((await (await call("/v1/community")).json()).member,true);
+ // Community V1 migration not applied in this DB → honest pending state, not a generic failure.
+ const pending=await call("/v1/community/spaces");assert.equal(pending.status,503);assert.equal((await pending.json()).code,"COMMUNITY_FEED_PENDING");
  assert.deepEqual((await (await call("/v1/opportunities")).json()).items,[]);
  await call("/v1/me",{name:"Other",market:"EU",interest:"LEARNING",complete:true},b,"PATCH");
  assert.equal((await (await call("/v1/gamification/summary",undefined,b)).json()).points,0);

@@ -43,3 +43,13 @@ test("media: URL fora de /media/ é rejeitada", async () => {
   const r = await requestPlayback(config, {assetRef: "01K5D8HGF18YCW2KO6VW", policyRef: "p", email: "a@b.pt"}, mockFetch(200, {token: "t", url: "https://evil.example/x.m3u8"}));
   assert.equal(!r.ok && r.code, "MEDIA_ERROR");
 });
+
+test("media: segredo S2S vai no header do catalog e nunca no corpo; 401 do catalog falha fechado", async () => {
+  let headers: Headers | undefined, body = "";
+  const fetcher = (async (_url: unknown, init?: RequestInit) => { headers = new Headers(init?.headers); body = String(init?.body); return new Response('{"error":"s2s_unauthorized"}', {status: 401}); }) as typeof fetch;
+  const withSecret = atlasMediaConfig({ATLAS_MEDIA_TOKEN_URL: "https://media.mock.invalid/token", ATLAS_MEDIA_GATEWAY_URL: "https://media.mock.invalid", ATLAS_MEDIA_ARO_PROJECT: "gwd", ATLAS_MEDIA_S2S_SECRET: "s2s-test-value"});
+  const r = await requestPlayback(withSecret, {assetRef: "01K5D8HGF18YCW2KO6VW", policyRef: "gwd.academy.series:gwd-start", email: "a@b.pt"}, fetcher);
+  assert.equal(headers?.get("x-atlas-media-s2s"), "s2s-test-value");
+  assert.ok(!body.includes("s2s-test-value"));
+  assert.equal(r.ok, false); assert.equal(!r.ok && r.code, "MEDIA_UNAVAILABLE");
+});

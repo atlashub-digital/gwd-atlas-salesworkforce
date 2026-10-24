@@ -68,6 +68,7 @@ jobs:
           for i in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3000/ >/dev/null && break; sleep 1; done
           echo "Waiting for App (3001)..."
           for i in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3001/entrar >/dev/null && break; sleep 1; done
+          trap 'kill $FIXTURE_PID $WEB_PID $APP_PID 2>/dev/null || true' EXIT
           node tests/browser/verify.cjs
       - name: Browser evidence
         if: always()
