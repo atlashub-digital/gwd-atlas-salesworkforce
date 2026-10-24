@@ -9,6 +9,8 @@
  --gwd-blue-600:#0060f0;--gwd-blue-500:#0a84ff;
  --gwd-cyan-500:#00c8f0;--gwd-cyan-400:#00e5ff;
  --gwd-success:#22c55e;--gwd-warning:#ffc107;--gwd-danger:#ff5d70;
+ /* Third-party marks (official brand colours, only inside their own logo) */
+ --gwd-brand-telegram:#26a5e4;--gwd-brand-discord:#5865f2;--gwd-brand-whatsapp:#25d366;
  --gwd-white:#f8fafc;--gwd-text-primary:#f4f8ff;--gwd-text-secondary:#b8c7dc;
  --gwd-border:rgba(108,188,255,.24);--gwd-border-strong:rgba(108,188,255,.42);--gwd-control-border:rgba(108,188,255,.55);
  /* Light surface (conversion cards). Ink/action ≥ 4.5:1 and control border ≥ 3:1 on paper. */
@@ -61,6 +63,10 @@
  --content-width:1280px;
  --ease-out:cubic-bezier(.2,.7,.2,1);
  --duration-hover:.24s;
+ /* Motion System V1 (.claude/skills/gwd-visual-excellence/references/motion-system.md) */
+ --gwd-dur-instant:90ms;--gwd-dur-fast:160ms;--gwd-dur-base:240ms;--gwd-dur-slow:420ms;--gwd-dur-scene:900ms;
+ --gwd-ease-out:cubic-bezier(.22,1,.36,1);--gwd-ease-in-out:cubic-bezier(.65,0,.35,1);--gwd-ease-spring:cubic-bezier(.34,1.56,.64,1);
+ --gwd-stagger:60ms;--gwd-distance-sm:8px;--gwd-distance-md:24px;
 
  font-family:var(--gwd-font-body);background:var(--bg);color:var(--ink);
 }

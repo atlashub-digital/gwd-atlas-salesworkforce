@@ -1,7 +1,7 @@
 /** Optimized derivatives of approved Drive masters; never hotlink Drive in production.
  * Source master IDs do Drive registados (W1).
  * Not used (baked-in text): gwd-hero-comeca-no-digital-v01.webp, gwd-paths-v01.webp. */
-export type ApprovedMedia={id:string;src:string;source_master_id:string;role:string;alt:string;width:number;height:number;focal_point:readonly[number,number];status:"APPROVED";canonicality:"canonical";usage_scope:readonly string[]};
+export type ApprovedMedia={id:string;src:string;source_master_id:string;role:string;alt:string;width:number;height:number;focal_point:readonly[number,number];status:"APPROVED"|"PENDING_APPROVAL";canonicality:"canonical"|"derived";usage_scope:readonly string[]};
 export const media={
  team:{id:"gwd-team-master-v02",src:"/media/gwd-team-master-v02.webp",source_master_id:"1ZlLsjRqZwsMuoxhehuH9hY3zYOFSJ7dF",role:"Public hero and canonical digital team",alt:"Equipa digital GWD: Diana Matos, Tomás Rocha, Elisa Duarte e Maia Valente, no espaço GoWorld.",width:1600,height:900,focal_point:[.53,.5],status:"APPROVED",canonicality:"canonical",usage_scope:["homepage","market-pages"]},
  teamGroup:{id:"gwd-team-group-v01",src:"/media/gwd-team-group-v01.webp",source_master_id:"1fKyrN7wJOmunxpuRll7hFGxTJzssF8uK",role:"Homepage hero — canonical digital team",alt:"Diana Matos, Tomás Rocha, Elisa Duarte e Maia Valente, a equipa digital GWD, lado a lado e sorridentes no espaço GoWorld.Digital.",width:1600,height:900,focal_point:[.5,.3],status:"APPROVED",canonicality:"canonical",usage_scope:["homepage"]},
@@ -13,6 +13,17 @@ export const media={
  /* Baked text in the top-right corner: crop from the left/bottom (focal point) — never show the full frame. */
  communityBanner:{id:"gwd-community-banner-v01",src:"/media/gwd-community-banner-v01.webp",source_master_id:"1bHU3xe51s4HjRWWABIDFV6xQjaQmd9r0",role:"Final CTA banner",alt:"Pessoas da comunidade GWD a criar conteúdo, a aprender e a trabalhar no digital, com cidades ligadas ao fundo.",width:1600,height:900,focal_point:[.3,.75],status:"APPROVED",canonicality:"canonical",usage_scope:["homepage"]},
  /* Baked "Como" title in the bottom 18%: always crop from the top. */
+ /* Golden Screen hero composition (23/10/2026) — PENDING APPROVAL by Diana; derived crops, no baked copy.
+  * Trio = 3 right-hand people of 01_GWD_Team_Master_Canonical_V02 (signage and handwritten note excluded).
+  * City panels = regions of the approved market panels without people or copy. */
+ /* Hero Cinematográfico V1 (24/10/2026) — the four canonical personas cut out of GWD_TEAM_MASTER_Official_V02
+  * (background removed with ISNet, identities untouched; office signage and handwritten note excluded).
+  * Hero-only composition: never reused as community/dashboard banner. PENDING the founder's visual approval. */
+ heroTeam:{id:"gwd-hero-team-v01",src:"/media/gwd-hero-team-v01.webp",source_master_id:"1ZlLsjRqZwsMuoxhehuH9hY3zYOFSJ7dF",role:"Homepage hero — digital team layer (transparent cut-out)",alt:"Equipa digital GWD, da esquerda para a direita: Diana Matos, Tomás Rocha, Elisa Duarte e Maia Valente.",width:1320,height:909,focal_point:[.5,.15],status:"PENDING_APPROVAL",canonicality:"derived",usage_scope:["homepage-hero"]},
+ heroTrio:{id:"gwd-hero-trio-v01",src:"/media/gwd-hero-trio-v01.webp",source_master_id:"1fKyrN7wJOmunxpuRll7hFGxTJzssF8uK",role:"Homepage hero — people layer",alt:"Três pessoas da equipa digital GWD, sorridentes e lado a lado no espaço GoWorld.Digital.",width:950,height:860,focal_point:[.5,.2],status:"PENDING_APPROVAL",canonicality:"derived",usage_scope:["homepage"]},
+ heroCityBarcelona:{id:"gwd-hero-city-barcelona-v01",src:"/media/gwd-hero-city-barcelona-v01.webp",source_master_id:"1gnKYOAjkNXMx4wTtiGhpSWAWy-4rNPq-",role:"Homepage hero — city panel",alt:"",width:500,height:240,focal_point:[.6,.5],status:"PENDING_APPROVAL",canonicality:"derived",usage_scope:["homepage"]},
+ heroCitySantorini:{id:"gwd-hero-city-santorini-v01",src:"/media/gwd-hero-city-santorini-v01.webp",source_master_id:"1gnKYOAjkNXMx4wTtiGhpSWAWy-4rNPq-",role:"Homepage hero — city panel",alt:"",width:185,height:360,focal_point:[.5,.4],status:"PENDING_APPROVAL",canonicality:"derived",usage_scope:["homepage"]},
+ heroCityRio:{id:"gwd-hero-city-rio-v01",src:"/media/gwd-hero-city-rio-v01.webp",source_master_id:"1-m-pPjDWNZ3pOCuSTZ4QuVF7AOb0jIPR",role:"Homepage hero — city panel",alt:"",width:365,height:300,focal_point:[.5,.3],status:"PENDING_APPROVAL",canonicality:"derived",usage_scope:["homepage"]},
  howItWorks:{id:"gwd-how-it-works-v01",src:"/media/gwd-how-it-works-v01.webp",source_master_id:"1qyT5vosFCeJcxe-zvzoxO0fT88OSBF3B",role:"How it works section",alt:"Equipa digital GWD em frente a uma rede global e à paisagem do Rio de Janeiro, a ilustrar o percurso de participação.",width:1600,height:900,focal_point:[.5,0],status:"APPROVED",canonicality:"canonical",usage_scope:["homepage"]}
 } as const satisfies Record<string,ApprovedMedia>;
 export const objectPosition=(m:ApprovedMedia)=>`${m.focal_point[0]*100}% ${m.focal_point[1]*100}%`;
