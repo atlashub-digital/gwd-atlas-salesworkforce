@@ -49,6 +49,25 @@ const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type
    if(process.env.HLS_EXPIRY!=="0")await step(pa,"hls-expired-403",async()=>{let exp;try{exp=JSON.parse(Buffer.from(t.split(".")[0],"base64url").toString()).exp;}catch{}const wait=Math.max(0,(exp?exp*1000-Date.now():305000))+5000;
     console.log("waiting",Math.round(wait/1000),"s for token expiry");await new Promise(z=>setTimeout(z,wait));const s=(await fetch(m)).status;if(s<400)throw Error(String(s));return String(s)+" after "+Math.round(wait/1000)+" s";});}
   return;}
+ if(cmd==="campaign"){// Social campaign → web lead form → real sign-in email → code → onboarding → Academy → community. WHO = session name.
+  const who=process.env.WHO||"C",email=args[0],campaign=args[1]||"gwd-e2e",ctx=await context(browser),p=await ctx.newPage();
+  const landing=`https://goworld.digital/entrar?utm_source=instagram&utm_medium=social&utm_campaign=${campaign}&source=instagram`;
+  await step(p,"campaign-landing",async()=>{await p.goto(landing,{waitUntil:"domcontentloaded"});await p.locator('form[data-ready="true"]').waitFor({timeout:60000});return landing.replace("https://","");});
+  await step(p,"campaign-lead-form",async()=>{await p.getByLabel("Como te chamas?").fill("Lead Campanha "+who);await p.getByLabel("Email",{exact:true}).fill(email);await p.getByLabel("O teu mercado").selectOption("EU");
+   await p.getByLabel("Por onde gostarias de começar?").selectOption("SOCIAL_MEDIA");await p.getByRole("checkbox",{name:/Li e aceito/}).check();await p.getByRole("checkbox",{name:/novidades da GWD/}).check();
+   await p.getByRole("button",{name:"Registar interesse"}).click();await p.getByRole("heading",{name:"Verifica o teu email."}).waitFor({timeout:30000});await p.screenshot({path:`${OUT}/campaign-01-confirm.png`,fullPage:true});return "sign-in email sent";});
+  await step(p,"campaign-code-login",async()=>{await p.getByRole("link",{name:"Já tenho o código"}).click();await p.waitForURL(u=>u.hostname==="app.goworld.digital"&&u.searchParams.get("sent")==="1",{timeout:60000});
+   await p.getByLabel("Código de acesso").waitFor({timeout:30000});console.log("WAITING_FOR_CODE",who);const file=`${OUT}/code-${who}.txt`;for(let i=0;i<120&&!fs.existsSync(file);i++)await new Promise(r=>setTimeout(r,2500));
+   const code=fs.readFileSync(file,"utf8").trim();fs.unlinkSync(file);await p.getByLabel("Código de acesso").fill(code);await p.getByRole("button",{name:/Confirmar e entrar/}).click();
+   await p.waitForURL(/\/(dashboard|onboarding|jornada)/,{timeout:30000});const cookies=(await ctx.cookies()).filter(c=>c.name.startsWith("gwd-"));if(!cookies.length||cookies.some(c=>!c.httpOnly||!c.secure))throw Error("session cookie not HttpOnly+Secure");
+   await ctx.storageState({path:`${OUT}/${who}.json`});return p.url().replace(APP,"");});
+  await step(p,"campaign-onboarding",async()=>{await p.goto(APP+"/onboarding");const f=p.getByLabel("Como queres ser tratado?");await f.waitFor({timeout:30000});await p.waitForLoadState("networkidle");if(await f.inputValue()&&!p.url().includes("onboarding"))return "already";
+   await f.fill("Lead Campanha "+who);await p.getByRole("checkbox").first().check();await p.getByRole("button",{name:/Começar GWD Start/}).click();await p.waitForURL("**/jornada",{timeout:30000});return "done";});
+  await step(p,"campaign-academy",async()=>{await p.goto(APP+"/academy/series/gwd-start/episodes/boas-vindas-gwd");await p.getByRole("heading",{name:/Boas-vindas à GWD/}).waitFor({timeout:30000});await p.waitForLoadState("networkidle");await p.screenshot({path:`${OUT}/campaign-02-academy.png`,fullPage:true});
+   const reader=await p.getByText(/Secção 1 de/).count();return reader?"GWD Start reader":"GWD Start (catálogo ainda sem seed)";});
+  await step(p,"campaign-community",async()=>{await p.goto(APP+"/comunidade");await p.waitForLoadState("networkidle");const cb=p.getByRole("checkbox");if(await cb.count()){await cb.first().check();await p.getByRole("button",{name:"Registar adesão"}).click();}
+   await p.getByText("A tua adesão às regras está registada.").waitFor({timeout:30000});await p.getByRole("heading",{name:"Feed da comunidade"}).waitFor();await p.screenshot({path:`${OUT}/campaign-03-community.png`,fullPage:true});});
+  return;}
  if(cmd==="telegram"){// P02: OUT/quiz-answers.json = {"teste-telegram-p02-1":{"q1":0,...},...} (kept out of Git); WHO = A|B
   const who=process.env.WHO||"A",answers=JSON.parse(fs.readFileSync(`${OUT}/quiz-answers.json`,"utf8")),ctx=await context(browser,who),p=await ctx.newPage();
   for(const ep of args.length?args:Object.keys(answers)){const url=`${APP}/academy/series/gwd-start/episodes/${ep}`;let id="";
@@ -75,7 +94,7 @@ const post=(page,path,body)=>api(page,path,{method:"POST",headers:{"Content-Type
  // Steps of the second account are BLOCKED (not FAIL) when it has no real session.
  const stepB=(name,fn)=>haveB?step(pb,name,fn):(record(name,"BLOCKED","no real session for account B"),Promise.resolve(false));const errors=[];pa.on("pageerror",e=>errors.push(e.message));
  for(const [p,who] of [[pa,"A"],...(haveB?[[pb,"B"]]:[])])await step(p,"onboarding-"+who,async()=>{await p.goto(APP+"/onboarding");const f=p.getByLabel("Como queres ser tratado?");await f.waitFor({timeout:30000});
-  if(await f.inputValue())return "already onboarded";await p.waitForLoadState("networkidle");await f.fill("Membro Free "+who);await p.getByRole("checkbox").first().check();await p.getByRole("button",{name:/Começar GWD Start/}).click();await p.waitForURL("**/jornada",{timeout:30000});return "done";});
+  if((await api(p,"me")).body?.participant?.onboarding_completed)return "already onboarded";await p.waitForLoadState("networkidle");await f.fill("Membro Free "+who);await p.getByRole("checkbox").first().check();await p.getByRole("button",{name:/Começar GWD Start/}).click();await p.waitForURL("**/jornada",{timeout:30000});return "done";});
  await step(pa,"dashboard",async()=>{await pa.goto(APP+"/dashboard");await pa.waitForLoadState("networkidle");await pa.screenshot({path:`${OUT}/01-dashboard-390.png`,fullPage:true});});
  await step(pa,"academy",async()=>{await pa.goto(APP+"/academy");await pa.getByText("GWD Start").first().waitFor({timeout:30000});await pa.waitForLoadState("networkidle");await pa.screenshot({path:`${OUT}/02-academy-390.png`,fullPage:true});});
  const linked=(await post(pa,"academy/episodes/boas-vindas-gwd/playback",{})).body?.code!=="MEDIA_NOT_LINKED";

@@ -40,6 +40,9 @@ test("Leads V2: campaign attribution, sign-in email, newsletter consent/unsubscr
   assert.deepEqual(await (await call("/v1/leads/unsubscribe",{token:row.token})).json(),{unsubscribed:true});
   assert.deepEqual(await (await call("/v1/leads/unsubscribe",{token:"00000000-0000-4000-8000-000000000000"})).json(),{unsubscribed:false});
   assert.equal((await call("/v1/leads/unsubscribe",{token:"x' or 1=1"})).status,400);
+  // Before onboarding, the verified lead's answers are offered as defaults (and only to that email).
+  assert.deepEqual((await (await call("/v1/me",undefined,member)).json()).lead,{name:"Lead Real",market:"BR",interest:"SOCIAL_MEDIA"});
+  assert.equal((await (await call("/v1/me",undefined,operator)).json()).lead,null);
   // Lead → participant attribution through onboarding (verified email claim).
   assert.equal((await call("/v1/me",{name:"Lead Real",market:"BR",interest:"SOCIAL_MEDIA",complete:true},member,"PATCH")).status,200);
   assert.equal((await call("/v1/me",{name:"Ops",market:"EU",interest:"LEARNING",complete:true},operator,"PATCH")).status,200);

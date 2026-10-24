@@ -4,4 +4,4 @@ export type Points={points:number;events:{event_key:string;points:number;created
 export type Community={links:{label:string;url:string}[];member:boolean};
 export type Item={id:string;title:string;body:string;owner:string};
 export type Opportunity={id:string;title:string;market:string;description:string};
-export type Me={participant:Participant|null;capabilities?:string[]};
+export type Me={participant:Participant|null;capabilities?:string[];lead?:{name:string;market:string;interest:string}|null};

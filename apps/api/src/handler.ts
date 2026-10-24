@@ -60,7 +60,8 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken,signIn=sendSign
    await c.query("select set_config('request.jwt.claim.email',$1,true)",[user.email?.toLowerCase()??""]);
    if(route==="/v1/me"&&method==="GET") {
     const result=await c.query("select * from gwd.participants where id=$1",[user.id]);
-    if(!result.rows.length)return json({participant:null,email:user.email});
+    // Not onboarded yet: offer the verified lead's answers as defaults (RLS: only the lead with this confirmed email).
+    if(!result.rows.length){const lead=(await c.query("select name,market,interest from gwd.leads where lower(email)=lower(current_setting('request.jwt.claim.email',true)) order by created_at desc limit 1")).rows[0]??null;return json({participant:null,email:user.email,lead});}
     const caps=await c.query("select capability from gwd.participant_capabilities where participant_id=$1",[user.id]);
     return json({participant:result.rows[0],capabilities:caps.rows.map(r=>r.capability),email:user.email});
    }
