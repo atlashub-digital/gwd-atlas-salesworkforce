@@ -7,8 +7,8 @@ Referência de execução: [PR #16](https://github.com/atlashub-digital/gwd-atla
 | Serviço | Versão | Rollback |
 |---|---|---|
 | web `goworld.digital` (Vercel `gwd`) | `c73502e` — Hero Cinematográfico V1 (`dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh`) | `dpl_4FpJc9oEAAZAYKo1ctjxG6yfxKHm` |
-| app `app.goworld.digital` (Vercel `gwd-app`) | `e67a978` (`dpl_EV3DtX6S5nCVSpqN46bRibjnr3Co`) | `dpl_FknDNJQRtgBMST2Ria6ukyEskv37` |
-| API `api.goworld.digital` | `16178c7` (contentor `gwd-api-16178c7`, release por SHA) | site Caddy → `gwd-api-a0ee992` |
+| app `app.goworld.digital` (Vercel `gwd-app`) | `4c071b6` (`dpl_ELYtRQixoZxsf87AaGFPGH5K86qk`) | `dpl_8jZthMSez7mtiQs9FhVZkHdtGzn1` |
+| API `api.goworld.digital` | `4c071b6` (contentor `gwd-api-4c071b6`, release por SHA) | site Caddy → `gwd-api-89bb8e2` → `gwd-api-16178c7` |
 | Worker | `4c7c5a2` (`commerce OFF`) | `docker start gwd-worker` |
 | DB (Supabase GWD) | schema + `community-v1` + `fix-claim` + `academy-preview` rev. 2 + `academy-preview-quiz` | bloco ROLLBACK em cada migração + backups da Helena |
 | Pagamentos | **OFF** (`aroProduction=false`, `payouts=false`) | — |
