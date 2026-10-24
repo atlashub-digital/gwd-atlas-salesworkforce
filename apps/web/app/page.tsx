@@ -93,7 +93,7 @@ export default function Home(){return <SiteFrame bleed>
     <span className="eyebrow">O teu próximo capítulo</span>
     <h2 id="cta-final">O teu talento pode chegar a qualquer lugar do mundo.</h2>
     <p className="lead">Regista o teu interesse, entra na comunidade e começa pela jornada GWD Start.</p>
-    <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Quero fazer parte <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo</a></div>
+    <div className="actions"><Link className={buttonClass("primary","large")} href="/entrar">Entrar na Comunidade <Arrow/></Link><a className={buttonClass("secondary","large")} href={appEntryUrl}>Já participo · Entrar</a></div>
    </div>
   </div>
  </Container></section>
