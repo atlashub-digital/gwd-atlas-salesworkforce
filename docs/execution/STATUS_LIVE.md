@@ -7,7 +7,7 @@ Branch `feat/gwd-e2e-production-delivery-v1` · PR #16 · Missão #15. PR #17 (v
 |---|---|---|
 | web `goworld.digital` (Vercel `gwd`) | **`daa0f45`** — canais oficiais + rota `/r/<id>` de links atribuídos; Hero V1 publicado, V1.1 só em preview (`dpl_CReiYHYV5tutdaNz53JZh6cRGFaD`) | `1f7a7c1` `dpl_A7heTSkwgoo2kAbh9VBt5pokm224` → `1cef61d` `dpl_AuC4mrc5hx3n1ueuFpTFTmBTnqad` |
 | app `app.goworld.digital` (Vercel `gwd-app`) | **`daa0f45`** — Produtos e Ofertas, Área do Afiliado, Vendedor Autorizado, Materiais, Resultados, Os meus percursos (`dpl_JgKtjEftJvFbqGuS6PpnxRugBwc6`) | `1f7a7c1` `dpl_D9PhRN6Z4NsDnEQKHyWP2zMdSeea` → `4c071b6` `dpl_ELYtRQixoZxsf87AaGFPGH5K86qk` |
-| API `api.goworld.digital` | **`daa0f45`** (contentor `gwd-api-daa0f45`; parceiros "em ativação" até à migração `partners-v1`) | site Caddy → `gwd-api-4c071b6` |
+| API `api.goworld.digital` | **`a1e0842`** (contentor `gwd-api-a1e0842`; recetor de eventos Novidades fechado até ao segredo partilhado e à migração `partners-orders`) | site Caddy → `gwd-api-daa0f45` → `gwd-api-4c071b6` |
 | Worker | **`4c7c5a2`** (contentor `gwd-worker-4c7c5a2`, release por SHA, `commerce OFF`) | `docker start gwd-worker` (antigo, parado com `restart=no`) |
 | DB GWD (Supabase dedicado) | schema até `2026-10-23-community-v1.sql` (H01). `2026-10-23-community-v1-fix-claim.sql` **aplicada** (Helena, 15:20). **Pendente (Helena, com backup):** `2026-10-23-academy-preview.sql` rev. 2 + `pilot-p01-assets.sql` v4 | ROLLBACK em cada ficheiro + backup |
 | Atlas Media | gateway HTTPS `media.atlashub.si` (H01), tenant `gwd`, política FREE `gwd-start` | — |
