@@ -6,21 +6,21 @@ export const flags = Object.freeze({
 });
 export const inactiveModules: Record<string, { title: string; status: string; description: string }> = {
   campanhas: { title: "Campanhas", status: "EM PREPARAÇÃO", description: "As campanhas serão apresentadas depois da validação do catálogo e dos critérios de participação." },
-  toolkit: { title: "Toolkit", status: "EM PREPARAÇÃO", description: "Aqui encontrarás materiais aprovados para criar e distribuir conteúdo com responsabilidade." },
   ranking: { title: "Ranking", status: "EM BREVE", description: "O reconhecimento da comunidade será publicado quando existirem regras homologadas e atividade real suficiente." },
-  vendas: { title: "Vendas", status: "AINDA NÃO ATIVADO", description: "A atribuição de vendas depende da integração comercial validada com Novidades.Store e ARO." },
-  ganhos: { title: "Ganhos", status: "AINDA NÃO ATIVADO", description: "Comissões, margens e pagamentos só estarão disponíveis após a ativação comercial. Não existe saldo financeiro disponível nesta fase." },
 };
 export const navigation = [
-  ["dashboard","Início"],["jornada","A minha jornada"],["academy","Academy"],
-  ["oportunidades","Oportunidades"],["campanhas","Campanhas"],["toolkit","Toolkit"],
-  ["comunidade","Comunidade"],["pontos","Os meus pontos"],["ranking","Ranking"],
-  ["vendas","Vendas"],["ganhos","Ganhos"],["perfil","Perfil"],["configuracoes","Configurações"],
+  ["dashboard","Início"],["percursos","Os meus percursos"],["jornada","A minha jornada"],["academy","Academy"],
+  ["comunidade","Comunidade"],["pontos","Os meus pontos"],
+  ["produtos","Produtos e Ofertas"],["afiliado","Área do Afiliado"],["revenda","Vendedor Autorizado"],
+  ["toolkit","Materiais de Divulgação"],["resultados","Resultados e Comissões"],["oportunidades","Oportunidades"],
+  ["campanhas","Campanhas"],["ranking","Ranking"],["perfil","Perfil"],["configuracoes","Configurações"],
 ] as const;
-/** Sidebar grouping (master board 10/11): learning first, staged commercial modules apart, account last. */
+/** Sidebar grouping: learning first, the commercial area (catalogue, affiliate, seller, materials, results), staged
+ *  modules apart, account last. Commercial screens show their real state (approval, programme, ARO), never fake data. */
 export const navigationGroups = [
-  { label: "A tua jornada", items: ["dashboard","jornada","academy","oportunidades","comunidade","pontos"] },
-  { label: "Em preparação", items: ["campanhas","toolkit","ranking","vendas","ganhos"] },
+  { label: "A tua jornada", items: ["dashboard","percursos","jornada","academy","comunidade","pontos"] },
+  { label: "Área comercial", items: ["produtos","afiliado","revenda","toolkit","resultados","oportunidades"] },
+  { label: "Em preparação", items: ["campanhas","ranking"] },
   { label: "Conta", items: ["perfil","configuracoes"] },
 ] as const;
 
@@ -39,3 +39,4 @@ export function levelFor(points: number) {
   return { number: index + 1, ...levels[index], next: next ? { name: next.name, min: next.min } : null };
 }
 export * from "./channels";
+export * from "./partners";
