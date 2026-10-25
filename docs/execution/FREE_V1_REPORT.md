@@ -6,9 +6,9 @@ Referência de execução: [PR #16](https://github.com/atlashub-digital/gwd-atla
 ## 1. Versões em produção
 | Serviço | Versão | Rollback |
 |---|---|---|
-| web `goworld.digital` (Vercel `gwd`) | `1f7a7c1` — canais oficiais ativos; Hero V1 publicado, acabamento visual em revisão (`dpl_A7heTSkwgoo2kAbh9VBt5pokm224`) | `dpl_AuC4mrc5hx3n1ueuFpTFTmBTnqad` |
-| app `app.goworld.digital` (Vercel `gwd-app`) | `1f7a7c1` — hub de canais oficiais (`dpl_D9PhRN6Z4NsDnEQKHyWP2zMdSeea`) | `dpl_ELYtRQixoZxsf87AaGFPGH5K86qk` |
-| API `api.goworld.digital` | `4c071b6` (contentor `gwd-api-4c071b6`, release por SHA) | site Caddy → `gwd-api-89bb8e2` → `gwd-api-16178c7` |
+| web `goworld.digital` (Vercel `gwd`) | `daa0f45` — canais oficiais e links atribuídos; Hero V1 publicado, acabamento visual em revisão (`dpl_CReiYHYV5tutdaNz53JZh6cRGFaD`) | `dpl_A7heTSkwgoo2kAbh9VBt5pokm224` |
+| app `app.goworld.digital` (Vercel `gwd-app`) | `daa0f45` — área comercial e percursos (`dpl_JgKtjEftJvFbqGuS6PpnxRugBwc6`) | `dpl_D9PhRN6Z4NsDnEQKHyWP2zMdSeea` |
+| API `api.goworld.digital` | `daa0f45` (contentor `gwd-api-daa0f45`, release por SHA) | site Caddy → `gwd-api-4c071b6` → `gwd-api-89bb8e2` |
 | Worker | `4c7c5a2` (`commerce OFF`) | `docker start gwd-worker` |
 | DB (Supabase GWD) | schema + `community-v1` + `fix-claim` + `academy-preview` rev. 2 + `academy-preview-quiz` | bloco ROLLBACK em cada migração + backups da Helena |
 | Pagamentos | **OFF** (`aroProduction=false`, `payouts=false`) | — |
