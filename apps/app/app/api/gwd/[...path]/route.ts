@@ -1,7 +1,8 @@
 import {cookies} from "next/headers";
 import {authFetch,clearSession,sameOrigin,saveSession} from "../../../../lib/session";
 const allowed=new Set(["me","journeys","journeys/gwd-start/progress","academy","opportunities","community","gamification/summary","feature-flags",
- "academy/series","academy/progress","ops/funnel","academy/progress/heartbeat","academy/progress/complete","academy/progress/summary","academy/telegram-handoff-opened"]);
+ "academy/series","academy/progress","ops/funnel","academy/progress/heartbeat","academy/progress/complete","academy/progress/summary","academy/telegram-handoff-opened",
+ "offers","partner","partner/applications","partner/terms","partner/links","ops/partners","ops/partners/review","ops/offer-programs"]);
 /** Academy Streaming resources addressed by slug/id; anything else stays blocked. */
 const academyPattern=/^academy\/(series\/[a-z0-9-]+|episodes\/[a-z0-9-]+(\/playback)?|quiz\/[a-z0-9-]+\/submit)$/;
 /** Community V1: spaces, a space's posts, and remove/report on one post. */
