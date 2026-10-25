@@ -75,3 +75,29 @@
 .auth-switch{display:flex;flex-wrap:wrap;gap:6px 20px}
 .auth-switch .link{margin-top:0;border:0;background:none;padding:4px 0;text-align:left}
 @media(max-width:400px){.auth-wrap .phone-input{grid-template-columns:1fr}}
+/* Official channels (shared by the public /canais page and the member app Community hub) */
+.channel-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+.channel-list--three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.channel-card{display:flex;gap:var(--space-4);height:100%;padding:var(--space-5);border-radius:var(--radius-card);border:1px solid var(--line);background:var(--gwd-gradient-surface);scroll-margin-top:96px;transition:border-color var(--duration-hover),box-shadow var(--duration-hover)}
+.channel-card:target{border-color:var(--gwd-border-strong);box-shadow:0 0 0 1px var(--gwd-border-strong),0 0 30px -12px var(--gwd-glow-cyan)}
+.channel-card.is-active:hover,.channel-card.is-active:focus-within{border-color:var(--gwd-border-strong)}
+.channel-card-icon{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:var(--gwd-navy-950);border:1px solid var(--line);color:var(--accent)}
+.channel-card-icon svg{width:26px;height:26px}
+.channel-card--telegram .channel-card-icon{color:var(--gwd-brand-telegram)}.channel-card--discord .channel-card-icon{color:var(--gwd-brand-discord)}.channel-card--whatsapp .channel-card-icon{color:var(--gwd-brand-whatsapp)}
+.channel-card-body{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.channel-card-body>p:last-of-type{margin-bottom:var(--space-4)}
+.channel-card-head{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-3)}
+.channel-card h2,.channel-card h3{font-size:1.3rem;margin:0}
+.channel-card p{margin:var(--space-3) 0 0;color:var(--muted)}
+.channel-card-access{display:flex;gap:var(--space-2);font-size:var(--text-small)}
+.channel-card-access svg{flex:none;width:18px;height:18px;color:var(--accent)}
+.channel-card-action{margin-top:auto;padding:12px 18px;font-size:14px}
+.contact-card{display:grid;grid-template-columns:96px 1fr;gap:var(--space-4);align-items:center;padding:var(--space-5);border-radius:var(--radius-card);border:1px solid var(--gwd-border-strong);background:var(--gwd-gradient-surface)}
+.contact-card img{width:96px;height:112px;object-fit:cover;object-position:center 22%;border-radius:14px;border:1px solid var(--line)}
+.contact-card h2,.contact-card h3{margin:0;font-size:1.25rem}
+.contact-card-role{margin:4px 0 0;font-size:var(--text-small);color:var(--accent);letter-spacing:.02em}
+.contact-card p{margin:var(--space-2) 0 0;font-size:var(--text-small)}
+.contact-card .button{margin-top:var(--space-3);padding:11px 16px;font-size:14px}
+@media (max-width:1023px){.channel-list--three{grid-template-columns:1fr}}
+@media (max-width:759px){.channel-list{grid-template-columns:1fr}.channel-card{padding:var(--space-4)}.channel-cta .actions{flex-direction:column;align-items:stretch;width:100%}.contact-card{grid-template-columns:72px 1fr;padding:var(--space-4)}.contact-card img{width:72px;height:88px}}
+.contact-card .button svg{width:18px;height:18px;color:var(--gwd-brand-whatsapp)}.contact-card-phone{font-variant-numeric:tabular-nums;color:var(--ink)!important;font-weight:600}

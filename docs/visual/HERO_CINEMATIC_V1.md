@@ -1,6 +1,6 @@
 # Hero Cinematográfico V1 — implementação (24/10/2026)
 
-Direção C (experiência híbrida), decisões fechadas pela direção. Estado: **APROVADO visualmente pelo fundador** (24/10/2026) e em produção (`1cef61d`, `dpl_AuC4mrc5hx3n1ueuFpTFTmBTnqad`; rollback `dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh`).
+Direção C (experiência híbrida), decisões fechadas pela direção. Estado: **especificação artística aprovada pela direção; acabamento visual da implementação ainda não aprovado formalmente** (revisão V1.1 em preview). A versão V1 está publicada (`1cef61d`, `dpl_AuC4mrc5hx3n1ueuFpTFTmBTnqad`; rollback `dpl_HYrdnvfzA7KNqsPnd2UbiVKR8Fmh`).
 
 ## Composição
 - 42 % mensagem — eyebrow "Pessoas · Conteúdo · Vendas", H1 "Comunidade Global GWD", assinatura "Aprende. Conecta. Cria. Cresce.", CTA "Entrar na Comunidade →" (`/entrar`), secundário "Já participo · Entrar" (app), nota de conformidade.
