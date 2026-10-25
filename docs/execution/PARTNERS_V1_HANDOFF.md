@@ -8,6 +8,9 @@ Código: branch `feat/gwd-commerce-affiliates-v1`. A API e a app funcionam antes
 3. Registar operadores: `insert into gwd.operators(participant_id, note) values ('<id do participante>', 'fundador')`.
 4. Publicar os percursos: `npx tsx packages/db/seed-academy.ts` (idempotente; acrescenta 4 séries, 25 episódios e 4 quizzes; não toca no progresso).
 
+5. `packages/db/migrations/2026-10-26-partners-orders.sql` (eventos de pedido assinados, comissão pendente e reversão).
+6. Segredo partilhado `NOVIDADES_EVENTS_SECRET` (≥ 32 caracteres) no env da API GWD e no webhook da Novidades.
+
 Verificação: `/v1/partner` deixa de responder 503 `PARTNERS_PENDING`; `/v1/academy/series` devolve 5 séries.
 
 ## 2. Ativar uma oferta piloto (operador, em `app.goworld.digital/operacao`)

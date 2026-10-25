@@ -1,4 +1,4 @@
-import {randomBytes} from "node:crypto";
+import {createHmac, randomBytes, timingSafeEqual} from "node:crypto";
 import {partnerTermsVersion, type PartnerKind} from "@gwd/config";
 import {InputError, market, object, text, uuid} from "@gwd/contracts";
 import type {PoolClient} from "pg";
@@ -92,6 +92,35 @@ export async function publicReferral(route: string, method: string, request: Req
     const offer = (await loadCatalog()).find(o => o.slug === row.offer_slug);
     if (!offer) return json({error: "Oferta indisponível."}, 404);
     return json({url: attributedUrl(offer.url, row.code, row.campaign), recorded: !bot});
+  });
+}
+
+/** Signed order events from the Novidades.Store checkout webhook (XPayments): attributed sale, pending commission,
+ *  reversal. Signature = hex HMAC-SHA256(secret, `${timestamp}.${rawBody}`), timestamp within 5 minutes; idempotent on
+ *  event_id. Without NOVIDADES_EVENTS_SECRET the integration is closed (never accepts unsigned events). */
+const orderStatuses = new Set(["approved", "refunded", "chargeback", "canceled", "failed", "pending"]);
+export function signOrderEvent(secret: string, timestamp: string, raw: string) { return createHmac("sha256", secret).update(timestamp + "." + raw).digest("hex"); }
+export async function orderEventRoute(route: string, method: string, request: Request,
+  tx: (userId: string | null, run: (c: PoolClient) => Promise<Response>) => Promise<Response>, json: Json): Promise<Response | null> {
+  if (route !== "/v1/integrations/novidades/order-events" || method !== "POST") return null;
+  const secret = process.env.NOVIDADES_EVENTS_SECRET;
+  if (!secret || secret.length < 32) return json({error: "Integração não configurada.", code: "INTEGRATION_NOT_CONFIGURED"}, 503);
+  const raw = await request.text();
+  if (raw.length > 8192) return json({error: "Pedido demasiado grande."}, 413);
+  const timestamp = request.headers.get("x-gwd-timestamp") ?? "", signature = (request.headers.get("x-gwd-signature") ?? "").toLowerCase();
+  const expected = signOrderEvent(secret, timestamp, raw);
+  if (!/^\d{13}$/.test(timestamp) || Math.abs(Date.now() - Number(timestamp)) > 300_000 || signature.length !== expected.length
+    || !timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return json({error: "Assinatura inválida."}, 401);
+  const v = object(JSON.parse(raw));
+  const eventId = String(v.event_id ?? ""), reference = String(v.reference ?? ""), status = String(v.status ?? ""), slug = String(v.product_slug ?? ""),
+    currency = String(v.currency ?? ""), ref = String(v.gwd_ref ?? ""), amount = Number(v.amount_minor);
+  if (!/^[A-Za-z0-9._:-]{8,120}$/.test(eventId) || !/^[A-Za-z0-9._:-]{4,120}$/.test(reference) || !orderStatuses.has(status)
+    || !/^[a-z0-9-]{2,80}$/.test(slug) || !/^[A-Z]{3}$/.test(currency) || !Number.isSafeInteger(amount) || amount < 0)
+    throw new InputError("Evento inválido.");
+  if (!/^[a-z0-9]{8,16}$/.test(ref)) return json({received: true, outcome: "unattributed"});
+  return tx(null, async c => {
+    const outcome = (await c.query("select gwd.record_order_event($1, $2, $3, $4, $5, $6, $7) as outcome", [eventId, reference, status, slug, amount, currency, ref])).rows[0]?.outcome;
+    return json({received: true, outcome});
   });
 }
 
@@ -196,7 +225,12 @@ export async function partnerRoute({request, route, method, c, userId, json}: {r
     if (!(await loadCatalog()).some(o => o.slug === slug)) throw new InputError("Esta oferta não está no catálogo da Novidades.Store.");
     const conditions = typeof v.conditions === "string" ? v.conditions.trim().slice(0, 2000) : "";
     if (status === "ACTIVE" && conditions.length < 20) throw new InputError("Um programa ativo precisa das condições confirmadas pela direção.");
+    const bps = v.commissionBps === undefined || v.commissionBps === null || v.commissionBps === "" ? null : Number(v.commissionBps);
+    const days = v.confirmationDays === undefined || v.confirmationDays === null || v.confirmationDays === "" ? null : Number(v.confirmationDays);
+    if ((bps !== null && !(Number.isInteger(bps) && bps >= 0 && bps <= 10000)) || (days !== null && !(Number.isInteger(days) && days >= 0 && days <= 365)))
+      throw new InputError("Comissão (pontos base, 0–10000) ou prazo de confirmação (0–365 dias) inválidos.");
     await c.query("select gwd.ops_set_offer_program($1, $2, $3, $4)", [slug, kind, status, conditions]);
+    if (bps !== null || days !== null) await c.query("select gwd.ops_set_program_terms($1, $2, $3, $4)", [slug, kind, bps, days]);
     return json({offerSlug: slug, kind, status});
   }
   return null;

@@ -3,7 +3,7 @@ import { InputError, leadInput, object, profileInput, text, uuid } from "@gwd/co
 import { academy, starterSteps, validStep } from "@gwd/domain";
 import { AcademyError, academyRoute, publicAcademyRoute } from "./academy";
 import { communityRoute } from "./community";
-import { partnerRoute, publicReferral } from "./partners";
+import { orderEventRoute, partnerRoute, publicReferral } from "./partners";
 import { transaction } from "@gwd/db";
 import type { PoolClient } from "pg";
 type Tx = typeof transaction;
@@ -52,6 +52,8 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken,signIn=sendSign
    const done=await tx(null,async c=>(await c.query<{ok:boolean}>("select gwd.lead_unsubscribe($1::uuid) as ok",[token])).rows[0]?.ok??false);
    return json({unsubscribed:done});
   }
+  const orderEvent=await orderEventRoute(route,method,request,tx,json);
+  if(orderEvent)return orderEvent;
   const referral=await publicReferral(route,method,request,tx,json);
   if(referral)return referral;
   const publicAcademy=await publicAcademyRoute(route,method,tx);
@@ -130,7 +132,7 @@ export function createHandler(tx:Tx=transaction,auth=verifyToken,signIn=sendSign
   if(route.startsWith("/v1/ops/")&&code==="42501")return json({error:"Área reservada à operação GWD.",code:"OPERATOR_ONLY"},403);
   if(error instanceof Error&&error.message==="CATALOG_UNAVAILABLE")return json({error:"O catálogo da Novidades.Store está temporariamente indisponível. Tenta novamente.",code:"CATALOG_UNAVAILABLE"},503);
   // Until 2026-10-25-partners-v1.sql is applied: say so instead of a generic 503.
-  if((route.startsWith("/v1/partner")||route.startsWith("/v1/public/referral")||route.startsWith("/v1/ops/partners")||route==="/v1/ops/offer-programs")&&["42P01","42883"].includes(code??""))return json({error:"A área de parceiros está em ativação.",code:"PARTNERS_PENDING"},503);
+  if((route.startsWith("/v1/partner")||route.startsWith("/v1/integrations/")||route.startsWith("/v1/public/referral")||route.startsWith("/v1/ops/partners")||route==="/v1/ops/offer-programs")&&["42P01","42883"].includes(code??""))return json({error:"A área de parceiros está em ativação.",code:"PARTNERS_PENDING"},503);
   if((route.startsWith("/v1/ops/")||route==="/v1/leads/unsubscribe")&&code==="42883")return json({error:"Esta função está em ativação.",code:"LEADS_V2_PENDING"},503);
   console.error("gwd.request.failed",error instanceof Error?error.name:"Error");
   return json({error:"O serviço está temporariamente indisponível. Tenta novamente.",code:"SERVICE_UNAVAILABLE"},503);

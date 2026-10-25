@@ -1,6 +1,6 @@
 import {test} from "node:test";import assert from "node:assert/strict";import {readFile} from "node:fs/promises";import {PGlite} from "@electric-sql/pglite";import type {PoolClient} from "pg";
 import {createHandler} from "../../apps/api/src/handler";
-import {resetCatalogCache} from "../../apps/api/src/partners";
+import {resetCatalogCache,signOrderEvent} from "../../apps/api/src/partners";
 import {partnerTermsVersion} from "../../packages/config/src/index";
 import type {transaction} from "../../packages/db/src/index";
 /* Partners V1 with real RLS (PGlite, production permission parity): Novidades catalogue → affiliate application →
@@ -79,6 +79,34 @@ test("Partners V1: catalogue, application, approval, terms, attributed link, ver
  await assert.rejects(tx(other,async c=>c.query("insert into gwd.referral_links(participant_id,offer_slug) values($1,'conversion-content-os')",[member])));
  await assert.rejects(tx(member,async c=>c.query("insert into gwd.participant_capabilities values($1,'AUTHORIZED_SELLER')",[member])),"capabilities are not self-granted");
  await assert.rejects(tx(member,async c=>c.query("insert into gwd.accrual_ledger(participant_id,aro_order_id,event_key,amount_minor,currency) values($1,'x','x',100,'BRL')",[member])),"commissions are never app-written");
+ // Order events (Novidades checkout webhook → GWD): closed without a secret; signed, fresh, idempotent; commission only
+ // with operator terms; refund reverses the commission (append-only).
+ const order=(e:Record<string,unknown>,opts:{secret?:string;ts?:number}={})=>{const raw=JSON.stringify(e),ts=String(opts.ts??Date.now());
+  return handle(new Request("http://test/v1/integrations/novidades/order-events",{method:"POST",headers:{"Content-Type":"application/json","x-gwd-timestamp":ts,"x-gwd-signature":signOrderEvent(opts.secret??"s".repeat(40),ts,raw)},body:raw}));};
+ const memberCode=(await (await call("/v1/partner",undefined,member)).json()).code;
+ const sale={event_id:"evt-approved-0001",reference:"NVD-DIGITAL-CCOS-001-1-abcd",status:"approved",product_slug:"conversion-content-os",amount_minor:9700,currency:"BRL",gwd_ref:memberCode};
+ assert.equal((await order(sale)).status,503,"integration closed without a secret");
+ process.env.NOVIDADES_EVENTS_SECRET="s".repeat(40);
+ assert.equal((await order(sale)).status,503,"orders migration pending");
+ await db.exec(await readFile(new URL("../../packages/db/migrations/2026-10-26-partners-orders.sql",import.meta.url),"utf8"));
+ assert.equal((await order(sale,{secret:"x".repeat(40)})).status,401);
+ assert.equal((await order(sale,{ts:Date.now()-600_000})).status,401,"stale event");
+ assert.deepEqual(await (await order(sale)).json(),{received:true,outcome:"attributed_no_commission_terms"},"no commission without terms");
+ assert.deepEqual(await (await order(sale)).json(),{received:true,outcome:"duplicate"});
+ assert.equal((await call("/v1/ops/offer-programs",{offerSlug:"conversion-content-os",kind:"AFFILIATE",status:"ACTIVE",conditions:"Condições de teste do piloto confirmadas.",commissionBps:2000,confirmationDays:7},operator)).status,200);
+ const sale2={...sale,event_id:"evt-approved-0002",reference:"NVD-DIGITAL-CCOS-001-2-abcd"};
+ assert.deepEqual(await (await order(sale2)).json(),{received:true,outcome:"attributed_pending_commission"});
+ assert.deepEqual(await (await order({...sale2,event_id:"evt-other-0003",reference:"NVD-X-3",product_slug:"social-content-os"})).json(),{received:true,outcome:"unattributed"},"no link for this offer");
+ assert.deepEqual(await (await order({...sale2,event_id:"evt-unknown-0004",reference:"NVD-X-4",gwd_ref:"zzzzzzzzzzzz"})).json(),{received:true,outcome:"unattributed"});
+ let mine=await (await call("/v1/partner",undefined,member)).json();
+ assert.deepEqual(mine.sales.map((s:{status:string})=>s.status).sort(),["APPROVED","APPROVED"]);
+ assert.deepEqual(mine.accruals.map((a:{amount_minor:string|number;status:string})=>[Number(a.amount_minor),a.status]),[[1940,"PENDING"]]);
+ assert.deepEqual(await (await order({...sale2,event_id:"evt-refund-0005",status:"refunded"})).json(),{received:true,outcome:"reversed"});
+ mine=await (await call("/v1/partner",undefined,member)).json();
+ assert.deepEqual(mine.accruals.map((a:{amount_minor:string|number;status:string})=>[Number(a.amount_minor),a.status]).sort(),[[-1940,"REVERSED"],[1940,"REVERSED"]]);
+ assert.ok(mine.sales.some((s:{status:string})=>s.status==="REFUNDED"));
+ assert.equal((await (await call("/v1/partner",undefined,other)).json()).accruals.length,0,"other members see nothing");
+ delete process.env.NOVIDADES_EVENTS_SECRET;
  // Pausing the programme stops the redirect (no click, no destination).
  await call("/v1/ops/offer-programs",{offerSlug:"conversion-content-os",kind:"AFFILIATE",status:"PAUSED",conditions:""},operator);
  assert.equal((await call("/v1/public/referral/"+link.id,{},null,{"x-visitor-user-agent":"Mozilla/5.0"})).status,404);
