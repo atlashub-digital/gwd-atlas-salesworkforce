@@ -27,5 +27,14 @@ Hoje o checkout de `digital.novidades.store` cria a sessão diretamente no XPaym
 
 Testes controlados a executar: identificação do afiliado, atribuição até ao checkout, pagamento de teste autorizado, evento de aprovação, comissão pendente, evento duplicado, reversão, direitos de acesso.
 
+## 3.1 Implementação pronta (sem duplicar checkout)
+Código em `atlashub-digital/novidades-platform#2` e nesta branch (`a1e0842`). Ordem segura:
+1. Novidades Supabase: `supabase/migrations/20261026100000_gwd_attribution_refunds.sql` (aditiva).
+2. Novidades Supabase: deploy de `digital-checkout` e `digital-webhook` a partir de `supabase/functions/` (inertes para a GWD sem segredo; corrigem a sobrescrita de metadados e tratam reembolsos).
+3. GWD: API `a1e0842` (recetor `/v1/integrations/novidades/order-events`) + migração `2026-10-26-partners-orders.sql`.
+4. Segredo partilhado: gerar ≥ 32 caracteres; guardar em `digital_runtime_secrets` (`name = 'gwd_events_secret'`) e em `NOVIDADES_EVENTS_SECRET` no env da API GWD.
+5. Merge do PR da Novidades (frontend: guarda `gwd_ref`/UTM na página da oferta e envia no checkout).
+6. Termos estruturados do piloto em `/operacao` (comissão em pontos base e prazo de confirmação decididos pela direção).
+
 ## 4. Email `comunidade@goworld.digital`
 A receção funciona (reencaminhamento Spaceship → Gmail), mas um email externo caiu em spam. Analisar cabeçalhos (SPF/DKIM/DMARC/ARC do reencaminhamento) e separar receção de envio em massa (o envio deve usar um fornecedor com DKIM do domínio, por exemplo o Resend já usado nos códigos de login).
