@@ -18,7 +18,7 @@ test("official channels never point at the Academy's private Telegram distributi
 });
 
 test("Maia's contact and the community email are explicit and distinct from the groups", () => {
-  assert.equal(new URL(maiaContact.url).hostname, "wa.me");
+  assert.equal(maiaContact.url, "https://wa.me/" + maiaContact.phone.replace(/\D/g, ""));
   assert.match(maiaContact.note, /não é atendimento automático/);
   assert.equal(communityEmail, "comunidade@goworld.digital");
 });

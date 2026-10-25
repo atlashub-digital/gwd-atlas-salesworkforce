@@ -14,8 +14,10 @@ export const officialChannels:readonly OfficialChannel[]=Object.freeze([
   description:"Grupo da comunidade para novidades e conversa. Os episódios da Academy continuam dentro da plataforma.",
   access:"Abre o convite no Telegram e toca em «Entrar». Este grupo é diferente dos canais privados dos episódios da Academy.",status:"ATIVO"},
 ]);
-/** Personal contact with Maia Valente (distinct from the public groups). A person answers; no instant AI support. */
+/** Personal contact with Maia Valente (distinct from the public groups). A person answers; no instant AI support.
+ *  Direct link to the number given by the direction: the provided QR link (wa.me/qr/DM2APA363VMAK1) answers HTTP 400 on
+ *  desktop browsers and cannot be checked against the number without the app, so it is kept only as `qrUrl`. */
 export const maiaContact=Object.freeze({name:"Maia Valente",role:"Community, Seller Success & Gamification",
- url:"https://wa.me/qr/DM2APA363VMAK1",phone:"+55 62 99443-2321",
+ url:"https://wa.me/5562994432321",qrUrl:"https://wa.me/qr/DM2APA363VMAK1",phone:"+55 62 99443-2321",
  note:"Contacto pessoal por WhatsApp para dúvidas sobre o teu percurso. Responde uma pessoa da equipa — não é atendimento automático nem instantâneo."});
 export const communityEmail="comunidade@goworld.digital";
