@@ -5,6 +5,10 @@
 
 import type {AccessTier, Episode, EpisodeAsset, Season, Series} from "./types";
 import {gwdStartEpisodes} from "./gwd-start";
+import {comunidadeObjetivosEpisodes} from "./comunidade-e-objetivos";
+import {socialMediaEpisodes} from "./social-media";
+import {afiliadoDigitalEpisodes} from "./afiliado-digital";
+import {revendedorAutorizadoEpisodes} from "./revendedor-autorizado";
 
 
 type EpisodeSeed = {
@@ -113,6 +117,54 @@ export const series: Series[] = [
       {number: 2, title: "Rotina e ética", episodeIds: gwdStartEpisodes.filter(e => e.seasonNumber === 2).map(e => e.id)},
     ],
     episodes: gwdStartEpisodes,
+  },
+  {
+    id: "series-comunidade-e-objetivos",
+    slug: "comunidade-e-objetivos",
+    title: "Comunidade e objetivos",
+    subtitle: "Fundamentos do Digital · cultura, regras e o teu plano",
+    description: "Completa os Fundamentos do Digital: como a comunidade funciona, as regras que nos protegem e como transformar o teu ponto de partida num plano de 30 dias.",
+    category: "fundamentos",
+    posterInitials: "CO",
+    posterGradient: "linear-gradient(140deg,#003a80 0%,#00c8f0 100%)",
+    seasons: [{number: 1, title: "Comunidade e objetivos", episodeIds: comunidadeObjetivosEpisodes.map(e => e.id)}],
+    episodes: comunidadeObjetivosEpisodes,
+  },
+  {
+    id: "series-social-media",
+    slug: "social-media",
+    title: "Social Media",
+    subtitle: "Conteúdo com propósito, do público às métricas",
+    description: "Fundamentos de conteúdo, plataformas e formatos, planeamento editorial, publicação e métricas, ética e direitos. Percurso prático com exercícios e verificação final.",
+    category: "social-media",
+    posterInitials: "SM",
+    posterGradient: "linear-gradient(140deg,#0a315c 0%,#00c8f0 100%)",
+    seasons: [{number: 1, title: "Social Media", episodeIds: socialMediaEpisodes.map(e => e.id)}],
+    episodes: socialMediaEpisodes,
+  },
+  {
+    id: "series-afiliado-digital",
+    slug: "afiliado-digital",
+    title: "Afiliado Digital",
+    subtitle: "Recomendar com atribuição, transparência e método",
+    description: "Como funciona a afiliação, como escolher produtos, links e atribuição, comunicação, regras de transparência e uma campanha prática. Prepara a tua candidatura a afiliado.",
+    category: "afiliacao",
+    posterInitials: "AF",
+    posterGradient: "linear-gradient(140deg,#002040 0%,#0a84ff 100%)",
+    seasons: [{number: 1, title: "Afiliado Digital", episodeIds: afiliadoDigitalEpisodes.map(e => e.id)}],
+    episodes: afiliadoDigitalEpisodes,
+  },
+  {
+    id: "series-revendedor-autorizado",
+    slug: "revendedor-autorizado",
+    title: "Revendedor Autorizado",
+    subtitle: "Regras comerciais, atendimento e responsabilidade",
+    description: "Diferenças face à afiliação, regras comerciais e preços, atendimento, processo de venda, suporte e devoluções. Concluir o percurso não concede o estatuto: esse exige candidatura e aprovação.",
+    category: "revenda",
+    posterInitials: "RA",
+    posterGradient: "linear-gradient(140deg,#001a33 0%,#0060f0 100%)",
+    seasons: [{number: 1, title: "Revendedor Autorizado", episodeIds: revendedorAutorizadoEpisodes.map(e => e.id)}],
+    episodes: revendedorAutorizadoEpisodes,
   },
 ];
 
