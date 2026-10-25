@@ -364,3 +364,10 @@
 .ops-kpi{display:grid;gap:4px}.ops-kpi strong{font-size:1.8rem}
 .ops-table{display:grid;gap:2px;font-size:14px}.ops-row{display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
 .ops-row span:first-child{overflow-wrap:anywhere}.ops-head{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.community-channels{margin:20px 0}
+.community-channels>h2{margin:0 0 6px;font-size:1.5rem}
+.community-channels>p{margin:0 0 16px;font-size:14px;max-width:70ch}
+.community-channels .channel-list{margin-bottom:14px}
+.community-channels .channel-card{padding:22px}
+.community-channels a[href^="mailto:"]{color:var(--accent)}
+.community-channels .channel-list--three{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
