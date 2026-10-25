@@ -45,3 +45,12 @@ Não usados (texto embutido): `gwd-hero-comeca-no-digital-v01.webp` e `gwd-paths
 
 ## Evidência (`docs/visual/evidence/`)
 `hero-v1-before-after-1440.webp`, `hero-v1-before-after-390.webp`, `hero-v1-vs-target-1440.webp`, `hero-v1-vs-target-390.webp`, `hero-v1-1024.webp`, `hero-v1-1440-reduced.webp`, `hero-v1-390-reduced-fold.webp`, `hero-v1-hover.webp`, `hero-v1-scroll-250.webp`, `hero-v1-motion.webm` (entrada, hover dos 6 atalhos com resposta do globo, scroll até aos percursos).
+
+## Revisão V1.1 — direção artística (preview, aguarda validação do fundador)
+Mesma estrutura e camadas; passagem de acabamento sobre o código existente. **Não promovida para produção.**
+- **Globo:** maior; oceano iluminado com lado noturno, realce especular, rim light e atmosfera em duas camadas; continentes sombreados pela luz principal; retícula subtil para volume; 22 arcos (6 a mais) com brilho aditivo e hubs principais (Lisboa, Porto, São Paulo, Rio) com pulsação. Mantém 30 fps máx., pausa fora do ecrã e frame único em movimento reduzido.
+- **Equipa:** ~10% maior, rim light ciano vindo do globo, sombra de contacto e luz de chão; imagem original, sem alteração das identidades.
+- **Cidades:** atrás do globo, profundidade atmosférica (desfoque e opacidade por distância), grading da cena.
+- **Mobile:** globo maior atrás da equipa, palco mais alto; headline, assinatura e CTA mantêm a prioridade.
+- **Acabamento:** H1 mais denso, eyebrow com mais tracking, CTA com brilho, dock em vidro da cena, ícones com halo no hover, linha de chão que conduz a "Escolhe o teu caminho".
+- Evidência: `evidence/hero-v1-1-*` (1440, 390, 1024, movimento reduzido, hover, vídeo, comparação maquete × V1 × V1.1).
